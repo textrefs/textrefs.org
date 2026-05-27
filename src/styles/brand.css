@@ -1,0 +1,117 @@
+/* TextRefs brand tokens — see textrefs.org-upstream/BRAND.md
+ *
+ * BRAND.md anchors:
+ *   light: bg #FFFFFF, fg #1A1A1A, muted #555555, accent #0A58CA
+ *   dark:  bg #111111, fg #F0F0F0, muted #AAAAAA, accent #6EA8FE
+ *
+ * Strategy: override Starlight's full neutral ramp (--sl-color-white/black,
+ * --sl-color-gray-1..7) so every derived surface — sidebar, hairlines,
+ * inline-code, emphasised text — picks up the brand's neutral hue instead of
+ * Starlight's default bluish ramp. The four BRAND anchor values are kept
+ * exactly; the in-between steps are interpolated on a neutral (hue 0%) scale.
+ */
+
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/inter-v20-latin-regular.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('/fonts/inter-v20-latin-500.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url('/fonts/inter-v20-latin-600.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/inter-v20-latin-700.woff2') format('woff2');
+}
+
+:root {
+	--sl-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+		Helvetica, Arial, sans-serif;
+}
+
+/* Dark theme — bg #111, fg #F0F0F0, muted #AAA, accent #6EA8FE */
+:root[data-theme='dark'] {
+	--sl-color-white: #f0f0f0;
+	--sl-color-gray-1: #e0e0e0;
+	--sl-color-gray-2: #cccccc;
+	--sl-color-gray-3: #aaaaaa; /* muted, per BRAND.md */
+	--sl-color-gray-4: #7a7a7a;
+	--sl-color-gray-5: #3a3a3a;
+	--sl-color-gray-6: #222222; /* panel bg — sidebar/nav */
+	--sl-color-black: #111111; /* page bg, per BRAND.md */
+
+	--sl-color-accent-low: #14315e;
+	--sl-color-accent: #6ea8fe; /* link colour, per BRAND.md */
+	--sl-color-accent-high: #c9defe;
+
+	--sl-color-text: #f0f0f0;
+	--sl-color-text-accent: #6ea8fe;
+	--sl-color-text-invert: #111111;
+	--sl-color-bg: #111111;
+	--sl-color-bg-nav: #1a1a1a;
+	--sl-color-bg-sidebar: #1a1a1a;
+	--sl-color-bg-inline-code: #2a2a2a;
+	--sl-color-bg-accent: #6ea8fe;
+	--sl-color-hairline-light: #333333;
+	--sl-color-hairline: #222222;
+	--sl-color-hairline-shade: #000000;
+	--sl-color-backdrop-overlay: hsla(0, 0%, 7%, 0.66);
+}
+
+/* Light theme — bg #FFFFFF, fg #1A1A1A, muted #555, accent #0A58CA */
+:root[data-theme='light'] {
+	--sl-color-white: #1a1a1a;
+	--sl-color-gray-1: #2a2a2a;
+	--sl-color-gray-2: #3d3d3d;
+	--sl-color-gray-3: #555555; /* muted, per BRAND.md */
+	--sl-color-gray-4: #8a8a8a;
+	--sl-color-gray-5: #cfcfcf;
+	--sl-color-gray-6: #ececec; /* panel bg — sidebar/nav */
+	--sl-color-gray-7: #f6f6f6;
+	--sl-color-black: #ffffff; /* page bg, per BRAND.md */
+
+	--sl-color-accent-low: #d6e3f7;
+	--sl-color-accent: #0a58ca; /* link colour, per BRAND.md */
+	--sl-color-accent-high: #073f8f;
+
+	--sl-color-text: #1a1a1a;
+	--sl-color-text-accent: #0a58ca;
+	--sl-color-text-invert: #ffffff;
+	--sl-color-bg: #ffffff;
+	--sl-color-bg-nav: #f6f6f6;
+	--sl-color-bg-sidebar: #ffffff;
+	--sl-color-bg-inline-code: #ececec;
+	--sl-color-bg-accent: #0a58ca;
+	--sl-color-hairline-light: #e0e0e0;
+	--sl-color-hairline: #d0d0d0;
+	--sl-color-hairline-shade: #c0c0c0;
+	--sl-color-backdrop-overlay: hsla(0, 0%, 0%, 0.5);
+}
+
+/* Brand mannerisms — tight tracking on display headings */
+h1,
+h2 {
+	letter-spacing: -0.04em;
+}
+
+:focus-visible {
+	outline: 2px solid var(--sl-color-text-accent);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
