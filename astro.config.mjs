@@ -46,15 +46,15 @@ export default defineConfig({
 			},
 			sidebar: [
 				{
-					label: 'Association',
-					translations: { de: 'Verein' },
-					items: [{ autogenerate: { directory: 'association' } }],
-				},
-				{
 					label: 'Standard',
 					items: [{ autogenerate: { directory: 'standard' } }],
 				},
 				{ label: 'API', items: [{ autogenerate: { directory: 'api' } }] },
+				{
+					label: 'Association',
+					translations: { de: 'Verein' },
+					items: [{ autogenerate: { directory: 'association' } }],
+				},
 				{
 					label: 'Community',
 					items: [{ autogenerate: { directory: 'community' } }],
