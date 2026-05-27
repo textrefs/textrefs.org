@@ -5,11 +5,11 @@ template: splash
 hero:
   tagline: An open, persistent, machine-readable registry for canonical text references.
   actions:
+    - text: Get started
+      link: /introduction/
+      icon: right-arrow
     - text: Read the standard
       link: /standard/
-      icon: right-arrow
-    - text: Browse the API
-      link: /api/
       icon: right-arrow
       variant: minimal
     - text: GitHub
@@ -21,20 +21,24 @@ hero:
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
 <CardGrid>
-  <Card title="Association" icon="approve-check">
-    The legal entity behind TextRefs — statutes, board, history, and how to get
-    in touch. [Learn more](/association/)
+  <Card title="Introduction" icon="rocket">
+    Why TextRefs exists, who it's for, use cases, and how it relates to DOI,
+    ARK, CTS, DTS, and other identifier systems. [Start here](/introduction/)
   </Card>
   <Card title="Standard" icon="open-book">
-    The specification for canonical text references: identifier syntax, JSON-LD
-    shape, versioning. [Read the spec](/standard/)
+    The normative specification: core model, identity rules, citation-system
+    profiles, data packaging. [Read the spec](/standard/)
   </Card>
   <Card title="API" icon="setting">
     Programmatic access to the registry — authentication, endpoints, errors,
     rate limits. [API reference](/api/)
   </Card>
+  <Card title="Association" icon="approve-check">
+    The non-profit behind TextRefs — statutes, governance, board, and contact.
+    [Learn more](/association/)
+  </Card>
   <Card title="Community" icon="comment">
-    Contributing guide, code of conduct, security policy, issue and PR workflow.
-    [Get involved](/community/)
+    Contributing guide, code of conduct, security policy, roadmap. [Get
+    involved](/community/)
   </Card>
 </CardGrid>

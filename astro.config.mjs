@@ -46,6 +46,11 @@ export default defineConfig({
 			},
 			sidebar: [
 				{
+					label: 'Introduction',
+					translations: { de: 'Einführung' },
+					items: [{ autogenerate: { directory: 'introduction' } }],
+				},
+				{
 					label: 'Standard',
 					items: [{ autogenerate: { directory: 'standard' } }],
 				},
