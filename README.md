@@ -1,49 +1,31 @@
-# Starlight Starter Kit: Basics
+# TextRefs
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+An open, persistent, machine-readable registry for canonical text references.
 
-```
-npm create astro@latest -- --template starlight
-```
+Site: <https://textrefs.org> · Built with [Astro](https://astro.build) + [Starlight](https://starlight.astro.build).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Local development
 
-## 🚀 Project Structure
-
-Inside of your Astro + Starlight project, you'll see the following folders and files:
-
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
+```sh
+npm install              # also wires git hooks via husky
+npm run dev              # http://localhost:4321
+npm run verify           # Prettier + astro check + build (the CI gate)
 ```
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+See [`AGENTS.md`](./AGENTS.md) for the project layout and conventions, and [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to submit changes.
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+## Community
 
-Static assets, like favicons, can be placed in the `public/` directory.
+- [Code of Conduct](./CODE_OF_CONDUCT.md) — Contributor Covenant 3.0.
+- [Contributing](./CONTRIBUTING.md) — how to file issues, open PRs, and run the project locally.
+- [Security Policy](./SECURITY.md) — private disclosure via GitHub Security Advisories.
 
-## 🧞 Commands
+## Licensing
 
-All commands are run from the root of the project, from a terminal:
+This repository carries three kinds of work under three licences:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+- **Code** — [AGPL-3.0-or-later](./LICENSE-AGPL.md)
+- **Docs & standard text** — [CC BY-SA 4.0](./LICENSE-CC-BY-SA.md)
+- **Registry data** — [CC0 1.0](./LICENSE-CC0.md)
 
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+See [`LICENSE.md`](./LICENSE.md) for the index and what each licence covers.

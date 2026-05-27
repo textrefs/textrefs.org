@@ -1,9 +1,4 @@
----
-title: Code of conduct
-description: How we expect everyone in TextRefs spaces to behave.
-sidebar:
-  order: 2
----
+# Contributor Covenant 3.0 Code of Conduct
 
 ## Our Pledge
 

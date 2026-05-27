@@ -1,9 +1,4 @@
----
-title: Contributing
-description: How to contribute code, docs, or data to TextRefs.
-sidebar:
-  order: 1
----
+# Contributing to TextRefs
 
 Thanks for helping build TextRefs. This guide covers how to get the site running locally, how the review process works, and the conventions PRs need to follow.
 

@@ -40,3 +40,16 @@ Hooks install automatically on `npm install` (husky): Prettier runs on staged fi
 ## Internal documents
 
 `docs-internal/` (gitignored) holds working drafts that are not published — e.g. the Steueramt-Tätigkeitskonzept and founding-meeting agenda.
+
+## Community files
+
+- Canonical home for the Contributor Covenant CoC, CONTRIBUTING, and SECURITY policy is the repo root (so GitHub's Community profile picks them up).
+- The same content is mirrored at `src/content/docs/community/{code-of-conduct,contributing,security}.md` with Starlight frontmatter prepended.
+- When editing one, update the other in the same commit.
+
+## Licensing
+
+- Code: `AGPL-3.0-or-later` — [`LICENSE-AGPL.md`](./LICENSE-AGPL.md). Reflected in `package.json#license`.
+- Docs & standard text (`src/content/docs/**`): `CC BY-SA 4.0` — [`LICENSE-CC-BY-SA.md`](./LICENSE-CC-BY-SA.md).
+- Registry data (mappings, exports, JSON-LD): `CC0 1.0` — [`LICENSE-CC0.md`](./LICENSE-CC0.md). Anchored by statutes Art. 2.
+- See [`LICENSE.md`](./LICENSE.md) for the index.

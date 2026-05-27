@@ -36,6 +36,9 @@ export default defineConfig({
 			editLink: {
 				baseUrl: 'https://github.com/textrefs/textrefs.org/edit/main/',
 			},
+			components: {
+				Footer: './src/components/Footer.astro',
+			},
 			defaultLocale: 'root',
 			locales: {
 				root: { label: 'English', lang: 'en' },
