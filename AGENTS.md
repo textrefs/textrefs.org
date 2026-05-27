@@ -28,3 +28,15 @@ Hooks install automatically on `npm install` (husky): Prettier runs on staged fi
 - Self-hosted Inter only; no external font requests.
 - Every page needs `title` and `description` frontmatter.
 - WCAG 2.2 AA is the baseline; AAA for primary text pairs.
+
+## Localization
+
+- English content lives at the root URL (e.g. `/association/statutes/`).
+- German content lives under `/de/` (e.g. `/de/association/statutes/`).
+- Only the legally relevant Association pages are bilingual today.
+- For statutes, governance, expenses, and the mission page: the German text is legally binding; the English version is a non-binding translation and must carry the `:::caution[Non-binding translation]` aside at the top.
+- Adding a German translation: mirror the file under `src/content/docs/de/...` with the same filename and frontmatter; Starlight's language picker appears automatically.
+
+## Internal documents
+
+`docs-internal/` (gitignored) holds working drafts that are not published — e.g. the Steueramt-Tätigkeitskonzept and founding-meeting agenda.

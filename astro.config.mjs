@@ -36,9 +36,15 @@ export default defineConfig({
 			editLink: {
 				baseUrl: 'https://github.com/textrefs/textrefs.org/edit/main/',
 			},
+			defaultLocale: 'root',
+			locales: {
+				root: { label: 'English', lang: 'en' },
+				de: { label: 'Deutsch', lang: 'de' },
+			},
 			sidebar: [
 				{
 					label: 'Association',
+					translations: { de: 'Verein' },
 					items: [{ autogenerate: { directory: 'association' } }],
 				},
 				{
