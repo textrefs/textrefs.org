@@ -1,0 +1,32 @@
+{
+  "title": "TextRefs — an open registry for canonical text references",
+  "description": "An open, persistent, machine-readable registry for canonical text references.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "AGPL-3.0-or-later",
+  "creators": [
+    {
+      "name": "Mähr, Moritz",
+      "affiliation": "TextRefs",
+      "orcid": "0000-0002-1367-1618"
+    },
+    {
+      "name": "Seiberth, Luz Christopher",
+      "affiliation": "TextRefs"
+    }
+  ],
+  "keywords": [
+    "canonical text references",
+    "citation",
+    "JSON-LD",
+    "open research infrastructure",
+    "persistent identifiers"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://textrefs.org",
+      "relation": "isDocumentedBy",
+      "resource_type": "publication-other"
+    }
+  ]
+}

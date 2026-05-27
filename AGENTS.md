@@ -53,3 +53,10 @@ Hooks install automatically on `npm install` (husky): Prettier runs on staged fi
 - Docs & standard text (`src/content/docs/**`): `CC BY-SA 4.0` — [`LICENSE-CC-BY-SA.md`](./LICENSE-CC-BY-SA.md).
 - Registry data (mappings, exports, JSON-LD): `CC0 1.0` — [`LICENSE-CC0.md`](./LICENSE-CC0.md). Anchored by statutes Art. 2.
 - See [`LICENSE.md`](./LICENSE.md) for the index.
+
+## Citation
+
+- `CITATION.cff` (root) — drives GitHub's "Cite this repository" button and citation managers (Zotero etc.).
+- `.zenodo.json` (root) — metadata for Zenodo at next tagged release.
+- Contributor roles use [CRediT](https://credit.niso.org/) and live in `README.md` (CITATION.cff v1.2.0 has no native CRediT field).
+- Update CITATION.cff + .zenodo.json + README when adding contributors or changing identifiers.

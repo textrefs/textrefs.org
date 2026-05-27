@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: 'If you cite TextRefs, please cite it as below.'
+title: TextRefs
+abstract: An open, persistent, machine-readable registry for canonical text references.
+type: software
+authors:
+  - family-names: Mähr
+    given-names: Moritz
+    email: moritz.maehr@gmail.com
+    orcid: 'https://orcid.org/0000-0002-1367-1618'
+    affiliation: TextRefs
+    website: 'https://moritzmaehr.ch'
+  - family-names: Seiberth
+    given-names: Luz Christopher
+    email: luz@seiberth.de
+    affiliation: TextRefs
+    # ORCID: TBD
+repository-code: 'https://github.com/textrefs/textrefs.org'
+url: 'https://textrefs.org'
+license:
+  - AGPL-3.0-or-later
+  - CC-BY-SA-4.0
+  - CC0-1.0
+keywords:
+  - canonical text references
+  - citation
+  - JSON-LD
+  - open research infrastructure
+  - persistent identifiers
