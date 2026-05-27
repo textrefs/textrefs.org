@@ -37,10 +37,19 @@ export default defineConfig({
 				baseUrl: 'https://github.com/textrefs/textrefs.org/edit/main/',
 			},
 			sidebar: [
-				{ label: 'Association', items: [{ autogenerate: { directory: 'association' } }] },
-				{ label: 'Standard', items: [{ autogenerate: { directory: 'standard' } }] },
+				{
+					label: 'Association',
+					items: [{ autogenerate: { directory: 'association' } }],
+				},
+				{
+					label: 'Standard',
+					items: [{ autogenerate: { directory: 'standard' } }],
+				},
 				{ label: 'API', items: [{ autogenerate: { directory: 'api' } }] },
-				{ label: 'Community', items: [{ autogenerate: { directory: 'community' } }] },
+				{
+					label: 'Community',
+					items: [{ autogenerate: { directory: 'community' } }],
+				},
 			],
 		}),
 	],

@@ -7,6 +7,13 @@ Astro + Starlight site for textrefs.org.
 - `npm run dev` — local dev server
 - `npm run build` — production build
 - `npm run preview` — preview build
+- `npm run format` — Prettier (with `prettier-plugin-astro`)
+- `npm run check` — `astro check` (TypeScript + Astro language server)
+- `npm run verify` — format:check + check + build (the CI gate)
+- `npm run commit` — guided conventional-commit prompt (cz-git)
+- `npm run changelog` — regenerate `CHANGELOG.md` from git history (git-cliff)
+
+Hooks install automatically on `npm install` (husky): Prettier runs on staged files, and `commitlint` rejects non-conventional commit messages.
 
 ## Layout
 
