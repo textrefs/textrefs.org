@@ -1,0 +1,36 @@
+name: 🩹 Standard change (erratum)
+description: Report or propose an erratum / clarification to an already-released spec version.
+title: 'standard: erratum — '
+labels: [standard, erratum, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for errata in released spec versions — typos, ambiguous wording, schema definitions that don't match published practice. For substantive new design, use the "Standard proposal" template instead.
+  - type: input
+    id: version
+    attributes:
+      label: Affected spec version
+      placeholder: v0.1.0-draft
+    validations:
+      required: true
+  - type: input
+    id: section
+    attributes:
+      label: Affected section
+      placeholder: specs/v0.1.0-draft/identity.md § Deterministic UUIDs
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What is wrong or ambiguous about the current text?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Proposed correction
+    validations:
+      required: true

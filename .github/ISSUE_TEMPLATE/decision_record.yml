@@ -1,0 +1,37 @@
+name: 🧭 Decision record (ADR)
+description: Propose a new Architecture Decision Record for a significant design or process choice.
+title: 'adr: '
+labels: [adr, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ADRs capture significant decisions whose rationale should survive past the originating PR. See `decisions/README.md` and the [MADR template](https://adr.github.io/madr/).
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What is the situation that calls for a decision?
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options considered
+      description: At least two alternatives, with trade-offs.
+    validations:
+      required: true
+  - type: textarea
+    id: recommendation
+    attributes:
+      label: Recommendation
+      description: Which option do you favour, and why?
+    validations:
+      required: true
+  - type: textarea
+    id: consequences
+    attributes:
+      label: Expected consequences
+      description: What changes if we accept this? What gets harder?
+    validations:
+      required: true

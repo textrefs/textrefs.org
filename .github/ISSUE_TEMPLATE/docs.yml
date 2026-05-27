@@ -1,0 +1,22 @@
+name: 📚 Documentation issue
+description: Something on the site or in the README is missing, wrong, or unclear.
+title: 'docs: '
+labels: [docs, triage]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Affected page or file
+      placeholder: https://textrefs.org/… or path/to/file.md
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What's missing, wrong, or unclear?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested wording or fix

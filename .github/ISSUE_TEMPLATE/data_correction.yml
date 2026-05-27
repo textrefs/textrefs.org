@@ -1,0 +1,47 @@
+name: 📊 Data correction or mapping proposal
+description: Report incorrect data, propose a new mapping, or suggest a status change in the registry.
+title: 'data: '
+labels: [data, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For changes that affect registry data — works, citation systems, references, mappings, or resolver targets.
+        Please provide evidence (sources, editions, scholarly references) so domain reviewers can verify.
+  - type: input
+    id: target
+    attributes:
+      label: Affected TextRefs ID or URL
+      description: The TextRefs ID, file path under `registry/`, or site URL.
+      placeholder: https://textrefs.org/id/ref/… or registry/references/…
+    validations:
+      required: true
+  - type: input
+    id: citation-system
+    attributes:
+      label: Citation system
+      description: Stephanus, Bekker, SBL, Vulgate, Aquinas, …
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is wrong (or what should be added)?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested correction / new value
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and sources
+      description: Editions, page numbers, URLs, Wikidata QIDs, CTS URNs. The stronger the evidence, the faster the review.
+    validations:
+      required: true
+  - type: input
+    id: rights
+    attributes:
+      label: Rights / licence note
+      description: For external links and identifiers — is the source open, paywalled, copyrighted?

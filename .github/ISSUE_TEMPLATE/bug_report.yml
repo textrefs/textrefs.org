@@ -1,0 +1,57 @@
+name: 🐛 Bug report
+description: Something on the site, in the build, or in the data isn't working.
+title: 'bug: '
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. The clearer the report, the faster we can fix it.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A short description of the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Visit …
+        2. Click …
+        3. Notice that …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs. actual behaviour
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Affected URL (if any)
+      placeholder: https://textrefs.org/…
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: Browser + OS, or Node version if it's a build problem.
+      placeholder: Firefox 142 / macOS 26, or Node 20.18
+  - type: textarea
+    id: extra
+    attributes:
+      label: Logs, screenshots, anything else
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - low — cosmetic
+        - medium — functionality affected
+        - high — blocks core use
+    validations:
+      required: true

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 General questions
+    url: https://github.com/textrefs/textrefs.org/discussions
+    about: Ask questions and discuss ideas in GitHub Discussions instead of opening an issue.
+  - name: 🛡 Security vulnerabilities
+    url: https://github.com/textrefs/textrefs.org/security/advisories/new
+    about: Report security issues privately via GitHub Security Advisories. Do not open a public issue.
+  - name: 🤝 Code-of-Conduct concerns
+    url: mailto:community@textrefs.org
+    about: Email reports of Code-of-Conduct violations to the Board's community contact.

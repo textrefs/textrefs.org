@@ -60,3 +60,22 @@ Hooks install automatically on `npm install` (husky): Prettier runs on staged fi
 - `.zenodo.json` (root) — metadata for Zenodo at next tagged release.
 - Contributor roles use [CRediT](https://credit.niso.org/) and live in `README.md` (CITATION.cff v1.2.0 has no native CRediT field).
 - Update CITATION.cff + .zenodo.json + README when adding contributors or changing identifiers.
+
+## Roadmap
+
+- Canonical roadmap is `ROADMAP.md` at the repo root; `src/content/docs/community/roadmap.md` mirrors it with Starlight frontmatter. Update both in the same commit.
+- Sequenced items: A (merge specs repo) → B (publish v0.1.0 spec) → C (static API prototype) → D (grow registry). A unblocks B/C/D.
+- Review & quality model (L1–L6) runs alongside, not as a separate phase. See ROADMAP.md for details.
+
+## Decision records (ADRs)
+
+- Significant cross-PR decisions live under `decisions/` following the [MADR](https://adr.github.io/madr/) format.
+- Filename: `ADR-NNNN-{slug}.md`. Use `decisions/ADR-TEMPLATE.md` as the starting point.
+- ADRs are immutable once accepted; corrections come via a superseding ADR.
+- Open an ADR via the `Decision record (ADR)` GitHub issue template.
+
+## GitHub templates
+
+- Issue forms: `.github/ISSUE_TEMPLATE/*.yml` (bug, feature, data correction, standard proposal, standard erratum, docs, decision record, conformance failure).
+- `config.yml` disables blank issues and routes general questions to Discussions, security to private advisories, CoC concerns to `community@textrefs.org`.
+- PR template at `.github/PULL_REQUEST_TEMPLATE.md` enforces Conventional Commit prefix + licence acknowledgement.

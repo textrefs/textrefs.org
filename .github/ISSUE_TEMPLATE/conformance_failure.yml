@@ -1,0 +1,33 @@
+name: ✅ Conformance failure
+description: Report a divergence between the published spec / context / schemas and an implementation.
+title: 'conformance: '
+labels: [conformance, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For maintainers of TextRefs implementations: report which test cases in the conformance suite your implementation fails, or where the spec and the validator disagree.
+  - type: input
+    id: implementation
+    attributes:
+      label: Implementation name & URL
+      placeholder: my-textrefs-client v0.3 (github.com/…)
+  - type: input
+    id: spec-version
+    attributes:
+      label: Spec version your implementation targets
+      placeholder: v0.1.0-draft
+    validations:
+      required: true
+  - type: textarea
+    id: failing-cases
+    attributes:
+      label: Failing test cases
+      description: List the conformance test IDs that fail and what your implementation produces instead.
+    validations:
+      required: true
+  - type: textarea
+    id: analysis
+    attributes:
+      label: Your analysis
+      description: Is the spec ambiguous? Is the test wrong? Is your implementation wrong?
