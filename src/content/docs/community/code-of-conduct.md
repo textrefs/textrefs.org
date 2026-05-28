@@ -2,7 +2,7 @@
 title: Code of conduct
 description: How we expect everyone in TextRefs spaces to behave.
 sidebar:
-  order: 2
+  order: 3
 ---
 
 ## Our Pledge

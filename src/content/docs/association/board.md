@@ -2,7 +2,7 @@
 title: Board
 description: Members of the TextRefs Board and our open call for additional members.
 sidebar:
-  order: 5
+  order: 6
 ---
 
 The Board is the association's executive organ. Per the [statutes](/association/statutes/#art-11-board), the Board consists of at least three persons serving two-year terms on a volunteer basis ([Art. 15](/association/statutes/#art-15-volunteer-service-expenses-and-compensation)).

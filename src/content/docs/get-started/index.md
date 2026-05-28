@@ -1,6 +1,8 @@
 ---
 title: Get started
 description: Why TextRefs exists, who it's for, and how it fits with existing identifier systems.
+sidebar:
+  order: 1
 ---
 
 ## The gap

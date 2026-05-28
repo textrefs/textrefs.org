@@ -2,7 +2,7 @@
 title: Expense and compensation regulation
 description: Principles for expenses, compensation, and documentation.
 sidebar:
-  order: 4
+  order: 5
 ---
 
 :::caution[Non-binding translation]

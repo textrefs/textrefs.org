@@ -2,7 +2,7 @@
 title: Security policy
 description: How to report vulnerabilities privately and what to expect from us.
 sidebar:
-  order: 3
+  order: 4
 ---
 
 ## Reporting a vulnerability

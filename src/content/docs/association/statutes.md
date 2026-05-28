@@ -2,7 +2,7 @@
 title: Statutes
 description: Statutes of TextRefs (Art. 1–26).
 sidebar:
-  order: 2
+  order: 3
 ---
 
 :::caution[Non-binding translation]

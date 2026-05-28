@@ -2,7 +2,7 @@
 title: Mission and non-profit alignment
 description: TextRefs's mission and non-profit positioning.
 sidebar:
-  order: 1
+  order: 2
 ---
 
 :::caution[Non-binding translation]

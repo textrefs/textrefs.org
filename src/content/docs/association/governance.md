@@ -2,7 +2,7 @@
 title: Organizational and governance regulation
 description: Organization, responsibilities, and decision-making processes of TextRefs.
 sidebar:
-  order: 3
+  order: 4
 ---
 
 :::caution[Non-binding translation]
