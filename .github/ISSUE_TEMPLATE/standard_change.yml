@@ -18,7 +18,7 @@ body:
     id: section
     attributes:
       label: Affected section
-      placeholder: specs/v0.1.0-draft/identity.md § Deterministic UUIDs
+      placeholder: /standard/identifier-syntax/ § Deterministic identity
     validations:
       required: true
   - type: textarea

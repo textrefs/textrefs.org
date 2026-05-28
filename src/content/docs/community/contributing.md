@@ -2,15 +2,15 @@
 title: Contributing
 description: How to contribute code, docs, or data to TextRefs.
 sidebar:
-  order: 1
+  order: 2
 ---
 
 Thanks for helping build TextRefs. This guide covers how to get the site running locally, how the review process works, and the conventions PRs need to follow.
 
 ## Ground rules
 
-- Be kind. Participation is governed by the [Code of Conduct](./CODE_OF_CONDUCT.md).
-- Security issues do **not** go in public issues. See the [Security Policy](./SECURITY.md).
+- Be kind. Participation is governed by the [Code of Conduct](/community/code-of-conduct/).
+- Security issues do **not** go in public issues. See the [Security Policy](/community/security/).
 - Contributions are accepted under the project's licences:
   - code under **AGPL-3.0-or-later**;
   - documentation and standard text under **CC BY-SA 4.0**;
@@ -25,7 +25,7 @@ Thanks for helping build TextRefs. This guide covers how to get the site running
 - Mapping proposals — additions, corrections, or status changes to external-identifier mappings.
 - Domain feedback — comments on works, citation systems, normalization rules.
 
-A contribution does not create a claim to acceptance, prioritization, publication, compensation, or membership. See the [governance regulation](https://textrefs.org/association/governance/) for the full review tracks.
+A contribution does not create a claim to acceptance, prioritization, publication, compensation, or membership. See the [governance regulation](/association/governance/) for the full review tracks.
 
 ## Review tracks
 
@@ -88,10 +88,10 @@ The changelog is generated from this history via `npm run changelog` (git-cliff)
 
 ## Project layout
 
-See [`AGENTS.md`](./AGENTS.md) for the high-level layout: where the brand assets live, how the bilingual association section is organised, and which docs are mirrored at the repo root vs under `src/content/docs/community/`.
+See [`AGENTS.md`](https://github.com/textrefs/textrefs.org/blob/main/AGENTS.md) for the high-level layout: where the brand assets live, how the bilingual association section is organised, and which docs are mirrored at the repo root vs under `src/content/docs/community/`.
 
 ## Questions
 
 - General questions: open a GitHub Discussion or a low-priority issue.
 - Code-of-Conduct concerns: <community@textrefs.org>.
-- Security: see the [Security Policy](./SECURITY.md).
+- Security: see the [Security Policy](/community/security/).
