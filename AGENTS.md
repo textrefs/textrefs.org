@@ -69,9 +69,8 @@ Hooks install automatically on `npm install` (husky): Prettier runs on staged fi
 
 ## Roadmap
 
-- Canonical roadmap is `ROADMAP.md` at the repo root; `src/content/docs/community/roadmap.md` mirrors it with Starlight frontmatter. Update both in the same commit.
-- Sequenced items: A (merge specs repo) → B (publish v0.1.0 spec) → C (static API prototype) → D (grow registry). A unblocks B/C/D.
-- Review & quality model (L1–L6) runs alongside, not as a separate phase. See ROADMAP.md for details.
+- The public roadmap (`ROADMAP.md` at the repo root + `src/content/docs/community/roadmap.md` mirror) is intentionally slim: Next = draft standard, static API MVP, registry data examples. Update both in the same commit.
+- Full detailed planning — hard targets, the L1–L6 review & quality model, and the "Later" list — lives in `docs-internal/roadmap.md` (private, gitignored). Promote items to the public roadmap once committed to.
 
 ## Decision records (ADRs)
 
