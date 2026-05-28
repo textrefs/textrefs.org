@@ -1,0 +1,48 @@
+name: Links
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  linkcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Check links with lychee
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --root-dir ${{ github.workspace }}/dist
+            --config lychee.toml dist
+          output: ./lychee/out.md
+          fail: false
+
+      # Report only: never fail CI. On main (or manual dispatch) open/update a
+      # tracking issue when broken links are found. PR runs only show the job summary.
+      - name: Create or update link report issue
+        if: >-
+          steps.lychee.outputs.exit_code != 0 &&
+          (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: Link Checker Report
+          content-filepath: ./lychee/out.md
+          labels: report, automated

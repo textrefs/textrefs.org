@@ -1,6 +1,7 @@
 dist/
 node_modules/
 .astro/
+lychee/
 public/fonts/
 open-research-data-template/
 pnpm-lock.yaml

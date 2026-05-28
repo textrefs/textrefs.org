@@ -13,6 +13,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "verify": "npm run format:check && npm run check && npm run build",
+    "check:links": "astro build && lychee --root-dir \"$(pwd)/dist\" --config lychee.toml dist",
     "commit": "git-cz",
     "changelog": "git-cliff -o CHANGELOG.md",
     "changelog:unreleased": "git-cliff --unreleased --prepend CHANGELOG.md",
@@ -42,6 +43,7 @@
     "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
+    "starlight-links-validator": "^0.24.0",
     "typescript": "^6.0.3"
   }
 }

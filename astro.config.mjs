@@ -1,11 +1,17 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import starlightLinksValidator from 'starlight-links-validator';
 
 export default defineConfig({
 	site: 'https://textrefs.org',
 	integrations: [
 		starlight({
+			plugins: [
+				starlightLinksValidator({
+					errorOnFallbackPages: false,
+				}),
+			],
 			title: 'TextRefs',
 			description:
 				'An open, persistent, machine-readable registry for canonical text references.',
