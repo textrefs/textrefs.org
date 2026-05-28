@@ -60,7 +60,6 @@ export default defineConfig({
 					label: 'Standard',
 					items: [{ autogenerate: { directory: 'standard' } }],
 				},
-				{ label: 'API', items: [{ autogenerate: { directory: 'api' } }] },
 				{
 					label: 'Community',
 					items: [{ autogenerate: { directory: 'community' } }],
