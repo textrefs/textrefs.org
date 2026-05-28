@@ -7,6 +7,7 @@ An open, persistent, machine-readable registry for canonical text references.
 [![Code: AGPL-3.0-or-later](https://img.shields.io/badge/code-AGPL--3.0--or--later-blue)](./LICENSE-AGPL.md)
 [![Docs: CC BY-SA 4.0](https://img.shields.io/badge/docs-CC%20BY--SA%204.0-blue)](./LICENSE-CC-BY-SA.md)
 [![Data: CC0 1.0](https://img.shields.io/badge/data-CC0%201.0-blue)](./LICENSE-CC0.md)
+[![POSI: v2.0](https://img.shields.io/badge/POSI-v2.0-blue)](https://textrefs.org/association/posi/)
 [![GitHub issues](https://img.shields.io/github/issues/textrefs/textrefs.org.svg)](https://github.com/textrefs/textrefs.org/issues)
 [![GitHub stars](https://img.shields.io/github/stars/textrefs/textrefs.org.svg)](https://github.com/textrefs/textrefs.org/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/textrefs/textrefs.org.svg)](https://github.com/textrefs/textrefs.org/network)
@@ -35,6 +36,7 @@ TextRefs is a non-profit infrastructure project that builds, maintains, and publ
 - **Standard**: <https://textrefs.org/standard/>
 - **API reference**: <https://textrefs.org/api/>
 - **Association** (mission, statutes, governance, expenses): <https://textrefs.org/association/>
+- **POSI self-assessment** (Principles of Open Scholarly Infrastructure): <https://textrefs.org/association/posi/>
 - **Statuten** (German original, legally binding): <https://textrefs.org/de/association/statutes/>
 
 ## Repository structure

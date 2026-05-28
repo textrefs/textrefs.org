@@ -1,6 +1,8 @@
 ---
 title: Association
 description: TextRefs — the non-profit association behind the registry.
+sidebar:
+  order: 1
 ---
 
 **TextRefs** is a non-profit, open, and non-commercial association (_Verein_) based in Zürich, Switzerland. It builds, maintains, and publishes an open, persistent, and machine-readable registry for canonical text references.
@@ -11,5 +13,6 @@ These pages contain the founding documents:
 - [Statutes](/association/statutes/) — Art. 1–26
 - [Organizational and governance regulation](/association/governance/)
 - [Expense and compensation regulation](/association/expenses/)
+- [Open infrastructure principles (POSI)](/association/posi/) — adherence to the Principles of Open Scholarly Infrastructure
 
 The English versions are convenience translations. The legally binding text is the [German original](/de/association/).
