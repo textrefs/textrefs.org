@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title: Get started
 description: Why TextRefs exists, who it's for, and how it fits with existing identifier systems.
 ---
 
@@ -21,11 +21,11 @@ The same model covers a Stephanus passage in Plato, a Bekker line in Aristotle, 
 - not a publisher or critical edition;
 - not a substitute for Perseus, Loeb, TLG, PHI, DTS, CTS, Wikidata, library catalogues, or any of the other systems we map to.
 
-We are explicitly **adjacent** to those systems, not replacing them. See the [related systems comparison](/introduction/related-systems/) for the full picture.
+We are explicitly **adjacent** to those systems, not replacing them. See the [related systems comparison](/get-started/related-systems/) for the full picture.
 
 ## Keep reading
 
-- [Use cases](/introduction/use-cases/) — concrete scenarios across research, libraries, digital editions, and AI grounding.
-- [Related identifier systems](/introduction/related-systems/) — how TextRefs relates to DOI, ARK, CTS, DTS, Wikidata, VIAF, and friends.
+- [Use cases](/get-started/use-cases/) — concrete scenarios across research, libraries, digital editions, and AI grounding.
+- [Related identifier systems](/get-started/related-systems/) — how TextRefs relates to DOI, ARK, CTS, DTS, Wikidata, VIAF, and friends.
 - [The standard](/standard/) — the normative specification text (`v0.1.0-draft`).
 - [The association](/association/) — the non-profit behind TextRefs, its statutes, and the open board search.

@@ -37,9 +37,9 @@ Hooks install automatically on `npm install` (husky): Prettier runs on staged fi
 - For statutes, governance, expenses, and the mission page: the German text is legally binding; the English version is a non-binding translation and must carry the `:::caution[Non-binding translation]` aside at the top.
 - Adding a German translation: mirror the file under `src/content/docs/de/...` with the same filename and frontmatter; Starlight's language picker appears automatically.
 
-## Introduction section
+## Get-started section
 
-- `src/content/docs/introduction/{index,use-cases,related-systems}.md` is non-normative.
+- `src/content/docs/get-started/{index,use-cases,related-systems}.md` is non-normative (sidebar label "Get started").
 - Audience: first-time visitors and adjacent-field practitioners.
 - When the Standard section grows, keep positioning content here, not under `/standard/`.
 

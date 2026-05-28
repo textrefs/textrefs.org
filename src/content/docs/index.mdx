@@ -6,7 +6,7 @@ hero:
   tagline: An open, persistent, machine-readable registry for canonical text references.
   actions:
     - text: Get started
-      link: /introduction/
+      link: /get-started/
       icon: right-arrow
     - text: Read the standard
       link: /standard/
@@ -21,9 +21,9 @@ hero:
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
 <CardGrid>
-  <Card title="Introduction" icon="rocket">
+  <Card title="Get started" icon="rocket">
     Why TextRefs exists, who it's for, use cases, and how it relates to DOI,
-    ARK, CTS, DTS, and other identifier systems. [Start here](/introduction/)
+    ARK, CTS, DTS, and other identifier systems. [Start here](/get-started/)
   </Card>
   <Card title="Standard" icon="open-book">
     The normative specification: core model, identity rules, citation-system
@@ -33,12 +33,12 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
     Programmatic access to the registry — authentication, endpoints, errors,
     rate limits. [API reference](/api/)
   </Card>
-  <Card title="Association" icon="approve-check">
-    The non-profit behind TextRefs — statutes, governance, board, and contact.
-    [Learn more](/association/)
-  </Card>
   <Card title="Community" icon="comment">
     Contributing guide, code of conduct, security policy, roadmap. [Get
     involved](/community/)
+  </Card>
+  <Card title="Association" icon="approve-check">
+    The non-profit behind TextRefs — statutes, governance, board, and contact.
+    [Learn more](/association/)
   </Card>
 </CardGrid>

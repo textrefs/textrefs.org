@@ -46,9 +46,9 @@ export default defineConfig({
 			},
 			sidebar: [
 				{
-					label: 'Introduction',
-					translations: { de: 'Einführung' },
-					items: [{ autogenerate: { directory: 'introduction' } }],
+					label: 'Get started',
+					translations: { de: 'Erste Schritte' },
+					items: [{ autogenerate: { directory: 'get-started' } }],
 				},
 				{
 					label: 'Standard',
@@ -56,13 +56,13 @@ export default defineConfig({
 				},
 				{ label: 'API', items: [{ autogenerate: { directory: 'api' } }] },
 				{
+					label: 'Community',
+					items: [{ autogenerate: { directory: 'community' } }],
+				},
+				{
 					label: 'Association',
 					translations: { de: 'Verein' },
 					items: [{ autogenerate: { directory: 'association' } }],
-				},
-				{
-					label: 'Community',
-					items: [{ autogenerate: { directory: 'community' } }],
 				},
 			],
 		}),

@@ -20,7 +20,7 @@ Status legend: 🟢 done · 🟡 in progress · ⚪ planned · 🔵 blocked.
 - 🟢 ADR directory and template (`decisions/`).
 - 🟢 This roadmap, mirrored on the site.
 - 🟢 Removed the empty `/association/history/` page.
-- 🟢 Added the Introduction section (welcome, use cases, related identifier systems).
+- 🟢 Added the Get-started section (welcome, use cases, related identifier systems).
 
 ## Next (target: Q3 2026)
 
