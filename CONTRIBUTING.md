@@ -31,6 +31,22 @@ Changes are routed to one of two tracks:
 
 The Board reserves decisions on legal or policy-sensitive matters (takedowns, blocking, licence policy).
 
+```mermaid
+flowchart TD
+    S["Contribution<br/>(issue or PR)"] --> T{Triage}
+    T -->|"typos, formatting, links, metadata, tooling"| TR[Technical review]
+    T -->|"new work / system / corpus, contested mapping, ID inputs, status change"| ER[Expert review]
+    T -->|"takedown, blocking, licence / policy"| BR[Board reservation]
+    TR --> V{"Automated validation<br/>+ 1 technical reviewer"}
+    ER --> V2{"Validation + rationale and sources<br/>+ 1 expert reviewer"}
+    V -->|pass| A([Accepted / merged])
+    V -->|fail| R([Rejected, with reason])
+    V2 -->|pass| A
+    V2 -->|fail| R
+    BR -->|decision| A
+    BR -->|decision| R
+```
+
 ## Local development
 
 Prerequisites: Node 20+ and npm.
