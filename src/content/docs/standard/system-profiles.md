@@ -22,6 +22,8 @@ Citation-system profiles constrain locators through strict regular expressions a
 
 See [Specification §7](/standard/specification/#7-citationsystem) for the full normative field list.
 
+Profiles MUST follow the key and locator Unicode rules in [Identifier syntax](/standard/identifier-syntax/#unicode-normalization). A profile MAY add stricter locator rules for case, digits, punctuation, whitespace, or allowed scripts, but those rules MUST be reflected in its examples and `locator_regex`.
+
 ## Seed profiles
 
 Bekker profile (Aristotelian corpus):

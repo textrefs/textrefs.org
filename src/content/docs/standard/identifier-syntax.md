@@ -38,6 +38,17 @@ Serialization rules:
 - Do not substitute labels, URIs, aliases, or external identifiers for the key fields.
 - Each field MUST already be normalized by its owning profile before UUID generation.
 
+## Unicode normalization
+
+Deterministic identifiers depend on byte-identical seed strings. Before validation and UUID generation:
+
+- `work_key` and `citation_system_key` MUST contain only ASCII lowercase letters, ASCII digits, `-`, `_`, and `:`.
+- `locator` MUST be normalized to Unicode NFC.
+- `locator` MUST NOT contain leading or trailing whitespace, control characters, or internal whitespace unless the citation-system profile explicitly allows it.
+- Implementations MUST NOT apply NFKC, case folding, digit folding, punctuation folding, transliteration, or script conversion unless the citation-system profile explicitly defines that rule.
+- Profiles for mixed-script locators MUST state the allowed scripts and enforce them through `locator_regex`.
+- Any change to locator normalization that can change a normalized locator MUST change the citation system's `normalization_version`.
+
 ## Example
 
 Input tuple:

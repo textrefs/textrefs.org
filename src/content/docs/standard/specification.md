@@ -163,6 +163,7 @@ Required: `id`, `key`, `type` (`CitationSystem`), `preferred_label`, `scope`, `n
 - `locator_regex` MUST be an anchored ECMAScript regular expression.
 - `normalization_version` MUST use semantic versioning.
 - `examples.valid` MUST all match `locator_regex`; `examples.invalid` MUST all fail it.
+- Unicode handling for keys and locators MUST follow [Identifier syntax](/standard/identifier-syntax/#unicode-normalization).
 - A pull request that adds or changes a citation system MUST include the profile, valid examples, invalid examples, and a scope note. See [Citation-system profiles](/standard/system-profiles/).
 
 ## 8. CanonicalReference
