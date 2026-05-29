@@ -96,11 +96,11 @@ The changelog is generated from this history via `npm run changelog` (git-cliff)
 
 ## Submitting a pull request
 
-1. Branch from `dev` (this is the integration branch; `main` is the release branch).
+1. Branch from `main`.
 2. Keep PRs focused — one logical change per PR.
 3. Link related issues in the PR description.
 4. Make sure `npm run verify` passes.
-5. Open the PR against `dev`. The maintainers will assign reviewers based on the track.
+5. Open the PR against `main`. The maintainers will assign reviewers based on the track.
 
 ## Project layout
 
