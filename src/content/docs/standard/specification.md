@@ -70,7 +70,6 @@ classDiagram
         +URI id
         +string key
         +string preferred_label
-        +URI creator
     }
     class CitationSystem {
         +URI id
@@ -123,7 +122,6 @@ A `Work` represents an abstract textual work, independent of editions, translati
   "key": "bible:john",
   "type": "Work",
   "preferred_label": "Gospel of John",
-  "creator": "https://textrefs.org/id/person/john-the-evangelist",
   "status": "active",
   "created": "2026-01-01",
   "modified": "2026-01-01",
@@ -132,7 +130,7 @@ A `Work` represents an abstract textual work, independent of editions, translati
 }
 ```
 
-Required: `id`, `key`, `type` (`Work`), `preferred_label`, `creator`, `status`, plus administrative metadata ([§12](#12-administrative-metadata)). The `id` MUST be a persistent TextRefs HTTP URI; the `key` MUST be stable and suitable for deterministic identity generation.
+Required: `id`, `key`, `type` (`Work`), `preferred_label`, `status`, plus administrative metadata ([§12](#12-administrative-metadata)). The `id` MUST be a persistent TextRefs HTTP URI; the `key` MUST be stable and suitable for deterministic identity generation.
 
 ## 7. CitationSystem
 
