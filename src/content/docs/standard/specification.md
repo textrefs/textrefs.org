@@ -28,7 +28,7 @@ A dataset conforms to the TextRefs Standard if it satisfies all of the following
 1. It represents registry data using the object types defined in this standard.
 2. Every registry object includes the required fields for its object type.
 3. Every `CanonicalReference` points to one known `Work` and one known `CitationSystem`.
-4. Every `CanonicalReference.locator` validates against the referenced `CitationSystem`.
+4. Every `CanonicalReference.locator` validates syntactically against the referenced `CitationSystem` and semantically by being a registered reference point for the referenced `Work`.
 5. Every `CitationSystem` declares valid and invalid examples for automated tests.
 6. Every dereferenceable location is represented through a `ResolverTarget`, and every external identifier or cross-reference equivalence through a `MappingAssertion`.
 7. Every registry object includes administrative metadata.
@@ -161,6 +161,7 @@ A `CitationSystem` defines the notation and validation rules used to identify lo
 Required: `id`, `key`, `type` (`CitationSystem`), `preferred_label`, `scope`, `normalization_version`, `locator_regex`, `valid_reference_types`, `examples.valid`, `examples.invalid`, plus administrative metadata.
 
 - `locator_regex` MUST be an anchored ECMAScript regular expression.
+- `locator_regex` validates locator shape only; it does not by itself prove that a reference point exists in a work.
 - `normalization_version` MUST use semantic versioning.
 - `examples.valid` MUST all match `locator_regex`; `examples.invalid` MUST all fail it.
 - Unicode handling for keys and locators MUST follow [Identifier syntax](/standard/identifier-syntax/#unicode-normalization).
@@ -195,6 +196,7 @@ Required: `id`, `uuid`, `type` (`CanonicalReference`), `work`, `work_key`, `cita
 
 - `work` MUST point to a known `Work`; `citation_system` MUST point to a known `CitationSystem`.
 - `locator` MUST match the system's `locator_regex`; `reference_type` MUST be in its `valid_reference_types`.
+- An accepted `CanonicalReference` MUST represent an attested reference point for the referenced `Work` under the referenced `CitationSystem`.
 - `normalization_version` is part of the reference's identity and is fixed when the reference is minted; it records the normalization in force at that time and need not equal the citation system's current `normalization_version`. Its correctness is verified by the deterministic identifier (see [§14](#14-validation-requirements) and [Identifier syntax](/standard/identifier-syntax/)).
 - The `uuid` MUST be generated deterministically per [Identifier syntax](/standard/identifier-syntax/).
 
@@ -360,13 +362,14 @@ A conforming validator MUST check:
 2. object `type` values and TextRefs URI patterns;
 3. administrative metadata and `status` values;
 4. citation-system `locator_regex` syntax, and its valid/invalid examples;
-5. canonical-reference locator validity and reference-type validity (the `normalization_version` is the value fixed at minting, verified by the deterministic identifier in item 6, not matched against the system's current version);
-6. deterministic-identifier correctness for canonical references;
-7. resolver-target `access` and `rights_status` values, and presence of `language` for language-specific targets;
-8. mapping `relation` values;
-9. absence of forbidden full-text/apparatus/commentary content.
+5. canonical-reference locator syntax and reference-type validity (the `normalization_version` is the value fixed at minting, verified by the deterministic identifier in item 7, not matched against the system's current version);
+6. canonical-reference semantic validity: accepted records must be registered, attested reference points for their `Work` and `CitationSystem`;
+7. deterministic-identifier correctness for canonical references;
+8. resolver-target `access` and `rights_status` values, and presence of `language` for language-specific targets;
+9. mapping `relation` values;
+10. absence of forbidden full-text/apparatus/commentary content.
 
-A validator SHOULD report errors in a machine-readable format, and SHOULD distinguish syntactically valid, registered, mapped, and resolvable references.
+A validator SHOULD report errors in a machine-readable format, and SHOULD distinguish syntactically valid, registered, mapped, and resolvable references. An input locator that matches `locator_regex` but has no corresponding registered `CanonicalReference` is syntactically valid but not a valid TextRefs reference.
 
 ## 15. Extensions
 

@@ -29,7 +29,7 @@ These scenarios are illustrative, not exhaustive. Each pairs "what happens today
 
 **Today.** Stuttgart numbering for the Vulgate, Pandekten numbering for Roman law, biblical book-chapter-verse, Aquinas Part–Question–Article — every tradition has its own implicit, untyped notation. There is no machine-readable contract for what is a valid citation in each system.
 
-**With TextRefs.** Each tradition is a `CitationSystem` with a documented locator regex, a normalisation rule, and a list of valid reference types. A parser can validate "Vulg. Gen. 1:1" or reject "ST I-II.300.99" because article 300 doesn't exist. The reference identifier is independent of any single edition.
+**With TextRefs.** Each tradition is a `CitationSystem` with a documented locator regex, a normalisation rule, and a list of valid reference types. A parser can validate "Vulg. Gen. 1:1" or reject "ST I-II.300.99" because no registered canonical reference exists for that locator. The reference identifier is independent of any single edition.
 
 ## AI/LLM grounding and retrieval
 
