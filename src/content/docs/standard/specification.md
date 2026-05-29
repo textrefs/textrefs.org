@@ -9,9 +9,9 @@ sidebar:
 TextRefs `v0.1.0-draft` is an **unstable working draft**. The data model and this specification may change without notice and without a version bump while the core is being settled. Do not rely on it for production use yet.
 :::
 
-Version: 0.1.0-draft
-Status: Draft
-Scope: Minimal standard for machine-addressable canonical text references
+**Version:** 0.1.0-draft\
+**Status:** Draft\
+**Scope:** a minimal standard for machine-addressable canonical text references.
 
 ## 1. Purpose
 
@@ -23,7 +23,7 @@ The standard is deliberately small. Its centre is a single idea: **a reference i
 
 ## 2. Conformance
 
-A dataset conforms to the TextRefs Minimal Viable Standard if it satisfies all of the following:
+A dataset conforms to the TextRefs Standard if it satisfies all of the following:
 
 1. It represents registry data using the object types defined in this standard.
 2. Every registry object includes the required fields for its object type.
@@ -65,6 +65,57 @@ A conforming registry MUST support these object types. Each object MUST carry a 
 | `CanonicalReference` | identity    | One abstract reference point in a work.                       |
 | `ResolverTarget`     | location    | A place where a reference can be read.                        |
 | `MappingAssertion`   | equivalence | A curated equivalence to an external ID or another reference. |
+
+The five types depend on one another as follows. Every object additionally carries the shared administrative metadata of [§12](#12-administrative-metadata) (omitted from the diagram for clarity).
+
+```mermaid
+classDiagram
+    class Work {
+        +URI id
+        +string key
+        +string preferred_label
+        +URI creator
+    }
+    class CitationSystem {
+        +URI id
+        +string key
+        +string preferred_label
+        +string scope
+        +string locator_regex
+        +string[] valid_reference_types
+        +string normalization_version
+    }
+    class CanonicalReference {
+        +URI id
+        +UUID uuid
+        +string locator
+        +string reference_type
+        +string canonical_citation
+        +string normalization_version
+    }
+    class ResolverTarget {
+        +URI id
+        +URL url
+        +string language
+        +string edition
+        +string provider
+        +enum access
+        +enum rights_status
+    }
+    class MappingAssertion {
+        +URI id
+        +enum relation
+        +enum confidence
+        +string source
+    }
+    CanonicalReference --> "1" Work : work
+    CanonicalReference --> "1" CitationSystem : citation_system
+    ResolverTarget --> "1" CanonicalReference : subject
+    MappingAssertion --> "1" CanonicalReference : subject
+    MappingAssertion ..> "0..1" CanonicalReference : target (textrefs)
+```
+
+A `MappingAssertion.target` may instead be an external identifier (CTS URN, Wikidata ID, DOI, ARK, …); there is no separate object type for external identifiers, so that case is expressed inline in the assertion rather than as a node above (see [§10](#10-mappingassertion)).
 
 ## 6. Work
 
@@ -338,4 +389,3 @@ Outside the current scope:
 **Deferred to a later version** (intentionally omitted from this draft):
 
 - `ReferenceRange` — ordered ranges between two canonical references.
-- Any first-class Expression / Translation / Edition object. Translations are modelled today as `ResolverTarget` locations ([§9](#9-resolvertarget)); a richer expression layer is out of scope until the core proves stable.
