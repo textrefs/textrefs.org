@@ -381,7 +381,3 @@ Outside the current scope:
 
 - full-text hosting, edition/manuscript modelling, translation hosting, textual apparatus, commentary, thematic annotation;
 - citation-style rendering, recommendation systems, legal rights clearance for external content.
-
-**Deferred to a later version** (intentionally omitted from this draft):
-
-- `ReferenceRange` — ordered ranges between two canonical references.

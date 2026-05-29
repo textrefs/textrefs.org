@@ -19,7 +19,7 @@ The association is politically and religiously neutral.
 
 The association's purpose is to advance scholarship, education, culture, and open digital research infrastructure by building, maintaining, validating, publishing, and long-term archiving an open, persistent, and machine-readable registry for canonical text references and associated metadata.
 
-The association supports in particular the unambiguous, durable, and citable identification of works, citation and reference systems, canonical text passages, reference ranges, external identifiers, resolver targets, and curated mappings to external resources.
+The association supports in particular the unambiguous, durable, and citable identification of works, citation and reference systems, canonical text passages, external identifiers, resolver targets, and curated mappings to external resources.
 
 The association's activity serves the general public — in particular researchers, teachers, students, libraries, archives, museums, edition projects, digital infrastructures, memory institutions, and the interested public, both domestic and abroad. The publicly available registry data and documentation are open in principle, independent of association membership.
 
