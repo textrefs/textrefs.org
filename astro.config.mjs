@@ -1,11 +1,13 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import mermaid from 'astro-mermaid';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
 
 export default defineConfig({
 	site: 'https://textrefs.org',
 	integrations: [
+		mermaid({ autoTheme: true }),
 		starlight({
 			plugins: [
 				starlightLinksValidator({
