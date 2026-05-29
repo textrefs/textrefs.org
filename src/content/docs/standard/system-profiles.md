@@ -54,4 +54,4 @@ Stephanus profile (Platonic corpus):
 
 ## Validation rule
 
-Every `CanonicalReference` MUST point to a known `CitationSystem`. Its `locator` MUST match that system's `locator_regex`, its `reference_type` MUST be listed in `valid_reference_types`, and its `normalization_version` MUST match the referenced system unless a migration note explicitly says otherwise.
+Every `CanonicalReference` MUST point to a known `CitationSystem`. Its `locator` MUST match that system's `locator_regex`, its `reference_type` MUST be listed in `valid_reference_types`, and its `normalization_version` MUST be the value fixed when the reference was minted (see [Specification §8](/standard/specification/#8-canonicalreference)); it need not equal the system's current `normalization_version`.

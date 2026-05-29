@@ -194,7 +194,7 @@ Required: `id`, `uuid`, `type` (`CanonicalReference`), `work`, `work_key`, `cita
 
 - `work` MUST point to a known `Work`; `citation_system` MUST point to a known `CitationSystem`.
 - `locator` MUST match the system's `locator_regex`; `reference_type` MUST be in its `valid_reference_types`.
-- `normalization_version` MUST match the referenced system unless an explicit migration record states otherwise.
+- `normalization_version` is part of the reference's identity and is fixed when the reference is minted; it records the normalization in force at that time and need not equal the citation system's current `normalization_version`. Its correctness is verified by the deterministic identifier (see [§14](#14-validation-requirements) and [Identifier syntax](/standard/identifier-syntax/)).
 - The `uuid` MUST be generated deterministically per [Identifier syntax](/standard/identifier-syntax/).
 
 ## 9. ResolverTarget
@@ -269,7 +269,7 @@ TextRefs identifiers MUST be persistent HTTP URIs, independent of external URLs,
 
 A `CanonicalReference` identifier MUST be generated deterministically. The identity seed MUST include at least `work_key`, `citation_system_key`, `locator`, `reference_type`, and `normalization_version`, in that order (see [Identifier syntax](/standard/identifier-syntax/)).
 
-An implementation MUST NOT silently change the identity-defining fields of an existing `CanonicalReference`. If such a field changes, the registry MUST either create a new identifier or provide an explicit migration record.
+An implementation MUST NOT silently change the identity-defining fields of an existing `CanonicalReference`. Because those fields seed the deterministic identifier, any change produces a new `CanonicalReference` with a new identifier. The prior reference MUST be retained as a tombstone (`status` `deprecated` or `withdrawn`, [§12](#12-administrative-metadata)) and SHOULD be linked to its replacement through an `exactMatch` `MappingAssertion` ([§10](#10-mappingassertion)).
 
 ## 12. Administrative metadata
 
@@ -359,7 +359,7 @@ A conforming validator MUST check:
 2. object `type` values and TextRefs URI patterns;
 3. administrative metadata and `status` values;
 4. citation-system `locator_regex` syntax, and its valid/invalid examples;
-5. canonical-reference locator validity, reference-type validity, and normalization-version compatibility;
+5. canonical-reference locator validity and reference-type validity (the `normalization_version` is the value fixed at minting, verified by the deterministic identifier in item 6, not matched against the system's current version);
 6. deterministic-identifier correctness for canonical references;
 7. resolver-target `access` and `rights_status` values, and presence of `language` for language-specific targets;
 8. mapping `relation` values;
