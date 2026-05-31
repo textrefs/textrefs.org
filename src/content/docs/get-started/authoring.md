@@ -5,16 +5,16 @@ sidebar:
   order: 6
 ---
 
-The published registry under `data/` is **compiler output**: flat JSON files, one per record, validated against the canonical Zod schemas. Contributors do not edit those files by hand. Instead, every work is described by one compact YAML file under `data/source/`, and a reference compiler expands it into the flat records when you run `npm run build:data`.
+The TextRefs repo contains only hand-authored YAML under `data/works/` and `data/systems/`. The compiled registry — Works, CitationSystems, CanonicalReferences, MappingAssertions — is produced in memory by `npm run build:data` and published as a single NDJSON.gz bundle attached to each GitHub Release.
 
 This page documents the YAML format.
 
 ## The two source directories
 
 ```
-data/source/
-├── {work_key}.yaml              # one file per Work
-└── systems/{system_key}.yaml    # one file per CitationSystem
+data/
+├── works/{work_key}.yaml              # one file per Work
+└── systems/{system_key}.yaml          # one file per CitationSystem
 ```
 
 A `Work` source file declares the work itself, references the citation system it uses, lists references, optionally lists resolver templates, and optionally lists work-level mappings. A `CitationSystem` source file declares the locator regex and examples.
@@ -24,7 +24,7 @@ A `Work` source file declares the work itself, references the citation system it
 The Dhammapada has 423 verses across 26 chapters and is hosted on four different reading platforms with four different URL patterns. The whole work, with chapter 1 fully wired up, is roughly 60 lines of YAML:
 
 ```yaml
-# data/source/dhammapada.yaml
+# data/works/dhammapada.yaml
 work:
   key: dhammapada
   preferred_label: Dhammapada
@@ -172,7 +172,7 @@ Multiple `references_range` entries on one work are concatenated. Combine with e
 A citation system declares its locator format once and is reused by every work that cites it.
 
 ```yaml
-# data/source/systems/dhammapada-chapter-verse.yaml
+# data/systems/dhammapada-chapter-verse.yaml
 key: dhammapada-chapter-verse
 preferred_label: Dhammapada chapter-and-verse
 normalization_version: 1.0.0

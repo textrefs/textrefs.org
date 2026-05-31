@@ -1,46 +1,32 @@
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join, resolve } from 'node:path';
-import type {
-	Work,
-	CitationSystem,
-	CanonicalReference,
-	MappingAssertion,
-} from '../../standard/schema/index.js';
+import {
+	compileRegistry,
+	type CompiledRegistry,
+} from '../../scripts/compile.js';
 
-const dataRoot = resolve(process.cwd(), 'data');
-
-function readJson<T>(path: string): T {
-	return JSON.parse(readFileSync(path, 'utf8')) as T;
+let cached: CompiledRegistry | null = null;
+function registry(): CompiledRegistry {
+	cached ??= compileRegistry();
+	return cached;
 }
 
-function listJson(dir: string): string[] {
-	const full = join(dataRoot, dir);
-	if (!existsSync(full)) return [];
-	return readdirSync(full)
-		.filter((n) => n.endsWith('.json'))
-		.map((n) => join(full, n));
+export function loadWorks() {
+	return registry().works;
 }
 
-export function loadWorks(): Work[] {
-	return listJson('works').map((p) => readJson<Work>(p));
+export function loadSystems() {
+	return registry().systems;
 }
 
-export function loadSystems(): CitationSystem[] {
-	return listJson('systems').map((p) => readJson<CitationSystem>(p));
+export function loadReferences() {
+	return registry().references;
 }
 
-export function loadReferences(): CanonicalReference[] {
-	return listJson('refs').map((p) => readJson<CanonicalReference>(p));
+export function loadMappings() {
+	return registry().mappings;
 }
 
-export function loadMappings(): MappingAssertion[] {
-	return listJson('mappings').map((p) => readJson<MappingAssertion>(p));
-}
-
-export function loadAliases(): Record<string, string> {
-	const p = join(dataRoot, 'aliases.json');
-	if (!existsSync(p)) return {};
-	return readJson<Record<string, string>>(p);
+export function loadAliases() {
+	return registry().aliases;
 }
 
 export function uuidOf(iri: string): string {

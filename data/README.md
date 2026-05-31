@@ -6,28 +6,24 @@ Future home of the standalone `textrefs/data` repo. Self-contained so a later `g
 
 ```
 data/
-├── source/                       # ✍️ Contributors edit these YAML files.
-│   ├── {work_key}.yaml           #     One file per Work (references, resolvers, mappings)
-│   └── systems/{system_key}.yaml #     One file per CitationSystem
-│
-├── works/{key}.json              # ⚙️  Compiler output. Do not edit by hand.
-├── systems/{key}.json            # ⚙️
-├── refs/{work_key}__{slug}.json  # ⚙️  Each ref carries an embedded resolver_targets array.
-├── mappings/{uuid}.json          # ⚙️  Subject is always a Work IRI.
-└── aliases.json                  # ⚙️  Alias → canonical target index.
+├── works/{key}.yaml             # ✍️ One file per Work
+└── systems/{key}.yaml           # ✍️ One file per CitationSystem
 ```
 
-Contributors edit only the YAML under `data/source/`. Everything else is compiler output, committed to git so diffs are reviewable but never hand-authored. See [`docs/get-started/authoring`](../src/content/docs/get-started/authoring.md) for the YAML format.
+Only hand-authored YAML lives in this repo. No JSON, no derived indexes, no per-reference files. The compiled registry is an in-memory derivation at build time; the published bundle is attached to GitHub Releases as a single NDJSON.gz artifact.
+
+See [`docs/get-started/authoring`](../src/content/docs/get-started/authoring.md) for the YAML format.
 
 ## Build pipeline
 
 ```sh
-npm run compile:data    # YAML → flat JSON records under data/
-npm run validate:data   # validate every record against the Zod schemas
-npm run build:data      # both, in sequence (the contributor entry point)
+npm run compile:data    # YAML → dist/dump/textrefs-{version}.ndjson.gz (+ manifest)
+npm run validate:data   # validate every in-memory record against the Zod schemas
+npm run build:data      # compile + validate, in sequence
+npm run build           # full site build; also emits the dump under dist/dump/
 ```
 
-The compiler is deterministic: re-running `compile:data` against unchanged source produces zero diff. UUIDs for `CanonicalReference` and `MappingAssertion` are derived from content per [Identifier syntax](../src/content/docs/standard/identifier-syntax.md).
+The compiler is deterministic: re-running `compile:data` against unchanged source produces a dump with identical SHA-256 (`content_hash_sha256` in the manifest). UUIDs for `CanonicalReference` and `MappingAssertion` are derived from content per [Identifier syntax](../src/content/docs/standard/identifier-syntax.md).
 
 ## Out of scope
 

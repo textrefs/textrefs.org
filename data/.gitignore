@@ -1,4 +1,7 @@
-/mappings/
-/refs/
-/systems/
-/aliases.json
+*
+!.gitignore
+!README.md
+!works/
+!systems/
+!works/*.yaml
+!systems/*.yaml

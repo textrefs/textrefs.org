@@ -3,12 +3,12 @@ import {
 	readdirSync,
 	statSync,
 	writeFileSync,
-	rmSync,
 	mkdirSync,
 	existsSync,
 } from 'node:fs';
-import { join, basename } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join, basename, resolve } from 'node:path';
+import { gzipSync } from 'node:zlib';
+import { createHash } from 'node:crypto';
 import { v5 as uuidv5 } from 'uuid';
 import { parse as parseYaml } from 'yaml';
 import {
@@ -22,8 +22,9 @@ const REFERENCE_NS = 'b1a3670e-2ac7-544c-a1b9-396e0dc193f7';
 const MAPPING_NS = 'f16bb214-4241-549d-ad41-7b011f02befb';
 const NORMALIZATION_VERSION = '1.0.0';
 
-const dataRoot = fileURLToPath(new URL('../data', import.meta.url));
-const sourceRoot = join(dataRoot, 'source');
+const projectRoot = resolve(process.cwd());
+const dataRoot = join(projectRoot, 'data');
+const distRoot = join(projectRoot, 'dist');
 
 type ResolverEntry = {
 	url?: string;
@@ -41,18 +42,11 @@ type ReferenceSource =
 	| string
 	| { locator: string; extra_resolvers?: ResolverEntry[] };
 
-// Compact shorthand for large canonical reference sets. Each entry is one
-// named expander; the compiler concatenates the expansion of every entry with
-// the explicit `references:` list and de-duplicates. See docs/get-started/authoring.
 type ReferenceRange =
 	| { kind: 'integer'; from: number; to: number }
 	| { kind: 'book_line'; counts: number[] }
 	| { kind: 'book_chapter'; counts: number[] }
-	| {
-			kind: 'book_chapter_verse';
-			book: string;
-			counts: number[];
-	  }
+	| { kind: 'book_chapter_verse'; book: string; counts: number[] }
 	| {
 			kind: 'bekker';
 			page_ranges: Array<[number, number]>;
@@ -160,19 +154,12 @@ type SystemSource = {
 	modified: string;
 };
 
-function walk(dir: string): string[] {
+function listYaml(dir: string): string[] {
 	if (!existsSync(dir)) return [];
-	return readdirSync(dir).flatMap((name) => {
-		const p = join(dir, name);
-		return statSync(p).isDirectory() ? walk(p) : [p];
-	});
-}
-
-function slugifyLocator(locator: string): string {
-	return locator
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/^-|-$/g, '');
+	return readdirSync(dir)
+		.filter((n) => n.endsWith('.yaml'))
+		.map((n) => join(dir, n))
+		.sort();
 }
 
 function deriveLocatorVars(
@@ -262,203 +249,267 @@ function mappingUuid(
 	return uuidv5(seed, MAPPING_NS);
 }
 
-function emitFile(path: string, value: unknown): void {
-	mkdirSync(join(path, '..'), { recursive: true });
-	writeFileSync(path, JSON.stringify(value, null, 2) + '\n');
+export interface CompiledRegistry {
+	works: Work[];
+	systems: CitationSystem[];
+	references: CanonicalReference[];
+	mappings: MappingAssertion[];
+	aliases: Record<string, string>;
+	warnings: number;
 }
 
-function clean(dir: string): void {
-	if (!existsSync(dir)) {
-		mkdirSync(dir, { recursive: true });
-		return;
-	}
-	for (const name of readdirSync(dir)) {
-		if (name.endsWith('.json')) rmSync(join(dir, name));
-	}
-}
-
-const systems = new Map<string, SystemSource>();
-const systemFiles = walk(join(sourceRoot, 'systems')).filter((f) =>
-	f.endsWith('.yaml'),
-);
-for (const f of systemFiles) {
-	const src = parseYaml(readFileSync(f, 'utf8')) as SystemSource;
-	systems.set(src.key, src);
-}
-
-const workFiles = walk(sourceRoot).filter(
-	(f) => f.endsWith('.yaml') && !f.includes(`${sourceRoot}/systems/`),
-);
-
-clean(join(dataRoot, 'works'));
-clean(join(dataRoot, 'systems'));
-clean(join(dataRoot, 'refs'));
-clean(join(dataRoot, 'mappings'));
-
-const aliases: Record<string, string> = {};
-let warnings = 0;
-
-for (const [key, src] of systems) {
-	const record = {
-		id: `https://textrefs.org/id/system/${key}`,
-		key,
-		type: 'CitationSystem' as const,
-		preferred_label: src.preferred_label,
-		normalization_version: src.normalization_version,
-		locator_regex: src.locator_regex,
-		examples: src.examples,
-		status: src.status,
-		created: src.created,
-		modified: src.modified,
-	};
-	const parsed = CitationSystem.safeParse(record);
-	if (!parsed.success) {
-		console.error(`✗ system/${key}: invalid`);
-		for (const issue of parsed.error.issues) {
-			console.error(
-				`    ${issue.path.join('.') || '(root)'}: ${issue.message}`,
-			);
-		}
-		process.exit(1);
-	}
-	emitFile(join(dataRoot, 'systems', `${key}.json`), record);
-}
-
-for (const file of workFiles) {
-	const src = parseYaml(readFileSync(file, 'utf8')) as WorkSource;
-	const workKey = src.work.key;
-	const workIri = `https://textrefs.org/id/work/${workKey}`;
-	const systemKey = src.citation_system;
-	const system = systems.get(systemKey);
-	if (!system) {
-		console.error(
-			`✗ ${basename(file)}: references unknown citation_system "${systemKey}"`,
-		);
-		process.exit(1);
+export function compileRegistry(): CompiledRegistry {
+	const systems = new Map<string, SystemSource>();
+	for (const f of listYaml(join(dataRoot, 'systems'))) {
+		const src = parseYaml(readFileSync(f, 'utf8')) as SystemSource;
+		systems.set(src.key, src);
 	}
 
-	const workRecord = {
-		id: workIri,
-		key: workKey,
-		type: 'Work' as const,
-		preferred_label: src.work.preferred_label,
-		status: src.work.status,
-		created: src.work.created,
-		modified: src.work.modified,
-	};
-	const workParsed = Work.safeParse(workRecord);
-	if (!workParsed.success) {
-		console.error(`✗ work/${workKey}: invalid`);
-		for (const issue of workParsed.error.issues) {
-			console.error(
-				`    ${issue.path.join('.') || '(root)'}: ${issue.message}`,
-			);
-		}
-		process.exit(1);
-	}
-	emitFile(join(dataRoot, 'works', `${workKey}.json`), workRecord);
+	const workFiles = listYaml(join(dataRoot, 'works'));
 
-	for (const mapping of src.mappings ?? []) {
-		const uuid = mappingUuid(workIri, mapping.relation, mapping.identifier);
+	const outWorks: Work[] = [];
+	const outSystems: CitationSystem[] = [];
+	const outReferences: CanonicalReference[] = [];
+	const outMappings: MappingAssertion[] = [];
+	const aliases: Record<string, string> = {};
+	let warnings = 0;
+
+	for (const [key, src] of [...systems].sort(([a], [b]) =>
+		a.localeCompare(b),
+	)) {
 		const record = {
-			id: `https://textrefs.org/id/mapping/${uuid}`,
-			type: 'MappingAssertion' as const,
-			subject: workIri,
-			relation: mapping.relation,
-			target: {
-				...(mapping.target_kind !== undefined && {
-					target_kind: mapping.target_kind,
-				}),
-				identifier: mapping.identifier,
-			},
-			source: mapping.source,
-			status: mapping.status,
-			created: mapping.created,
-			modified: mapping.modified,
+			id: `https://textrefs.org/id/system/${key}`,
+			key,
+			type: 'CitationSystem' as const,
+			preferred_label: src.preferred_label,
+			normalization_version: src.normalization_version,
+			locator_regex: src.locator_regex,
+			examples: src.examples,
+			status: src.status,
+			created: src.created,
+			modified: src.modified,
 		};
-		const parsed = MappingAssertion.safeParse(record);
+		const parsed = CitationSystem.safeParse(record);
 		if (!parsed.success) {
-			console.error(`✗ mapping/${uuid}: invalid`);
+			console.error(`✗ system/${key}: invalid`);
 			for (const issue of parsed.error.issues) {
 				console.error(
 					`    ${issue.path.join('.') || '(root)'}: ${issue.message}`,
 				);
 			}
-			process.exit(1);
+			throw new Error(`invalid system: ${key}`);
 		}
-		emitFile(join(dataRoot, 'mappings', `${uuid}.json`), record);
-		aliases[mapping.identifier] = workIri;
+		outSystems.push(parsed.data);
 	}
 
-	const explicitRefs: ReferenceSource[] = src.references ?? [];
-	const expandedRefs: ReferenceSource[] = (src.references_range ?? []).flatMap(
-		expandRange,
-	);
-	const seenLocators = new Set<string>();
-	const allRefs: ReferenceSource[] = [];
-	for (const r of [...expandedRefs, ...explicitRefs]) {
-		const loc = typeof r === 'string' ? r : r.locator;
-		if (seenLocators.has(loc)) continue;
-		seenLocators.add(loc);
-		allRefs.push(r);
-	}
+	for (const file of workFiles) {
+		const src = parseYaml(readFileSync(file, 'utf8')) as WorkSource;
+		const workKey = src.work.key;
+		const workIri = `https://textrefs.org/id/work/${workKey}`;
+		const systemKey = src.citation_system;
+		const system = systems.get(systemKey);
+		if (!system) {
+			throw new Error(
+				`${basename(file)}: references unknown citation_system "${systemKey}"`,
+			);
+		}
 
-	for (const refSrc of allRefs) {
-		const locator = typeof refSrc === 'string' ? refSrc : refSrc.locator;
-		const extraResolvers =
-			typeof refSrc === 'string' ? [] : (refSrc.extra_resolvers ?? []);
-		const vars = deriveLocatorVars(locator, system);
-		const targets: Record<string, unknown>[] = [];
-		for (const resolver of src.resolvers ?? []) {
-			const entry = buildResolverEntry(resolver, vars);
-			if (entry) targets.push(entry);
-			else warnings++;
-		}
-		for (const resolver of extraResolvers) {
-			const entry = buildResolverEntry(resolver, vars);
-			if (entry) targets.push(entry);
-		}
-		const uuid = referenceUuid(
-			workKey,
-			systemKey,
-			locator,
-			NORMALIZATION_VERSION,
-		);
-		const record = {
-			id: `https://textrefs.org/id/ref/${uuid}`,
-			type: 'CanonicalReference' as const,
-			work_key: workKey,
-			citation_system_key: systemKey,
-			locator,
-			normalization_version: NORMALIZATION_VERSION,
-			resolver_targets: targets,
+		const workRecord = {
+			id: workIri,
+			key: workKey,
+			type: 'Work' as const,
+			preferred_label: src.work.preferred_label,
 			status: src.work.status,
 			created: src.work.created,
 			modified: src.work.modified,
 		};
-		const parsed = CanonicalReference.safeParse(record);
-		if (!parsed.success) {
-			console.error(`✗ ref/${workKey}/${locator}: invalid`);
-			for (const issue of parsed.error.issues) {
+		const workParsed = Work.safeParse(workRecord);
+		if (!workParsed.success) {
+			console.error(`✗ work/${workKey}: invalid`);
+			for (const issue of workParsed.error.issues) {
 				console.error(
 					`    ${issue.path.join('.') || '(root)'}: ${issue.message}`,
 				);
 			}
-			process.exit(1);
+			throw new Error(`invalid work: ${workKey}`);
 		}
-		const slug = slugifyLocator(locator);
-		emitFile(join(dataRoot, 'refs', `${workKey}__${slug}.json`), record);
-		aliases[`${workKey}/${locator}`] = record.id;
+		outWorks.push(workParsed.data);
+
+		for (const mapping of src.mappings ?? []) {
+			const uuid = mappingUuid(workIri, mapping.relation, mapping.identifier);
+			const record = {
+				id: `https://textrefs.org/id/mapping/${uuid}`,
+				type: 'MappingAssertion' as const,
+				subject: workIri,
+				relation: mapping.relation,
+				target: {
+					...(mapping.target_kind !== undefined && {
+						target_kind: mapping.target_kind,
+					}),
+					identifier: mapping.identifier,
+				},
+				source: mapping.source,
+				status: mapping.status,
+				created: mapping.created,
+				modified: mapping.modified,
+			};
+			const parsed = MappingAssertion.safeParse(record);
+			if (!parsed.success) {
+				console.error(`✗ mapping/${uuid}: invalid`);
+				for (const issue of parsed.error.issues) {
+					console.error(
+						`    ${issue.path.join('.') || '(root)'}: ${issue.message}`,
+					);
+				}
+				throw new Error(`invalid mapping: ${uuid}`);
+			}
+			outMappings.push(parsed.data);
+			aliases[mapping.identifier] = workIri;
+		}
+
+		const explicitRefs: ReferenceSource[] = src.references ?? [];
+		const expandedRefs: ReferenceSource[] = (
+			src.references_range ?? []
+		).flatMap(expandRange);
+		const seenLocators = new Set<string>();
+		const allRefs: ReferenceSource[] = [];
+		for (const r of [...expandedRefs, ...explicitRefs]) {
+			const loc = typeof r === 'string' ? r : r.locator;
+			if (seenLocators.has(loc)) continue;
+			seenLocators.add(loc);
+			allRefs.push(r);
+		}
+
+		for (const refSrc of allRefs) {
+			const locator = typeof refSrc === 'string' ? refSrc : refSrc.locator;
+			const extraResolvers =
+				typeof refSrc === 'string' ? [] : (refSrc.extra_resolvers ?? []);
+			const vars = deriveLocatorVars(locator, system);
+			const targets: Record<string, unknown>[] = [];
+			for (const resolver of src.resolvers ?? []) {
+				const entry = buildResolverEntry(resolver, vars);
+				if (entry) targets.push(entry);
+				else warnings++;
+			}
+			for (const resolver of extraResolvers) {
+				const entry = buildResolverEntry(resolver, vars);
+				if (entry) targets.push(entry);
+			}
+			const uuid = referenceUuid(
+				workKey,
+				systemKey,
+				locator,
+				NORMALIZATION_VERSION,
+			);
+			const record = {
+				id: `https://textrefs.org/id/ref/${uuid}`,
+				type: 'CanonicalReference' as const,
+				work_key: workKey,
+				citation_system_key: systemKey,
+				locator,
+				normalization_version: NORMALIZATION_VERSION,
+				resolver_targets: targets,
+				status: src.work.status,
+				created: src.work.created,
+				modified: src.work.modified,
+			};
+			const parsed = CanonicalReference.safeParse(record);
+			if (!parsed.success) {
+				console.error(`✗ ref/${workKey}/${locator}: invalid`);
+				for (const issue of parsed.error.issues) {
+					console.error(
+						`    ${issue.path.join('.') || '(root)'}: ${issue.message}`,
+					);
+				}
+				throw new Error(`invalid reference: ${workKey}/${locator}`);
+			}
+			outReferences.push(parsed.data);
+			aliases[`${workKey}/${locator}`] = record.id;
+		}
 	}
+
+	outWorks.sort((a, b) => a.key.localeCompare(b.key));
+	outReferences.sort((a, b) => a.id.localeCompare(b.id));
+	outMappings.sort((a, b) => a.id.localeCompare(b.id));
+
+	return {
+		works: outWorks,
+		systems: outSystems,
+		references: outReferences,
+		mappings: outMappings,
+		aliases,
+		warnings,
+	};
 }
 
-emitFile(join(dataRoot, 'aliases.json'), aliases);
+function readPackageVersion(): string {
+	const pkgPath = join(projectRoot, 'package.json');
+	const pkg = JSON.parse(readFileSync(pkgPath, 'utf8')) as { version: string };
+	return pkg.version;
+}
 
-console.log(
-	`✓ compiled ${systems.size} system(s), ${workFiles.length} work(s); ${Object.keys(aliases).length} alias(es)`,
-);
-if (warnings > 0) {
-	console.warn(
-		`  (${warnings} resolver entry(ies) skipped — missing template variable or url_by key)`,
+function writeDump(registry: CompiledRegistry, version: string): void {
+	const lines: string[] = [];
+	for (const w of registry.works) lines.push(JSON.stringify(w));
+	for (const s of registry.systems) lines.push(JSON.stringify(s));
+	for (const r of registry.references) lines.push(JSON.stringify(r));
+	for (const m of registry.mappings) lines.push(JSON.stringify(m));
+	const ndjson = lines.join('\n') + '\n';
+	const contentHash = createHash('sha256').update(ndjson).digest('hex');
+	const gz = gzipSync(Buffer.from(ndjson, 'utf8'), { level: 9 });
+
+	const dumpDir = join(distRoot, 'dump');
+	mkdirSync(dumpDir, { recursive: true });
+	const ndjsonPath = join(dumpDir, `textrefs-${version}.ndjson.gz`);
+	const manifestPath = join(dumpDir, `textrefs-${version}.manifest.json`);
+	writeFileSync(ndjsonPath, gz);
+
+	const manifest = {
+		version,
+		generated_at: new Date().toISOString(),
+		format: 'ndjson',
+		compression: 'gzip',
+		filename: basename(ndjsonPath),
+		content_hash_sha256: contentHash,
+		uncompressed_bytes: Buffer.byteLength(ndjson, 'utf8'),
+		record_count: lines.length,
+		counts: {
+			Work: registry.works.length,
+			CitationSystem: registry.systems.length,
+			CanonicalReference: registry.references.length,
+			MappingAssertion: registry.mappings.length,
+		},
+		schema_urls: {
+			Work: 'https://textrefs.org/standard/schema/work',
+			CitationSystem: 'https://textrefs.org/standard/schema/citation-system',
+			CanonicalReference:
+				'https://textrefs.org/standard/schema/canonical-reference',
+			MappingAssertion:
+				'https://textrefs.org/standard/schema/mapping-assertion',
+		},
+	};
+	writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+}
+
+const isCliEntry =
+	import.meta.url === `file://${process.argv[1]}` ||
+	process.argv[1]?.endsWith('compile.ts');
+
+if (isCliEntry) {
+	const registry = compileRegistry();
+	const version = readPackageVersion();
+	writeDump(registry, version);
+	const totalRecords =
+		registry.works.length +
+		registry.systems.length +
+		registry.references.length +
+		registry.mappings.length;
+	console.log(
+		`✓ compiled ${registry.systems.length} system(s), ${registry.works.length} work(s), ${registry.references.length} reference(s), ${registry.mappings.length} mapping(s); ${Object.keys(registry.aliases).length} alias(es); ${totalRecords} records in dump`,
 	);
+	if (registry.warnings > 0) {
+		console.warn(
+			`  (${registry.warnings} resolver entry(ies) skipped — missing template variable or url_by key)`,
+		);
+	}
 }
