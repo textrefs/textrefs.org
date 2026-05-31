@@ -7,7 +7,6 @@ import {
 	existsSync,
 } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
-import { gzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import { v5 as uuidv5 } from 'uuid';
 import { parse as parseYaml } from 'yaml';
@@ -449,46 +448,75 @@ function readPackageVersion(): string {
 }
 
 function writeDump(registry: CompiledRegistry, version: string): void {
-	const lines: string[] = [];
-	for (const w of registry.works) lines.push(JSON.stringify(w));
-	for (const s of registry.systems) lines.push(JSON.stringify(s));
-	for (const r of registry.references) lines.push(JSON.stringify(r));
-	for (const m of registry.mappings) lines.push(JSON.stringify(m));
-	const ndjson = lines.join('\n') + '\n';
-	const contentHash = createHash('sha256').update(ndjson).digest('hex');
-	const gz = gzipSync(Buffer.from(ndjson, 'utf8'), { level: 9 });
-
 	const dumpDir = join(distRoot, 'dump');
 	mkdirSync(dumpDir, { recursive: true });
-	const ndjsonPath = join(dumpDir, `textrefs-${version}.ndjson.gz`);
-	const manifestPath = join(dumpDir, `textrefs-${version}.manifest.json`);
-	writeFileSync(ndjsonPath, gz);
 
-	const manifest = {
-		version,
-		generated_at: new Date().toISOString(),
-		format: 'ndjson',
-		compression: 'gzip',
-		filename: basename(ndjsonPath),
-		content_hash_sha256: contentHash,
-		uncompressed_bytes: Buffer.byteLength(ndjson, 'utf8'),
-		record_count: lines.length,
-		counts: {
-			Work: registry.works.length,
-			CitationSystem: registry.systems.length,
-			CanonicalReference: registry.references.length,
-			MappingAssertion: registry.mappings.length,
-		},
-		schema_urls: {
-			Work: 'https://textrefs.org/standard/schema/work',
-			CitationSystem: 'https://textrefs.org/standard/schema/citation-system',
-			CanonicalReference:
-				'https://textrefs.org/standard/schema/canonical-reference',
-			MappingAssertion:
-				'https://textrefs.org/standard/schema/mapping-assertion',
-		},
+	type ResourceSpec = {
+		name: string;
+		filename: string;
+		records: ReadonlyArray<unknown>;
 	};
-	writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+
+	const specs: ResourceSpec[] = [
+		{ name: 'works', filename: 'works.jsonl', records: registry.works },
+		{
+			name: 'citation-systems',
+			filename: 'citation-systems.jsonl',
+			records: registry.systems,
+		},
+		{
+			name: 'references',
+			filename: 'references.jsonl',
+			records: registry.references,
+		},
+		{
+			name: 'mappings',
+			filename: 'mappings.jsonl',
+			records: registry.mappings,
+		},
+	];
+
+	const resources = specs.map((spec) => {
+		const body =
+			spec.records.length === 0
+				? ''
+				: spec.records.map((r) => JSON.stringify(r)).join('\n') + '\n';
+		const bytes = Buffer.byteLength(body, 'utf8');
+		const hash = createHash('sha256').update(body).digest('hex');
+		writeFileSync(join(dumpDir, spec.filename), body);
+		return {
+			name: spec.name,
+			path: spec.filename,
+			profile: 'data-resource',
+			format: 'jsonl',
+			mediatype: 'application/x-ndjson',
+			encoding: 'utf-8',
+			bytes,
+			hash: `sha256:${hash}`,
+		};
+	});
+
+	const datapackage = {
+		profile: 'data-package',
+		name: 'textrefs-registry',
+		title: 'TextRefs Registry',
+		version: version.replace(/^v/, ''),
+		created: new Date().toISOString(),
+		homepage: 'https://textrefs.org',
+		licenses: [
+			{
+				name: 'CC0-1.0',
+				path: 'https://creativecommons.org/publicdomain/zero/1.0/',
+				title: 'Creative Commons Zero v1.0 Universal',
+			},
+		],
+		resources,
+	};
+
+	writeFileSync(
+		join(dumpDir, 'datapackage.json'),
+		JSON.stringify(datapackage, null, 2) + '\n',
+	);
 }
 
 const isCliEntry =
