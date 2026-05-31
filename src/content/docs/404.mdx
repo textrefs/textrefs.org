@@ -1,0 +1,42 @@
+---
+title: '404'
+description: This page could not be found. Help improve TextRefs by reporting broken links or missing content.
+template: splash
+editUrl: false
+hero:
+  title: This reference is missing.
+  tagline: If you expected a TextRefs page here, please help us improve the registry and documentation.
+  actions:
+    - text: Open a GitHub issue
+      link: https://github.com/textrefs/textrefs.org/issues
+      icon: external
+    - text: Start a discussion
+      link: https://github.com/textrefs/textrefs.org/discussions
+      icon: external
+      variant: minimal
+    - text: Email the community
+      link: mailto:community@textrefs.org
+      icon: email
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Report a broken link" icon="github">
+    Open a [GitHub issue](https://github.com/textrefs/textrefs.org/issues) if a
+    page, registry record, or mapping should exist here.
+  </Card>
+  <Card title="Ask a question" icon="comment">
+    Start a [GitHub
+    discussion](https://github.com/textrefs/textrefs.org/discussions) for
+    general questions, ideas, or uncertainty about where something belongs.
+  </Card>
+  <Card title="Contact the community" icon="email">
+    Email [community@textrefs.org](mailto:community@textrefs.org) for general
+    correspondence, board enquiries, or code-of-conduct reports.
+  </Card>
+  <Card title="Return home" icon="right-arrow">
+    Go back to the [TextRefs home page](/) or browse the [registry](/reg/).
+  </Card>
+</CardGrid>
