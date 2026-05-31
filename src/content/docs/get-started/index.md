@@ -28,6 +28,13 @@ This division is deliberate. TextRefs stays small, persistent, and legally reusa
 - [How it works](/get-started/how-it-works/) — the practical model: identity, mappings, resolver targets, and examples.
 - [Use cases](/get-started/use-cases/) — concrete scenarios across research, libraries, digital editions, and AI grounding.
 - [Mappings and resolver targets](/get-started/mappings-and-resolver-targets/) — how to model external identifiers, reading URLs, and canonical-citation candidates.
+- [Authoring registry data](/get-started/authoring/) — the contributor YAML format and the `npm run build:data` pipeline.
 - [Related identifier systems](/get-started/related-systems/) — how TextRefs relates to DOI, ARK, CTS, DTS, Wikidata, VIAF, and friends.
 - [The standard](/standard/) — the normative specification text (`v0.1.0-draft`).
 - [The association](/association/) — the non-profit behind TextRefs, its statutes, and the open board search.
+
+## Live examples
+
+- [`/reg/work/dhammapada/`](/reg/work/dhammapada/) — Dhammapada with four real providers (Gutenberg, Wikisource, ancient-buddhist-texts.net, palikanon.com) across English and German.
+- [`/reg/work/kant.krv/`](/reg/work/kant.krv/) — Kant's _Critique of Pure Reason_ with the Akademie-Ausgabe A/B pagination.
+- [`/reg/`](/reg/) — the registry index.
