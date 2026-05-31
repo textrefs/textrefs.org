@@ -8,9 +8,13 @@ info:
     the planned shape of the API so it can be discussed and iterated on before
     any handler is written.
 
-    The resolver dereferences TextRefs identifiers to either a JSON-LD
-    description of the object or, for `ResolverTarget`, a 303 redirect to an
-    external manifestation. Content negotiation is via the `Accept` header.
+    The resolver dereferences TextRefs identifiers to a JSON-LD description
+    of the object, or to an HTML detail page via `Accept`-header content
+    negotiation. Resolver targets are embedded entries on a
+    `CanonicalReference` (not a separate object type with their own IRI), so
+    302/303 redirects to external manifestations are negotiated on the
+    `/id/ref/{uuid}` endpoint via `Accept-Language` and the `edition` query
+    parameter.
 
     All JSON responses use the JSON-LD context at
     [`/contexts/v1.jsonld`](https://textrefs.org/contexts/v1.jsonld). Schemas
@@ -68,9 +72,19 @@ paths:
     get:
       tags: [Resolver]
       summary: Resolve a CanonicalReference
+      description: |
+        Returns the reference record (JSON-LD or HTML). With
+        `Accept-Language` and/or an `edition` query parameter, the resolver
+        MAY instead 303-redirect to the matching entry in the reference's
+        embedded `resolver_targets` array.
       operationId: resolveCanonicalReference
       parameters:
         - $ref: '#/components/parameters/Uuid'
+        - in: query
+          name: edition
+          required: false
+          schema: { type: string }
+          description: Preferred edition tag for resolver-target negotiation.
       responses:
         '200':
           description: CanonicalReference record.
@@ -79,39 +93,15 @@ paths:
               schema: { $ref: '#/components/schemas/CanonicalReference' }
             text/html:
               schema: { type: string }
-        '404': { $ref: '#/components/responses/NotFound' }
-  /id/target/{uuid}:
-    get:
-      tags: [Resolver]
-      summary: Resolve a ResolverTarget
-      description: |
-        Returns a 303 redirect to the external manifestation by default, with
-        language/edition selected via `Accept-Language` and the `edition`
-        query parameter. Clients that send `Accept: application/ld+json`
-        receive a JSON-LD description of the target instead.
-      operationId: resolveResolverTarget
-      parameters:
-        - $ref: '#/components/parameters/Uuid'
-        - in: query
-          name: edition
-          required: false
-          schema: { type: string }
-          description: Preferred edition tag, when the target has multiple.
-      responses:
-        '200':
-          description: ResolverTarget JSON-LD description.
-          content:
-            application/ld+json:
-              schema: { $ref: '#/components/schemas/ResolverTargetEntry' }
         '303':
-          description: Redirect to the external manifestation.
+          description: Redirect to a negotiated resolver-target manifestation.
           headers:
             Location:
               schema: { type: string, format: uri }
               description: Absolute URL of the chosen manifestation.
         '404': { $ref: '#/components/responses/NotFound' }
         '406':
-          description: No acceptable manifestation for the requested language/edition.
+          description: No resolver-target entry matches the requested language/edition.
   /id/mapping/{uuid}:
     get:
       tags: [Resolver]
