@@ -19,20 +19,19 @@ This namespace is derived from `uuidv5(uuid.NAMESPACE_DNS, "textrefs.org/referen
 
 ## Seed sequence
 
-The UUID seed string is the following five-field sequence, in this exact order:
+The UUID seed string is the following four-field sequence, in this exact order:
 
 ```text
 work_key
 citation_system_key
 locator
-reference_type
 normalization_version
 ```
 
 Serialization rules:
 
 - Encode the seed as UTF-8.
-- Join the five values with a single line feed character, `U+000A`.
+- Join the four values with a single line feed character, `U+000A`.
 - Do not add leading or trailing whitespace.
 - Do not add a final trailing line feed.
 - Do not substitute labels, URIs, aliases, or external identifiers for the key fields.
@@ -57,7 +56,6 @@ Input tuple:
 work_key = aristotle:metaphysics
 citation_system_key = bekker
 locator = 983b10
-reference_type = point
 normalization_version = 1.0.0
 ```
 
@@ -67,20 +65,19 @@ Seed string:
 aristotle:metaphysics
 bekker
 983b10
-point
 1.0.0
 ```
 
 Result:
 
 ```text
-a2e519e0-e45a-5ce1-8da0-4533210a632a
+988e0b39-88eb-537b-aee5-8ad318cb534f
 ```
 
 Canonical URI:
 
 ```text
-https://textrefs.org/id/ref/a2e519e0-e45a-5ce1-8da0-4533210a632a
+https://textrefs.org/id/ref/988e0b39-88eb-537b-aee5-8ad318cb534f
 ```
 
 ## Immutability

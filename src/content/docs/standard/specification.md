@@ -75,17 +75,14 @@ classDiagram
         +URI id
         +string key
         +string preferred_label
-        +string scope
         +string locator_regex
-        +string[] valid_reference_types
         +string normalization_version
     }
     class CanonicalReference {
         +URI id
-        +UUID uuid
+        +string work_key
+        +string citation_system_key
         +string locator
-        +string reference_type
-        +string canonical_citation
         +string normalization_version
     }
     class ResolverTarget {
@@ -100,11 +97,10 @@ classDiagram
     class MappingAssertion {
         +URI id
         +enum relation
-        +enum confidence
         +string source
     }
-    CanonicalReference --> "1" Work : work
-    CanonicalReference --> "1" CitationSystem : citation_system
+    CanonicalReference --> "1" Work : work_key
+    CanonicalReference --> "1" CitationSystem : citation_system_key
     ResolverTarget --> "1" CanonicalReference : subject
     MappingAssertion --> "1" CanonicalReference : subject
     MappingAssertion ..> "0..1" CanonicalReference : target (textrefs)
@@ -124,9 +120,7 @@ A `Work` represents an abstract textual work, independent of editions, translati
   "preferred_label": "Gospel of John",
   "status": "active",
   "created": "2026-01-01",
-  "modified": "2026-01-01",
-  "schema_version": "v0.1.0-draft",
-  "record_version": 1
+  "modified": "2026-01-01"
 }
 ```
 
@@ -145,21 +139,19 @@ A `CitationSystem` defines the notation and validation rules used to identify lo
   "scope": "Protestant chapter-and-verse versification",
   "normalization_version": "1.0.0",
   "locator_regex": "^[0-9]{1,3}:[0-9]{1,3}$",
-  "valid_reference_types": ["verse"],
   "examples": {
     "valid": ["3:16", "1:1"],
     "invalid": ["3", "3:", "iii:16"]
   },
   "status": "active",
   "created": "2026-01-01",
-  "modified": "2026-01-01",
-  "schema_version": "v0.1.0-draft",
-  "record_version": 1
+  "modified": "2026-01-01"
 }
 ```
 
-Required: `id`, `key`, `type` (`CitationSystem`), `preferred_label`, `scope`, `normalization_version`, `locator_regex`, `valid_reference_types`, `examples.valid`, `examples.invalid`, plus administrative metadata.
+Required: `id`, `key`, `type` (`CitationSystem`), `preferred_label`, `normalization_version`, `locator_regex`, `examples.valid`, `examples.invalid`, plus administrative metadata.
 
+- `scope` SHOULD describe the corpus or tradition the system applies to; it disambiguates divergent versification or pagination traditions.
 - `locator_regex` MUST be an anchored ECMAScript regular expression.
 - `locator_regex` validates locator shape only; it does not by itself prove that a reference point exists in a work.
 - `normalization_version` MUST use semantic versioning.
@@ -169,36 +161,29 @@ Required: `id`, `key`, `type` (`CitationSystem`), `preferred_label`, `scope`, `n
 
 ## 8. CanonicalReference
 
-A `CanonicalReference` represents one atomized, **language-independent** reference point, identified by combining a work, a citation system, a normalized locator, a reference type, and a normalization version.
+A `CanonicalReference` represents one atomized, **language-independent** reference point, identified by combining a work, a citation system, a normalized locator, and a normalization version.
 
 ```json
 {
   "id": "https://textrefs.org/id/ref/{uuid}",
-  "uuid": "{uuid}",
   "type": "CanonicalReference",
-  "work": "https://textrefs.org/id/work/bible/john",
   "work_key": "bible:john",
-  "citation_system": "https://textrefs.org/id/system/bible-chapter-verse",
   "citation_system_key": "bible-chapter-verse",
   "locator": "3:16",
-  "reference_type": "verse",
   "normalization_version": "1.0.0",
-  "canonical_citation": "John 3:16",
   "status": "active",
   "created": "2026-01-01",
-  "modified": "2026-01-01",
-  "schema_version": "v0.1.0-draft",
-  "record_version": 1
+  "modified": "2026-01-01"
 }
 ```
 
-Required: `id`, `uuid`, `type` (`CanonicalReference`), `work`, `work_key`, `citation_system`, `citation_system_key`, `locator`, `reference_type`, `normalization_version`, `canonical_citation`, plus administrative metadata.
+Required: `id`, `type` (`CanonicalReference`), `work_key`, `citation_system_key`, `locator`, `normalization_version`, plus administrative metadata.
 
-- `work` MUST point to a known `Work`; `citation_system` MUST point to a known `CitationSystem`.
-- `locator` MUST match the system's `locator_regex`; `reference_type` MUST be in its `valid_reference_types`.
+- `work_key` MUST reference a known `Work`; `citation_system_key` MUST reference a known `CitationSystem`.
+- `locator` MUST match the system's `locator_regex`.
 - An accepted `CanonicalReference` MUST represent an attested reference point for the referenced `Work` under the referenced `CitationSystem`.
 - `normalization_version` is part of the reference's identity and is fixed when the reference is minted; it records the normalization in force at that time and need not equal the citation system's current `normalization_version`. Its correctness is verified by the deterministic identifier (see [§14](#14-validation-requirements) and [Identifier syntax](/standard/identifier-syntax/)).
-- The `uuid` MUST be generated deterministically per [Identifier syntax](/standard/identifier-syntax/).
+- The `id` MUST be generated deterministically per [Identifier syntax](/standard/identifier-syntax/); its UUID component is the deterministic seed output.
 
 ## 9. ResolverTarget
 
@@ -209,7 +194,6 @@ A `ResolverTarget` records a dereferenceable external location where a reference
   "id": "https://textrefs.org/id/target/{uuid}",
   "type": "ResolverTarget",
   "subject": "https://textrefs.org/id/ref/{uuid}",
-  "target_kind": "reader",
   "url": "https://www.biblegateway.com/passage/?search=John%203%3A16&version=KJV",
   "language": "en",
   "edition": "King James Version",
@@ -220,9 +204,7 @@ A `ResolverTarget` records a dereferenceable external location where a reference
   "last_checked": "2026-01-01",
   "status": "active",
   "created": "2026-01-01",
-  "modified": "2026-01-01",
-  "schema_version": "v0.1.0-draft",
-  "record_version": 1
+  "modified": "2026-01-01"
 }
 ```
 
@@ -249,28 +231,25 @@ A `MappingAssertion` records a curated equivalence claim. It connects a TextRefs
     "target_kind": "cts",
     "identifier": "urn:cts:greekLit:tlg0031.tlg004:3.16"
   },
-  "confidence": "medium",
   "source": "manual-curation",
   "status": "candidate",
   "created": "2026-01-01",
-  "modified": "2026-01-01",
-  "schema_version": "v0.1.0-draft",
-  "record_version": 1
+  "modified": "2026-01-01"
 }
 ```
 
-Required: `id`, `type` (`MappingAssertion`), `subject`, `relation`, `target`, `confidence`, `source`, plus administrative metadata.
+Required: `id`, `type` (`MappingAssertion`), `subject`, `relation`, `target`, `source`, plus administrative metadata.
 
 - `subject` MUST point to a TextRefs object.
 - `target` MUST identify the mapped object — either an external identifier (`{ target_kind, identifier }`) or a TextRefs URI (`{ target_kind: "textrefs", identifier }`).
 - `relation` MUST be one of the SKOS-compatible values `exactMatch` or `closeMatch`. Use `exactMatch` only when the mapped object identifies the same reference with sufficient precision; if there is any uncertainty about segmentation, edition, translation, scope, or locator alignment, use `closeMatch`.
-- `confidence` and `source` document the basis for the assertion.
+- `source` documents the basis for the assertion.
 
 ## 11. Identifier policy
 
 TextRefs identifiers MUST be persistent HTTP URIs, independent of external URLs, resolver targets, edition identifiers, provider-specific identifiers, and website structures.
 
-A `CanonicalReference` identifier MUST be generated deterministically. The identity seed MUST include at least `work_key`, `citation_system_key`, `locator`, `reference_type`, and `normalization_version`, in that order (see [Identifier syntax](/standard/identifier-syntax/)).
+A `CanonicalReference` identifier MUST be generated deterministically. The identity seed MUST include `work_key`, `citation_system_key`, `locator`, and `normalization_version`, in that order (see [Identifier syntax](/standard/identifier-syntax/)).
 
 An implementation MUST NOT silently change the identity-defining fields of an existing `CanonicalReference`. Because those fields seed the deterministic identifier, any change produces a new `CanonicalReference` with a new identifier. The prior reference MUST be retained as a tombstone (`status` `deprecated` or `withdrawn`, [§12](#12-administrative-metadata)) and SHOULD be linked to its replacement through an `exactMatch` `MappingAssertion` ([§10](#10-mappingassertion)).
 
@@ -282,13 +261,11 @@ Every registry object MUST include:
 {
   "status": "active",
   "created": "2026-01-01",
-  "modified": "2026-01-01",
-  "schema_version": "v0.1.0-draft",
-  "record_version": 1
+  "modified": "2026-01-01"
 }
 ```
 
-- `created` / `modified` MUST be ISO dates; `record_version` MUST be a positive integer.
+- `created` / `modified` MUST be ISO dates.
 - `status` MUST be one of:
   - `candidate` — proposed but not yet accepted as stable.
   - `active` — accepted and recommended for use.
@@ -320,9 +297,7 @@ This is the case that motivates separating identity from location. The Bible exi
     "type": "CanonicalReference",
     "work_key": "bible:john",
     "citation_system_key": "bible-chapter-verse",
-    "locator": "3:16",
-    "reference_type": "verse",
-    "canonical_citation": "John 3:16"
+    "locator": "3:16"
   }
 }
 ```
@@ -362,7 +337,7 @@ A conforming validator MUST check:
 2. object `type` values and TextRefs URI patterns;
 3. administrative metadata and `status` values;
 4. citation-system `locator_regex` syntax, and its valid/invalid examples;
-5. canonical-reference locator syntax and reference-type validity (the `normalization_version` is the value fixed at minting, verified by the deterministic identifier in item 7, not matched against the system's current version);
+5. canonical-reference locator syntax (the `normalization_version` is the value fixed at minting, verified by the deterministic identifier in item 7, not matched against the system's current version);
 6. canonical-reference semantic validity: accepted records must be registered, attested reference points for their `Work` and `CitationSystem`;
 7. deterministic-identifier correctness for canonical references;
 8. resolver-target `access` and `rights_status` values, and presence of `language` for language-specific targets;

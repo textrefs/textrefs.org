@@ -5,7 +5,7 @@ sidebar:
   order: 4
 ---
 
-Citation-system profiles constrain locator syntax through strict regular expressions and reference-type lists. A pull request that adds or changes a citation system MUST include the profile record, examples of valid locators, and examples of invalid locators.
+Citation-system profiles constrain locator syntax through strict regular expressions. A pull request that adds or changes a citation system MUST include the profile record, examples of valid locators, and examples of invalid locators.
 
 ## Required profile fields
 
@@ -13,12 +13,12 @@ Citation-system profiles constrain locator syntax through strict regular express
 - `key`: stable key used for deterministic UUID seeds.
 - `type`: `CitationSystem`.
 - `preferred_label`: human-readable label.
-- `scope`: corpus or tradition scope.
 - `normalization_version`: SemVer version.
 - `locator_regex`: anchored ECMAScript regular expression.
-- `valid_reference_types`: allowed types.
 - `examples.valid`: locator examples that MUST match.
 - `examples.invalid`: locator examples that MUST NOT match.
+
+`scope` (corpus or tradition) is OPTIONAL but SHOULD be provided to disambiguate divergent traditions.
 
 See [Specification §7](/standard/specification/#7-citationsystem) for the full normative field list.
 
@@ -56,4 +56,4 @@ Stephanus profile (Platonic corpus):
 
 ## Validation rule
 
-Every `CanonicalReference` MUST point to a known `CitationSystem`. Its `locator` MUST match that system's `locator_regex`, its `reference_type` MUST be listed in `valid_reference_types`, and its `normalization_version` MUST be the value fixed when the reference was minted (see [Specification §8](/standard/specification/#8-canonicalreference)); it need not equal the system's current `normalization_version`. Regex success is necessary but not sufficient: a usable TextRefs reference must resolve to a registered `CanonicalReference`.
+Every `CanonicalReference` MUST point to a known `CitationSystem`. Its `locator` MUST match that system's `locator_regex`, and its `normalization_version` MUST be the value fixed when the reference was minted (see [Specification §8](/standard/specification/#8-canonicalreference)); it need not equal the system's current `normalization_version`. Regex success is necessary but not sufficient: a usable TextRefs reference must resolve to a registered `CanonicalReference`.
