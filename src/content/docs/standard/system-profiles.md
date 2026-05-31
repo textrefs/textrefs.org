@@ -26,7 +26,7 @@ Profiles MUST follow the key and locator Unicode rules in [Identifier syntax](/s
 
 ## Seed profiles
 
-Bekker profile (Aristotelian corpus):
+Bekker profile (Aristotelian corpus). Implements **Bekker numbering**, the page-and-column-and-line citation introduced by August Immanuel Bekker's 1831 edition and used as the standard reference scheme for Aristotle:
 
 ```json
 {
@@ -40,7 +40,7 @@ Bekker profile (Aristotelian corpus):
 }
 ```
 
-Stephanus profile (Platonic corpus):
+Stephanus profile (Platonic corpus). Implements **Stephanus pagination**, the page-and-section citation from Henri Estienne's 1578 edition and used as the standard reference scheme for Plato:
 
 ```json
 {

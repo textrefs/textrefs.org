@@ -48,6 +48,8 @@ Deterministic identifiers depend on byte-identical seed strings. Before validati
 - Profiles for mixed-script locators MUST state the allowed scripts and enforce them through `locator_regex`.
 - Any change to locator normalization that can change a normalized locator MUST change the citation system's `normalization_version`.
 
+The seed bytes used for UUID v5 generation are ASCII-restricted (keys) and NFC-normalized UTF-8 (locators). This is independent of whether downstream TextRefs identifiers are expressed as URIs ([RFC 3986](https://www.rfc-editor.org/rfc/rfc3986)) or IRIs ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)).
+
 ## Example
 
 Input tuple:

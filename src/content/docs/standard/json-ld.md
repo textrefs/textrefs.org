@@ -5,7 +5,7 @@ sidebar:
   order: 5
 ---
 
-TextRefs records are plain JSON that becomes linked data through a published JSON-LD context. The context maps TextRefs terms onto a small TextRefs ontology namespace (`tr:`) plus established vocabularies — SKOS for mapping relations, Dublin Core Terms for dates and provenance, and schema.org for URLs and providers.
+TextRefs records are plain JSON that becomes linked data through a published JSON-LD context. The context maps TextRefs terms onto a small TextRefs ontology namespace (`tr:`) plus established vocabularies — SKOS for typed concepts and mapping relations, Dublin Core Terms for dates and provenance, schema.org for URLs and providers, and XSD for date typing.
 
 The `v1` context is served at:
 
@@ -15,12 +15,13 @@ https://textrefs.org/contexts/v1.jsonld
 
 ## Vocabularies
 
-| Prefix    | Namespace                              | Used for                                                   |
-| --------- | -------------------------------------- | ---------------------------------------------------------- |
-| `tr`      | `https://textrefs.org/ontology#`       | TextRefs object types and properties                       |
-| `skos`    | `http://www.w3.org/2004/02/skos/core#` | Mapping relations (`exactMatch`, `closeMatch`)             |
-| `dcterms` | `http://purl.org/dc/terms/`            | `created`, `modified`, `source`, `language`, `license_url` |
-| `schema`  | `https://schema.org/`                  | `url`, `provider`, `edition`, date types                   |
+| Prefix    | Namespace                              | Used for                                                                   |
+| --------- | -------------------------------------- | -------------------------------------------------------------------------- |
+| `tr`      | `https://textrefs.org/ontology#`       | TextRefs object types and properties                                       |
+| `skos`    | `http://www.w3.org/2004/02/skos/core#` | Typed concepts (`Concept`, `ConceptScheme`, `inScheme`), mapping relations |
+| `dcterms` | `http://purl.org/dc/terms/`            | `created`, `modified`, `source`, `language`, `license`                     |
+| `schema`  | `https://schema.org/`                  | `CreativeWork`, `url`, `provider`, `edition`                               |
+| `xsd`     | `http://www.w3.org/2001/XMLSchema#`    | `xsd:date` typing for `created` / `modified`                               |
 
 ## Mapping relations
 
@@ -40,35 +41,39 @@ Use `exactMatch` only when the mapped object identifies the same reference with 
     "skos": "http://www.w3.org/2004/02/skos/core#",
     "dcterms": "http://purl.org/dc/terms/",
     "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
     "id": "@id",
     "type": "@type",
-    "Work": "tr:Work",
-    "CitationSystem": "tr:CitationSystem",
-    "CanonicalReference": "tr:CanonicalReference",
+    "Work": ["tr:Work", "schema:CreativeWork", "skos:Concept"],
+    "CitationSystem": ["tr:CitationSystem", "skos:ConceptScheme"],
+    "CanonicalReference": ["tr:CanonicalReference", "skos:Concept"],
     "ResolverTarget": "tr:ResolverTarget",
     "MappingAssertion": "tr:MappingAssertion",
     "preferred_label": "skos:prefLabel",
+    "inScheme": { "@id": "skos:inScheme", "@type": "@id" },
     "work_key": "tr:workKey",
     "citation_system_key": "tr:citationSystemKey",
     "locator": "tr:locator",
     "normalization_version": "tr:normalizationVersion",
     "status": "tr:status",
     "source": "dcterms:source",
-    "created": { "@id": "dcterms:created", "@type": "schema:Date" },
-    "modified": { "@id": "dcterms:modified", "@type": "schema:Date" },
+    "created": { "@id": "dcterms:created", "@type": "xsd:date" },
+    "modified": { "@id": "dcterms:modified", "@type": "xsd:date" },
     "relation": "tr:relation",
     "exactMatch": { "@id": "skos:exactMatch", "@type": "@id" },
     "closeMatch": { "@id": "skos:closeMatch", "@type": "@id" },
     "target": "tr:target",
     "target_kind": "tr:targetKind",
-    "identifier": "tr:identifier",
+    "identifier": { "@id": "tr:identifier", "@type": "@id" },
     "provider": "schema:provider",
     "url": { "@id": "schema:url", "@type": "@id" },
     "language": "dcterms:language",
     "edition": "schema:bookEdition",
     "access": "tr:access",
-    "rights_status": "tr:rightsStatus",
+    "license": "dcterms:license",
     "license_url": { "@id": "dcterms:license", "@type": "@id" }
   }
 }
 ```
+
+The `license` term carries an SPDX identifier string; `license_url` (optional fallback) carries an IRI. `MappingAssertion.source` is a plain string in v0.1 — a structured **W3C PROV-O** mapping (`prov:wasDerivedFrom`) is reserved for a later context version. `rights_status` has been removed; see [Specification §9](/standard/specification/#9-resolvertarget).

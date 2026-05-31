@@ -39,7 +39,7 @@ Each `datapackage.json` MUST include:
 - `profile`: `data-package`.
 - `name`: `textrefs-registry`.
 - `version`: SemVer package version.
-- `licenses`: CC0-1.0 for registry data.
+- `licenses`: SPDX identifier `CC0-1.0` for registry data.
 - `resources`: one resource per JSONL file.
 - `schema`: field descriptors for each resource.
 

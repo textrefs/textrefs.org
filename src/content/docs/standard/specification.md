@@ -87,12 +87,12 @@ classDiagram
     }
     class ResolverTarget {
         +URI id
-        +URL url
+        +IRI url
         +string language
         +string edition
         +string provider
         +enum access
-        +enum rights_status
+        +string license
     }
     class MappingAssertion {
         +URI id
@@ -106,7 +106,7 @@ classDiagram
     MappingAssertion ..> "0..1" CanonicalReference : target (textrefs)
 ```
 
-A `MappingAssertion.target` may instead be an external identifier (CTS URN, Wikidata ID, DOI, ARK, …); there is no separate object type for external identifiers, so that case is expressed inline in the assertion rather than as a node above (see [§10](#10-mappingassertion)).
+A `MappingAssertion.target` may instead be an external identifier (CTS URN, Wikidata Q-ID, DOI, ARK, …); there is no separate object type for external identifiers, so that case is expressed inline in the assertion rather than as a node above (see [§10](#10-mappingassertion) and [Appendix B](#appendix-b-well-known-external-identifier-schemes-informative)).
 
 ## 6. Work
 
@@ -125,6 +125,8 @@ A `Work` represents an abstract textual work, independent of editions, translati
 ```
 
 Required: `id`, `key`, `type` (`Work`), `preferred_label`, `status`, plus administrative metadata ([§12](#12-administrative-metadata)). The `id` MUST be a persistent TextRefs HTTP URI; the `key` MUST be stable and suitable for deterministic identity generation.
+
+External identifiers for a `Work` (e.g. Wikidata Q-ID, DOI, VIAF) are recorded as `MappingAssertion`s whose `subject` is the `Work`. They are not fields on the `Work` itself.
 
 ## 7. CitationSystem
 
@@ -158,6 +160,7 @@ Required: `id`, `key`, `type` (`CitationSystem`), `preferred_label`, `normalizat
 - `examples.valid` MUST all match `locator_regex`; `examples.invalid` MUST all fail it.
 - Unicode handling for keys and locators MUST follow [Identifier syntax](/standard/identifier-syntax/#unicode-normalization).
 - A pull request that adds or changes a citation system MUST include the profile, valid examples, invalid examples, and a scope note. See [Citation-system profiles](/standard/system-profiles/).
+- In the JSON-LD view, a `CitationSystem` is a `skos:ConceptScheme` and its `CanonicalReference`s are `skos:inScheme` it.
 
 ## 8. CanonicalReference
 
@@ -199,7 +202,7 @@ A `ResolverTarget` records a dereferenceable external location where a reference
   "edition": "King James Version",
   "provider": "Bible Gateway",
   "access": "open",
-  "rights_status": "public_domain",
+  "license": "CC0-1.0",
   "license_url": null,
   "last_checked": "2026-01-01",
   "status": "active",
@@ -208,18 +211,19 @@ A `ResolverTarget` records a dereferenceable external location where a reference
 }
 ```
 
-Required: `id`, `type` (`ResolverTarget`), `subject`, `url`, `access`, `rights_status`, plus administrative metadata.
+Required: `id`, `type` (`ResolverTarget`), `subject`, `url`, `access`, plus administrative metadata.
 
 - `subject` MUST point to a TextRefs object (usually a `CanonicalReference`).
-- `url` MUST be a dereferenceable external URL.
-- `language` MUST be present when the target is language-specific (e.g. a translation), as a BCP 47 / ISO 639 code. `edition` SHOULD name the specific edition or version when known.
+- `url` MUST be a dereferenceable external IRI ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)).
+- `language` MUST be present when the target is language-specific (e.g. a translation), as a [BCP 47](https://www.rfc-editor.org/info/bcp47) language tag ([RFC 5646](https://www.rfc-editor.org/rfc/rfc5646)). Tags MUST include an [ISO 15924](https://www.unicode.org/iso15924/) script subtag when the target uses a non-default script for the language (e.g. `grc-Grek`, `hbo-Hebr`, `grc-Latn`). `edition` SHOULD name the specific edition or version when known.
 - `access` MUST be one of `open`, `paywalled`, `restricted`, `unknown`.
-- `rights_status` MUST be one of `public_domain`, `open_license`, `unknown`, `not_applicable`. Values implying permission to host copyrighted full text (e.g. `copyrighted`, `all_rights_reserved`) are forbidden.
+- `license` SHOULD be a current [SPDX license identifier](https://spdx.org/licenses/) (e.g. `CC0-1.0`, `CC-BY-4.0`) when the licence of the target resource is known. For licences not in the SPDX list, omit `license` and use the optional `license_url` to point at the licence text.
+- Values implying permission to host copyrighted full text (e.g. a `license` of `proprietary` accompanied by hosted text) are forbidden; the no-text rule in [§2](#2-conformance) governs.
 - When a rights or trust dispute is accepted for review, the target SHOULD be set to status `blocked` and retained as a visible tombstone.
 
 ## 10. MappingAssertion
 
-A `MappingAssertion` records a curated equivalence claim. It connects a TextRefs object either to an **external identifier** (CTS URN, Wikidata ID, DOI, ARK, …) or to **another TextRefs reference** (for example, equating references across two divergent versification systems). There is no separate object type for external identifiers; they are always expressed as mapping targets.
+A `MappingAssertion` records a curated equivalence claim. It connects a TextRefs object either to an **external identifier** (CTS URN, Wikidata Q-ID, DOI, ARK, …) or to **another TextRefs reference** (for example, equating references across two divergent versification systems). There is no separate object type for external identifiers; they are always expressed as mapping targets. The subject MAY be any TextRefs object — most commonly a `CanonicalReference`, but also a `Work` (e.g. to map a `Work` to its Wikidata Q-ID) or a `CitationSystem`.
 
 ```json
 {
@@ -241,13 +245,14 @@ A `MappingAssertion` records a curated equivalence claim. It connects a TextRefs
 Required: `id`, `type` (`MappingAssertion`), `subject`, `relation`, `target`, `source`, plus administrative metadata.
 
 - `subject` MUST point to a TextRefs object.
-- `target` MUST identify the mapped object — either an external identifier (`{ target_kind, identifier }`) or a TextRefs URI (`{ target_kind: "textrefs", identifier }`).
+- `target.identifier` MUST be an IRI ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)) that identifies a **textual resource**: a work, edition, manuscript, passage, citation system, citation point, or another TextRefs object. Identifiers of agents, organisations, instruments, or datasets that are not themselves textual resources (e.g. ROR, ORCID, ISNI) are out of scope.
+- `target.target_kind` is OPTIONAL and is a human-readable scheme hint (e.g. `"cts"`, `"doi"`, `"wikidata"`, `"textrefs"`). Validators MUST NOT key behaviour off it. The presence or absence of `target_kind` carries no normative weight; the IRI in `identifier` is authoritative. See [Appendix B](#appendix-b-well-known-external-identifier-schemes-informative) for non-normative examples.
 - `relation` MUST be one of the SKOS-compatible values `exactMatch` or `closeMatch`. Use `exactMatch` only when the mapped object identifies the same reference with sufficient precision; if there is any uncertainty about segmentation, edition, translation, scope, or locator alignment, use `closeMatch`.
-- `source` documents the basis for the assertion.
+- `source` documents the basis for the assertion. A structured [W3C PROV-O](https://www.w3.org/TR/prov-o/) mapping is reserved for a future version.
 
 ## 11. Identifier policy
 
-TextRefs identifiers MUST be persistent HTTP URIs, independent of external URLs, resolver targets, edition identifiers, provider-specific identifiers, and website structures.
+TextRefs identifiers MUST be persistent HTTP URIs ([RFC 3986](https://www.rfc-editor.org/rfc/rfc3986)) or IRIs ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)), independent of external URLs, resolver targets, edition identifiers, provider-specific identifiers, and website structures. The deterministic UUID seed remains ASCII-only; see [Identifier syntax](/standard/identifier-syntax/).
 
 A `CanonicalReference` identifier MUST be generated deterministically. The identity seed MUST include `work_key`, `citation_system_key`, `locator`, and `normalization_version`, in that order (see [Identifier syntax](/standard/identifier-syntax/)).
 
@@ -265,7 +270,7 @@ Every registry object MUST include:
 }
 ```
 
-- `created` / `modified` MUST be ISO dates.
+- `created` and `modified` MUST be [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) calendar dates in `YYYY-MM-DD` form.
 - `status` MUST be one of:
   - `candidate` — proposed but not yet accepted as stable.
   - `active` — accepted and recommended for use.
@@ -313,7 +318,7 @@ This is the case that motivates separating identity from location. The Bible exi
     "edition": "King James Version",
     "provider": "Bible Gateway",
     "access": "open",
-    "rights_status": "public_domain"
+    "license": "CC0-1.0"
   },
   {
     "type": "ResolverTarget",
@@ -321,8 +326,7 @@ This is the case that motivates separating identity from location. The Bible exi
     "language": "de",
     "edition": "Lutherbibel 1984",
     "provider": "die-bibel.de",
-    "access": "open",
-    "rights_status": "unknown"
+    "access": "open"
   }
 ]
 ```
@@ -340,15 +344,40 @@ A conforming validator MUST check:
 5. canonical-reference locator syntax (the `normalization_version` is the value fixed at minting, verified by the deterministic identifier in item 7, not matched against the system's current version);
 6. canonical-reference semantic validity: accepted records must be registered, attested reference points for their `Work` and `CitationSystem`;
 7. deterministic-identifier correctness for canonical references;
-8. resolver-target `access` and `rights_status` values, and presence of `language` for language-specific targets;
+8. resolver-target `access` values, BCP 47 syntax of `language` and its presence for language-specific targets, and SPDX syntax of `license` when present;
 9. mapping `relation` values;
 10. absence of forbidden full-text/apparatus/commentary content.
 
 A validator SHOULD report errors in a machine-readable format, and SHOULD distinguish syntactically valid, registered, mapped, and resolvable references. An input locator that matches `locator_regex` but has no corresponding registered `CanonicalReference` is syntactically valid but not a valid TextRefs reference.
 
+A normative [JSON Schema 2020-12](https://json-schema.org/specification-links#2020-12) document, generated from the canonical Zod schemas, is published at `https://textrefs.org/schemas/v1/textrefs.schema.json`. The Zod schemas are the implementation source of truth; the JSON Schema is the published machine-readable contract.
+
 ## 15. Extensions
 
 Implementations MAY define extensions, but extensions MUST NOT change the meaning of standard fields and MUST NOT make non-standard fields required for conformance. Content-related extensions MUST be defined separately from this standard.
+
+## 16. Normative references
+
+This standard relies on the following external standards. Each is normative wherever it is cited above.
+
+| Topic                                | Standard                                                                                             |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Normative keywords                   | [BCP 14](https://www.rfc-editor.org/info/bcp14) / RFC 2119 / RFC 8174                                |
+| Language tags                        | [BCP 47](https://www.rfc-editor.org/info/bcp47) / [RFC 5646](https://www.rfc-editor.org/rfc/rfc5646) |
+| Script subtags                       | [ISO 15924](https://www.unicode.org/iso15924/)                                                       |
+| Dates                                | [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html)                                   |
+| URIs                                 | [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986)                                                   |
+| IRIs                                 | [RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)                                                   |
+| UUIDs                                | [RFC 4122](https://www.rfc-editor.org/rfc/rfc4122)                                                   |
+| Unicode normalization (NFC)          | [Unicode Standard Annex #15](https://www.unicode.org/reports/tr15/)                                  |
+| Regular expression dialect           | [ECMA-262](https://262.ecma-international.org/) §22.2                                                |
+| Versioning                           | [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html)                                                  |
+| Linked-data serialization            | [JSON-LD 1.1](https://www.w3.org/TR/json-ld11/)                                                      |
+| Concepts and mapping relations       | [SKOS](https://www.w3.org/TR/skos-reference/)                                                        |
+| Dates, provenance, language, licence | [Dublin Core Terms](https://www.dublincore.org/specifications/dublin-core/dcmi-terms/)               |
+| URL, provider, edition, work type    | [schema.org](https://schema.org/)                                                                    |
+| Licence identifiers                  | [SPDX License List](https://spdx.org/licenses/)                                                      |
+| Machine-readable schema              | [JSON Schema 2020-12](https://json-schema.org/specification-links#2020-12)                           |
 
 ## Appendix A. Conformance boundary
 
@@ -358,3 +387,21 @@ Outside the current scope:
 
 - full-text hosting, edition/manuscript modelling, translation hosting, textual apparatus, commentary, thematic annotation;
 - citation-style rendering, recommendation systems, legal rights clearance for external content.
+
+## Appendix B. Well-known external identifier schemes (informative)
+
+The following identifier schemes commonly satisfy [§10](#10-mappingassertion)'s "textual resource" rule and are useful values for `MappingAssertion.target.identifier`. This table is non-normative and non-exhaustive; presence here implies neither endorsement nor commitment to support.
+
+| Scheme   | `target_kind` hint | Example identifier                                |
+| -------- | ------------------ | ------------------------------------------------- |
+| TextRefs | `textrefs`         | `https://textrefs.org/id/ref/988e0b39-…`          |
+| CTS URN  | `cts`              | `urn:cts:greekLit:tlg0031.tlg004:3.16`            |
+| DTS      | `dts`              | `https://dts.example/api/collection?id=urn:cts:…` |
+| DOI      | `doi`              | `https://doi.org/10.1093/oseo/instance.00266836`  |
+| ARK      | `ark`              | `https://n2t.net/ark:/12148/btv1b8451636f`        |
+| Handle   | `handle`           | `https://hdl.handle.net/2027/uc1.b000123456`      |
+| PURL     | `purl`             | `https://purl.org/dc/terms/`                      |
+| URN:NBN  | `urn-nbn`          | `urn:nbn:de:bvb:12-bsb00012345-2`                 |
+| Wikidata | `wikidata`         | `https://www.wikidata.org/entity/Q42`             |
+
+Identifiers of agents, organisations, instruments, or non-textual datasets (e.g. ROR, ORCID, ISNI) are explicitly out of scope and MUST NOT appear in `MappingAssertion.target`.
