@@ -15,4 +15,4 @@ These pages contain the founding documents:
 - [Expense and compensation regulation](/association/expenses/)
 - [Open infrastructure principles (POSI)](/association/posi/) — adherence to the Principles of Open Scholarly Infrastructure
 
-The English versions are convenience translations. The legally binding text is the [German original](/de/association/).
+For the mission, statutes, governance regulation, and expense regulation, the English versions are convenience translations. The legally binding texts are the [German originals](/de/association/).

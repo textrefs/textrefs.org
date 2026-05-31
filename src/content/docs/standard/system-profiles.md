@@ -5,7 +5,7 @@ sidebar:
   order: 4
 ---
 
-Citation-system profiles constrain locator syntax through strict regular expressions. A pull request that adds or changes a citation system MUST include the profile record, examples of valid locators, and examples of invalid locators.
+Citation-system profiles constrain locator syntax through regular expressions and, where needed, additional documented validation rules. A pull request that adds or changes a citation system MUST include the profile record, examples of valid locators, and examples of invalid locators.
 
 ## Required profile fields
 
@@ -14,13 +14,13 @@ Citation-system profiles constrain locator syntax through strict regular express
 - `type`: `CitationSystem`.
 - `preferred_label`: human-readable label.
 - `normalization_version`: SemVer version.
-- `locator_regex`: anchored ECMAScript regular expression.
+- `locator_regex`: ECMAScript regular expression for machine-checkable locator pre-validation.
 - `examples.valid`: locator examples that MUST match.
 - `examples.invalid`: locator examples that MUST NOT match.
 
 See [Specification §7](/standard/specification/#7-citationsystem) for the full normative field list.
 
-Profiles MUST follow the flat key and locator Unicode rules in [Identifier syntax](/standard/identifier-syntax/). A profile MAY add stricter locator rules for case, digits, punctuation, whitespace, or allowed scripts, but those rules MUST be reflected in its examples and `locator_regex`. The machine-actionable contract is the flat key, `normalization_version`, `locator_regex`, and examples.
+Profiles MUST follow the flat key and locator Unicode rules in [Identifier syntax](/standard/identifier-syntax/). A profile MAY add stricter locator rules for case, digits, punctuation, whitespace, allowed scripts, or non-regex-checkable constraints. Regex-checkable constraints MUST be reflected in examples and `locator_regex`; other constraints MUST be documented in the profile. The machine-actionable contract is the flat key, `normalization_version`, `locator_regex`, and examples.
 
 ## Seed profiles
 
@@ -54,4 +54,4 @@ Stephanus profile (Platonic corpus). Implements **Stephanus pagination**, the pa
 
 ## Validation rule
 
-Every `CanonicalReference` MUST point to a known `CitationSystem`. Its `locator` MUST match that system's `locator_regex`, and its `normalization_version` MUST be the value fixed when the reference was minted (see [Specification §8](/standard/specification/#8-canonicalreference)); it need not equal the system's current `normalization_version`. Regex success is necessary but not sufficient: a usable TextRefs reference must resolve to a registered `CanonicalReference`.
+Every `CanonicalReference` MUST point to a known `CitationSystem`. Its `locator` MUST match that system's `locator_regex`, and its `normalization_version` MUST be the value fixed when the reference was minted (see [Specification §8](/standard/specification/#8-canonicalreference)); it need not equal the system's current `normalization_version`. Regex success is necessary but not sufficient: a usable TextRefs reference must resolve to a registered `CanonicalReference` and satisfy any additional profile validation rules.

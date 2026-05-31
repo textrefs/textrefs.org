@@ -118,7 +118,7 @@ An expert review is required for:
 - contested mapping statements;
 - conflicting external identifiers;
 - changes with significant expert or reputational impact;
-- status changes to `verified`, `disputed`, `withdrawn`, `merged`, or `blocked`, where these are subject-matter decisions.
+- status changes to `active`, `deprecated`, `withdrawn`, or `blocked`, where these are subject-matter decisions.
 
 Prerequisites:
 
@@ -143,27 +143,27 @@ The Board decides or confirms:
 
 ### 5.1 General record status
 
+- **candidate:** proposed record, not yet fully reviewed;
 - **active:** valid and recommended;
-- **provisional:** preliminary, not yet fully reviewed;
 - **deprecated:** no longer recommended, but retained for historical reasons;
 - **withdrawn:** withdrawn, landing page retained;
-- **merged:** merged into another record;
 - **blocked:** blocked on legal, policy, or serious quality grounds.
 
 ### 5.2 Mapping status
 
 - **candidate:** proposed mapping;
-- **verified:** reviewed mapping;
-- **disputed:** contested mapping;
+- **active:** reviewed and recommended mapping;
 - **deprecated:** mapping no longer recommended;
 - **withdrawn:** withdrawn mapping;
 - **blocked:** blocked mapping.
+
+Contested mappings remain in the appropriate schema status and carry the documented rationale, review history, or replacement relationship in accompanying metadata or decision records.
 
 ### 5.3 Tombstone principle
 
 Published IDs are, as a matter of principle, not hard-deleted.
 
-In the event of withdrawal, blocking, merging, or deprecation, a landing page is retained with:
+In the event of withdrawal, blocking, or deprecation, a landing page is retained with:
 
 - status;
 - date of the status change;

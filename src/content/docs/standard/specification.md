@@ -158,8 +158,10 @@ A `CitationSystem.key` is a single flat registry key for a locator notation and 
 
 Required: `id`, `key`, `type` (`CitationSystem`), `preferred_label`, `normalization_version`, `locator_regex`, `examples.valid`, `examples.invalid`, plus administrative metadata. The `id` MUST be a persistent TextRefs HTTP URI of the form `https://textrefs.org/id/system/{key}`, where `{key}` is one flat key and occupies exactly one URI path segment.
 
-- `locator_regex` MUST be an anchored ECMAScript regular expression.
-- `locator_regex` validates locator shape only; it does not by itself prove that a reference point exists in a work.
+- `locator_regex` MUST be a valid ECMAScript regular expression.
+- `locator_regex` provides machine-checkable pre-validation for locator shape only; it need not fully describe citation systems whose valid references cannot be expressed completely as a regular language.
+- Citation systems SHOULD use an anchored `locator_regex` when the pattern is intended to describe the full locator string.
+- Regex success does not by itself prove that a reference point exists in a work.
 - `normalization_version` MUST use semantic versioning.
 - `examples.valid` MUST all match `locator_regex`; `examples.invalid` MUST all fail it.
 - Unicode handling for keys and locators MUST follow [Identifier syntax](/standard/identifier-syntax/#unicode-normalization).
@@ -188,7 +190,7 @@ Required: `id`, `type` (`CanonicalReference`), `work_key`, `citation_system_key`
 
 - `work_key` MUST reference a known `Work`; `citation_system_key` MUST reference a known `CitationSystem`.
 - `work_key` and `citation_system_key` MUST be treated as opaque flat keys. Implementations MUST NOT infer author, corpus, title, hierarchy, or resolver behaviour by splitting either key.
-- `locator` MUST match the system's `locator_regex`.
+- `locator` MUST match the system's `locator_regex`; additional profile-specific validation MAY be required for systems that are not fully regex-checkable.
 - An accepted `CanonicalReference` MUST represent an attested reference point for the referenced `Work` under the referenced `CitationSystem`.
 - `normalization_version` is part of the reference's identity and is fixed when the reference is minted; it records the normalization in force at that time and need not equal the citation system's current `normalization_version`. Its correctness is verified by the deterministic identifier (see [§14](#14-validation-requirements) and [Identifier syntax](/standard/identifier-syntax/)).
 - The `id` MUST be generated deterministically per [Identifier syntax](/standard/identifier-syntax/); its UUID component is the deterministic seed output.

@@ -118,7 +118,7 @@ Ein fachlicher Review ist erforderlich für:
 - strittige Mapping-Aussagen;
 - widersprüchliche externe Identifikatoren;
 - Änderungen mit erheblicher fachlicher oder reputationsbezogener Wirkung;
-- Statusänderungen zu `verified`, `disputed`, `withdrawn`, `merged` oder `blocked`, soweit fachlich begründet.
+- Statusänderungen zu `active`, `deprecated`, `withdrawn` oder `blocked`, soweit fachlich begründet.
 
 Voraussetzungen:
 
@@ -143,27 +143,27 @@ Der Vorstand entscheidet oder bestätigt:
 
 ### 5.1 Allgemeine Datensatzstatus
 
+- **candidate:** vorgeschlagener Datensatz, noch nicht vollständig geprüft;
 - **active:** gültig und empfohlen;
-- **provisional:** vorläufig, noch nicht vollständig geprüft;
 - **deprecated:** nicht mehr empfohlen, aber aus historischen Gründen erhalten;
 - **withdrawn:** zurückgezogen, Landing Page bleibt erhalten;
-- **merged:** in einen anderen Datensatz überführt;
 - **blocked:** aus rechtlichen, policybezogenen oder schwerwiegenden Qualitätsgründen gesperrt.
 
 ### 5.2 Mapping-Status
 
 - **candidate:** vorgeschlagene Zuordnung;
-- **verified:** geprüfte Zuordnung;
-- **disputed:** strittige Zuordnung;
+- **active:** geprüfte und empfohlene Zuordnung;
 - **deprecated:** nicht mehr empfohlene Zuordnung;
 - **withdrawn:** zurückgezogene Zuordnung;
 - **blocked:** gesperrte Zuordnung.
+
+Strittige Mappings behalten den passenden Schema-Status und führen Begründung, Review-Historie oder Ersatzbeziehung in begleitenden Metadaten oder Entscheidungsdokumenten.
 
 ### 5.3 Tombstone-Prinzip
 
 Publizierte IDs werden grundsätzlich nicht hart gelöscht.
 
-Bei Rückzug, Sperrung, Zusammenführung oder Deprecation bleibt eine Landing Page erhalten mit:
+Bei Rückzug, Sperrung oder Deprecation bleibt eine Landing Page erhalten mit:
 
 - Status;
 - Datum der Statusänderung;
