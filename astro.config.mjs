@@ -6,8 +6,13 @@ import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
 
+const siteDomain = process.env.SITE_DOMAIN ?? 'textrefs.org';
+const site = siteDomain.startsWith('http')
+	? siteDomain
+	: `https://${siteDomain}`;
+
 export default defineConfig({
-	site: 'https://textrefs.org',
+	site,
 	integrations: [
 		mermaid({ autoTheme: true }),
 		starlight({

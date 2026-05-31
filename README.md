@@ -59,6 +59,8 @@ TextRefs is a non-profit infrastructure project that builds, maintains, and publ
 
 Prerequisites: Node 20+ and npm.
 
+Configuration lives in `.env`; use [`.env.example`](./.env.example) as the starting point. `SITE_DOMAIN` controls Astro's canonical `site` URL and defaults to `textrefs.org` when unset.
+
 | Command                 | Action                                                                         |
 | :---------------------- | :----------------------------------------------------------------------------- |
 | `npm install`           | Install dependencies; wires git hooks (husky + lint-staged)                    |
@@ -75,6 +77,12 @@ Prerequisites: Node 20+ and npm.
 Contributors edit the compact YAML under `data/source/`; the compiler expands URI templates into the flat published records under `data/{works,systems,refs,mappings}/`. See [`docs/get-started/authoring`](https://textrefs.org/get-started/authoring/) for the format.
 
 See [`AGENTS.md`](./AGENTS.md) for the full layout and conventions.
+
+## Deployment
+
+GitHub Pages deployment is handled by [`.github/workflows/pages.yml`](./.github/workflows/pages.yml). On pushes to `main`, the workflow installs dependencies, builds the Astro site, writes `dist/CNAME` from `SITE_DOMAIN`, uploads the `dist/` artifact, and deploys it with the official GitHub Pages actions.
+
+Set the repository variable `SITE_DOMAIN` under GitHub Actions variables to the custom domain, for example `textrefs.org`. If the variable is absent, CI falls back to `textrefs.org`. The same variable is also read by `astro.config.mjs` to set Astro's canonical `site` value.
 
 ## Citation
 
