@@ -41,6 +41,89 @@ type ReferenceSource =
 	| string
 	| { locator: string; extra_resolvers?: ResolverEntry[] };
 
+// Compact shorthand for large canonical reference sets. Each entry is one
+// named expander; the compiler concatenates the expansion of every entry with
+// the explicit `references:` list and de-duplicates. See docs/get-started/authoring.
+type ReferenceRange =
+	| { kind: 'integer'; from: number; to: number }
+	| { kind: 'book_line'; counts: number[] }
+	| { kind: 'book_chapter'; counts: number[] }
+	| {
+			kind: 'book_chapter_verse';
+			book: string;
+			counts: number[];
+	  }
+	| {
+			kind: 'bekker';
+			page_ranges: Array<[number, number]>;
+			lines_per_column: number;
+	  }
+	| {
+			kind: 'stephanus';
+			page_range: [number, number];
+			sections?: string[];
+	  };
+
+function expandRange(range: ReferenceRange): string[] {
+	switch (range.kind) {
+		case 'integer': {
+			const out: string[] = [];
+			for (let i = range.from; i <= range.to; i++) out.push(String(i));
+			return out;
+		}
+		case 'book_line': {
+			const out: string[] = [];
+			for (let b = 1; b <= range.counts.length; b++) {
+				const lines = range.counts[b - 1];
+				for (let l = 1; l <= lines; l++) out.push(`${b}.${l}`);
+			}
+			return out;
+		}
+		case 'book_chapter': {
+			const out: string[] = [];
+			for (let b = 1; b <= range.counts.length; b++) {
+				const chapters = range.counts[b - 1];
+				for (let c = 1; c <= chapters; c++) out.push(`${b}.${c}`);
+			}
+			return out;
+		}
+		case 'book_chapter_verse': {
+			const out: string[] = [];
+			for (let ch = 1; ch <= range.counts.length; ch++) {
+				const verses = range.counts[ch - 1];
+				for (let v = 1; v <= verses; v++) out.push(`${range.book}.${ch}.${v}`);
+			}
+			return out;
+		}
+		case 'bekker': {
+			const out: string[] = [];
+			const seen = new Set<string>();
+			for (const [from, to] of range.page_ranges) {
+				for (let p = from; p <= to; p++) {
+					for (const col of ['a', 'b']) {
+						for (let l = 1; l <= range.lines_per_column; l++) {
+							const loc = `${p}${col}${l}`;
+							if (!seen.has(loc)) {
+								seen.add(loc);
+								out.push(loc);
+							}
+						}
+					}
+				}
+			}
+			return out;
+		}
+		case 'stephanus': {
+			const sections = range.sections ?? ['a', 'b', 'c', 'd', 'e'];
+			const out: string[] = [];
+			for (let p = range.page_range[0]; p <= range.page_range[1]; p++) {
+				for (const s of sections) out.push(`${p}${s}`);
+			}
+			return out;
+		}
+	}
+}
+
 type MappingSource = {
 	relation: 'exactMatch' | 'closeMatch';
 	target_kind?: string;
@@ -62,7 +145,8 @@ type WorkSource = {
 	citation_system: string;
 	mappings?: MappingSource[];
 	resolvers?: ResolverEntry[];
-	references: ReferenceSource[];
+	references?: ReferenceSource[];
+	references_range?: ReferenceRange[];
 };
 
 type SystemSource = {
@@ -306,7 +390,20 @@ for (const file of workFiles) {
 		aliases[mapping.identifier] = workIri;
 	}
 
-	for (const refSrc of src.references) {
+	const explicitRefs: ReferenceSource[] = src.references ?? [];
+	const expandedRefs: ReferenceSource[] = (src.references_range ?? []).flatMap(
+		expandRange,
+	);
+	const seenLocators = new Set<string>();
+	const allRefs: ReferenceSource[] = [];
+	for (const r of [...expandedRefs, ...explicitRefs]) {
+		const loc = typeof r === 'string' ? r : r.locator;
+		if (seenLocators.has(loc)) continue;
+		seenLocators.add(loc);
+		allRefs.push(r);
+	}
+
+	for (const refSrc of allRefs) {
 		const locator = typeof refSrc === 'string' ? refSrc : refSrc.locator;
 		const extraResolvers =
 			typeof refSrc === 'string' ? [] : (refSrc.extra_resolvers ?? []);
