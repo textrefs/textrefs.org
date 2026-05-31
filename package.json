@@ -10,6 +10,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
+    "compile:data": "tsx scripts/compile.ts",
+    "build:data": "npm run compile:data && npm run validate:data",
     "validate:data": "tsx scripts/validate-data.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -34,6 +36,8 @@
     "astro-mermaid": "^2.0.1",
     "mermaid": "^11.15.0",
     "sharp": "^0.34.5",
+    "uuid": "^14.0.0",
+    "yaml": "^2.9.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -15,11 +15,14 @@ function walk(dir: string): string[] {
 	});
 }
 
+const NON_REGISTRY_FILES = new Set(['aliases.json']);
+
 const files = walk(root).filter((f) => f.endsWith('.json'));
 let failed = 0;
 
 for (const file of files) {
 	const rel = relative(root, file);
+	if (NON_REGISTRY_FILES.has(rel)) continue;
 	let parsed: unknown;
 	try {
 		parsed = JSON.parse(readFileSync(file, 'utf8'));

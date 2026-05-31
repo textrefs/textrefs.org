@@ -1,0 +1,90 @@
+work:
+  key: dhammapada
+  preferred_label: Dhammapada
+  status: candidate
+  created: 2026-05-31
+  modified: 2026-05-31
+
+citation_system: dhammapada-chapter-verse
+
+mappings:
+  - relation: exactMatch
+    target_kind: wikidata
+    identifier: 'https://www.wikidata.org/entity/Q220114'
+    source: manual-curation
+    status: candidate
+    created: 2026-05-31
+    modified: 2026-05-31
+
+# URL templates use RFC 6570 Level 1 expansion with variables drawn from
+# the citation system's named capture groups (`chapter`, `verse`) plus
+# compiler-derived zero-padded variants (`chapter02`, `chapter03`, `chapter04`, …).
+# Providers whose URLs don't fit a template use a per-chapter URL map (`url_by.chapter`).
+resolvers:
+  - provider: Project Gutenberg
+    edition: 'Müller (1881), Gutenberg ebook #2017'
+    language: en
+    access: open
+    license_url: 'https://www.gutenberg.org/policy/license.html'
+    # Single-page text; per-chapter anchors `#link2HCH0001` … `#link2HCH0026`.
+    url: 'https://www.gutenberg.org/files/2017/2017-h/2017-h.htm#link2HCH{chapter04}'
+
+  - provider: Wikisource
+    edition: 'Müller (1881)'
+    language: en
+    access: open
+    license: CC-BY-SA-4.0
+    # Single page with chapter anchors generated from heading text.
+    url_by:
+      chapter:
+        1: 'https://en.wikisource.org/wiki/Dhammapada_(Muller)#Chapter_I:_The_Twin-Verses'
+        2: 'https://en.wikisource.org/wiki/Dhammapada_(Muller)#Chapter_II:_On_Earnestness'
+        3: 'https://en.wikisource.org/wiki/Dhammapada_(Muller)#Chapter_III:_Thought'
+        4: 'https://en.wikisource.org/wiki/Dhammapada_(Muller)#Chapter_IV:_Flowers'
+        5: 'https://en.wikisource.org/wiki/Dhammapada_(Muller)#Chapter_V:_The_Fool'
+        # Chapters 6–26 omitted from MVP; add as references are registered.
+
+  - provider: ancient-buddhist-texts.net
+    edition: 'Anandajoti Bhikkhu translation'
+    language: en
+    access: open
+    # Separate file per chapter, named `{NN}-{Topic}.htm`.
+    url_by:
+      chapter:
+        1: 'https://ancient-buddhist-texts.net/Texts-and-Translations/Dhammapada/01-Pairs.htm'
+        2: 'https://ancient-buddhist-texts.net/Texts-and-Translations/Dhammapada/02-Heedfulness.htm'
+        3: 'https://ancient-buddhist-texts.net/Texts-and-Translations/Dhammapada/03-Mind.htm'
+        4: 'https://ancient-buddhist-texts.net/Texts-and-Translations/Dhammapada/04-Flowers.htm'
+        5: 'https://ancient-buddhist-texts.net/Texts-and-Translations/Dhammapada/05-Fools.htm'
+        # Chapters 6–26 omitted from MVP; add as references are registered.
+
+  - provider: palikanon.com
+    edition: 'Nyanatiloka (Hg.) Übersetzung'
+    language: de
+    access: open
+    # Single page; per-verse anchors `#dhp_{verse}` cover most verses.
+    url: 'https://palikanon.com/khuddaka/dhp/dhp.html#dhp_{verse}'
+
+# References. For the MVP we register chapter 1 (verses 1–20) to demonstrate
+# the four-provider pipeline end-to-end. Add remaining chapters incrementally.
+references:
+  - '1.1'
+  - '1.2'
+  - '1.3'
+  - '1.4'
+  - '1.5'
+  - '1.6'
+  - '1.7'
+  - '1.8'
+  - '1.9'
+  - '1.10'
+  - '1.11'
+  - '1.12'
+  - '1.13'
+  - '1.14'
+  - '1.15'
+  - '1.16'
+  - '1.17'
+  - '1.18'
+  - '1.19'
+  - '1.20'

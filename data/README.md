@@ -4,28 +4,30 @@ Future home of the standalone `textrefs/data` repo. Self-contained so a later `g
 
 ## Layout
 
-One JSON file per registry record, grouped by type:
-
 ```
 data/
-├── works/{key}.json
-├── systems/{key}.json
-├── refs/{work_key}__{slug}.json
-├── targets/{uuid}.json
-└── mappings/{uuid}.json
+├── source/                       # ✍️ Contributors edit these YAML files.
+│   ├── {work_key}.yaml           #     One file per Work (references, resolvers, mappings)
+│   └── systems/{system_key}.yaml #     One file per CitationSystem
+│
+├── works/{key}.json              # ⚙️  Compiler output. Do not edit by hand.
+├── systems/{key}.json            # ⚙️
+├── refs/{work_key}__{slug}.json  # ⚙️  Each ref carries an embedded resolver_targets array.
+├── mappings/{uuid}.json          # ⚙️  Subject is always a Work IRI.
+└── aliases.json                  # ⚙️  Alias → canonical target index.
 ```
 
-The filename is convenience only; identity lives in the `id` field. UUIDs in `refs/` are deterministic per [Identifier syntax](../src/content/docs/standard/identifier-syntax.md); UUIDs in `targets/` and `mappings/` are random v4.
+Contributors edit only the YAML under `data/source/`. Everything else is compiler output, committed to git so diffs are reviewable but never hand-authored. See [`docs/get-started/authoring`](../src/content/docs/get-started/authoring.md) for the YAML format.
 
-## Validation
-
-Records are validated by the Zod schemas under [`../standard/schema/`](../standard/schema/):
+## Build pipeline
 
 ```sh
-npm run validate:data
+npm run compile:data    # YAML → flat JSON records under data/
+npm run validate:data   # validate every record against the Zod schemas
+npm run build:data      # both, in sequence (the contributor entry point)
 ```
 
-The script dispatches on each record's `type` field. Invalid records fail CI.
+The compiler is deterministic: re-running `compile:data` against unchanged source produces zero diff. UUIDs for `CanonicalReference` and `MappingAssertion` are derived from content per [Identifier syntax](../src/content/docs/standard/identifier-syntax.md).
 
 ## Out of scope
 
