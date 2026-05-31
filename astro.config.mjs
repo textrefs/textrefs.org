@@ -72,6 +72,11 @@ export default defineConfig({
 					items: [{ autogenerate: { directory: 'standard' } }],
 				},
 				{
+					label: 'Registry',
+					translations: { de: 'Verzeichnis' },
+					items: [{ label: 'Browse', link: '/reg/' }],
+				},
+				{
 					label: 'Community',
 					items: [{ autogenerate: { directory: 'community' } }],
 				},

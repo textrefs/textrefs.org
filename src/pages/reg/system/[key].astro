@@ -1,5 +1,5 @@
 ---
-import RegistryLayout from '../../../layouts/RegistryLayout.astro';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import { loadSystems, loadReferences, uuidOf } from '../../../lib/registry.ts';
 
 export async function getStaticPaths() {
@@ -21,12 +21,18 @@ export async function getStaticPaths() {
 const { system, refs } = Astro.props;
 ---
 
-<RegistryLayout title={system.preferred_label}>
-	<h1>{system.preferred_label}</h1>
-	<p class="sub">
-		<span class="tag">CitationSystem</span>
-		<span class="tag">{system.status}</span>
-		<code class="iri">{system.id}</code>
+<StarlightPage
+	frontmatter={{
+		title: system.preferred_label,
+		description: `Registry record for the citation system ${system.preferred_label}.`,
+		template: 'doc',
+		tableOfContents: false,
+	}}
+>
+	<p class="reg-sub">
+		<span class="reg-tag">CitationSystem</span>
+		<span class="reg-tag">{system.status}</span>
+		<code class="reg-iri">{system.id}</code>
 	</p>
 
 	<h2>Locator format</h2>
@@ -60,9 +66,9 @@ const { system, refs } = Astro.props;
 	<h2>References using this system ({refs.length})</h2>
 	{
 		refs.length === 0 ? (
-			<p class="empty">No references registered yet.</p>
+			<p class="reg-empty">No references registered yet.</p>
 		) : (
-			<ul class="bare">
+			<ul class="reg-list">
 				{refs.map((r) => (
 					<li>
 						<a href={`/reg/id/${uuidOf(r.id)}/`}>
@@ -73,4 +79,4 @@ const { system, refs } = Astro.props;
 			</ul>
 		)
 	}
-</RegistryLayout>
+</StarlightPage>

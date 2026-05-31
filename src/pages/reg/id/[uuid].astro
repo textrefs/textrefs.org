@@ -1,5 +1,5 @@
 ---
-import RegistryLayout from '../../../layouts/RegistryLayout.astro';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import {
 	loadReferences,
 	loadWorks,
@@ -30,20 +30,25 @@ export async function getStaticPaths() {
 }
 
 const { ref, work, system, byLang } = Astro.props;
+const pageTitle = `${work?.preferred_label ?? ref.work_key} ${ref.locator}`;
 ---
 
-<RegistryLayout
-	title={`${work?.preferred_label ?? ref.work_key} ${ref.locator}`}
+<StarlightPage
+	frontmatter={{
+		title: pageTitle,
+		description: `Canonical reference ${ref.locator} in ${work?.preferred_label ?? ref.work_key}.`,
+		template: 'doc',
+		tableOfContents: false,
+	}}
 >
-	<h1>{ref.locator}</h1>
-	<p class="sub">
-		<span class="tag">CanonicalReference</span>
-		<span class="tag">{ref.status}</span>
-		<code class="iri">{ref.id}</code>
+	<p class="reg-sub">
+		<span class="reg-tag">CanonicalReference</span>
+		<span class="reg-tag">{ref.status}</span>
+		<code class="reg-iri">{ref.id}</code>
 	</p>
 
 	<h2>In context</h2>
-	<ul class="bare">
+	<ul class="reg-list">
 		<li>
 			Work:
 			{
@@ -73,25 +78,27 @@ const { ref, work, system, byLang } = Astro.props;
 	<h2>Resolver targets ({ref.resolver_targets.length})</h2>
 	{
 		ref.resolver_targets.length === 0 ? (
-			<p class="empty">No resolver targets registered for this reference.</p>
+			<p class="reg-empty">
+				No resolver targets registered for this reference.
+			</p>
 		) : (
 			<div>
 				{byLang.map((group) => (
-					<div class="lang-group">
-						<div class="lang-label">
+					<div class="reg-lang-group">
+						<div class="reg-lang-label">
 							Language: <code>{group.lang}</code>
 						</div>
-						<ul class="bare">
+						<ul class="reg-list">
 							{group.items.map((t) => (
-								<li class="target">
+								<li>
 									<a href={t.url} target="_blank" rel="noopener noreferrer">
 										{t.provider ?? t.url}
 									</a>
-									{t.edition && <span class="tag">{t.edition}</span>}
-									<span class="tag">{t.access}</span>
-									{t.license && <span class="tag">{t.license}</span>}
+									{t.edition && <span class="reg-tag">{t.edition}</span>}
+									<span class="reg-tag">{t.access}</span>
+									{t.license && <span class="reg-tag">{t.license}</span>}
 									<br />
-									<code class="iri">{t.url}</code>
+									<code class="reg-iri">{t.url}</code>
 								</li>
 							))}
 						</ul>
@@ -100,4 +107,4 @@ const { ref, work, system, byLang } = Astro.props;
 			</div>
 		)
 	}
-</RegistryLayout>
+</StarlightPage>

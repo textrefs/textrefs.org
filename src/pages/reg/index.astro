@@ -1,26 +1,50 @@
 ---
-import RegistryLayout from '../../layouts/RegistryLayout.astro';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import { loadWorks, loadSystems } from '../../lib/registry.ts';
 
 const works = loadWorks().sort((a, b) => a.key.localeCompare(b.key));
 const systems = loadSystems().sort((a, b) => a.key.localeCompare(b.key));
 ---
 
-<RegistryLayout title="Registry">
-	<h1>Registry</h1>
-	<p class="sub">All works and citation systems currently registered.</p>
+<StarlightPage
+	frontmatter={{
+		title: 'Registry',
+		description:
+			'Browse the works, citation systems, and canonical references registered in TextRefs.',
+		template: 'doc',
+		tableOfContents: false,
+	}}
+>
+	<p>
+		The TextRefs registry holds three kinds of records: <strong>works</strong>
+		(texts that get cited), <strong>citation systems</strong> (rules for how locators
+		inside a work look), and <strong>canonical references</strong>
+		(individual points inside a work, each with a persistent IRI under
+		<code>https://textrefs.org/id/</code>). See the
+		<a href="/standard/specification/">specification</a> for the data model.
+	</p>
+
+	<label for="reg-filter" class="sr-only">Filter registry</label>
+	<input
+		id="reg-filter"
+		class="reg-filter"
+		type="search"
+		placeholder="Filter by name or key…"
+		autocomplete="off"
+		aria-controls="reg-works reg-systems"
+	/>
 
 	<h2>Works</h2>
 	{
 		works.length === 0 ? (
-			<p class="empty">No works registered.</p>
+			<p class="reg-empty">No works registered.</p>
 		) : (
-			<ul class="bare">
+			<ul id="reg-works" class="reg-list" data-reg-list>
 				{works.map((w) => (
-					<li>
-						<a href={`/reg/work/${w.key}/`}>{w.preferred_label}</a>
-						<span class="tag">{w.status}</span>
-						<code class="iri">{w.key}</code>
+					<li data-reg-item={`${w.preferred_label} ${w.key}`.toLowerCase()}>
+						<a href={`/reg/work/${w.key}/`}>{w.preferred_label}</a>{' '}
+						<span class="reg-tag">{w.status}</span>{' '}
+						<code class="reg-iri">{w.key}</code>
 					</li>
 				))}
 			</ul>
@@ -30,17 +54,48 @@ const systems = loadSystems().sort((a, b) => a.key.localeCompare(b.key));
 	<h2>Citation systems</h2>
 	{
 		systems.length === 0 ? (
-			<p class="empty">No citation systems registered.</p>
+			<p class="reg-empty">No citation systems registered.</p>
 		) : (
-			<ul class="bare">
+			<ul id="reg-systems" class="reg-list" data-reg-list>
 				{systems.map((s) => (
-					<li>
-						<a href={`/reg/system/${s.key}/`}>{s.preferred_label}</a>
-						<span class="tag">{s.status}</span>
-						<code class="iri">{s.key}</code>
+					<li data-reg-item={`${s.preferred_label} ${s.key}`.toLowerCase()}>
+						<a href={`/reg/system/${s.key}/`}>{s.preferred_label}</a>{' '}
+						<span class="reg-tag">{s.status}</span>{' '}
+						<code class="reg-iri">{s.key}</code>
 					</li>
 				))}
 			</ul>
 		)
 	}
-</RegistryLayout>
+</StarlightPage>
+
+<script is:inline>
+	(function () {
+		const input = document.getElementById('reg-filter');
+		if (!input) return;
+		const lists = document.querySelectorAll('[data-reg-list]');
+		input.addEventListener('input', () => {
+			const q = input.value.trim().toLowerCase();
+			lists.forEach((list) => {
+				list.querySelectorAll('[data-reg-item]').forEach((li) => {
+					const hay = li.getAttribute('data-reg-item') || '';
+					li.hidden = q.length > 0 && !hay.includes(q);
+				});
+			});
+		});
+	})();
+</script>
+
+<style>
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+</style>

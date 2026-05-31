@@ -1,5 +1,5 @@
 ---
-import RegistryLayout from '../../../layouts/RegistryLayout.astro';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import {
 	loadWorks,
 	loadSystems,
@@ -42,24 +42,30 @@ export async function getStaticPaths() {
 const { work, refs, mappings, systems } = Astro.props;
 ---
 
-<RegistryLayout title={work.preferred_label}>
-	<h1>{work.preferred_label}</h1>
-	<p class="sub">
-		<span class="tag">Work</span>
-		<span class="tag">{work.status}</span>
-		<code class="iri">{work.id}</code>
+<StarlightPage
+	frontmatter={{
+		title: work.preferred_label,
+		description: `Registry record for the work ${work.preferred_label}.`,
+		template: 'doc',
+		tableOfContents: false,
+	}}
+>
+	<p class="reg-sub">
+		<span class="reg-tag">Work</span>
+		<span class="reg-tag">{work.status}</span>
+		<code class="reg-iri">{work.id}</code>
 	</p>
 
 	<h2>Citation systems</h2>
 	{
 		systems.length === 0 ? (
-			<p class="empty">No citation systems registered for this work yet.</p>
+			<p class="reg-empty">No citation systems registered for this work yet.</p>
 		) : (
-			<ul class="bare">
+			<ul class="reg-list">
 				{systems.map((s) => (
 					<li>
-						<a href={`/reg/system/${s.key}/`}>{s.preferred_label}</a>
-						<code class="iri">{s.key}</code>
+						<a href={`/reg/system/${s.key}/`}>{s.preferred_label}</a>{' '}
+						<code class="reg-iri">{s.key}</code>
 					</li>
 				))}
 			</ul>
@@ -69,14 +75,14 @@ const { work, refs, mappings, systems } = Astro.props;
 	<h2>Mappings ({mappings.length})</h2>
 	{
 		mappings.length === 0 ? (
-			<p class="empty">No mappings yet.</p>
+			<p class="reg-empty">No mappings yet.</p>
 		) : (
-			<ul class="bare">
+			<ul class="reg-list">
 				{mappings.map((m) => (
 					<li>
-						<span class="tag">{m.relation}</span>
+						<span class="reg-tag">{m.relation}</span>
 						{m.target.target_kind && (
-							<span class="tag">{m.target.target_kind}</span>
+							<span class="reg-tag">{m.target.target_kind}</span>
 						)}
 						<a href={m.target.identifier}>{m.target.identifier}</a>
 					</li>
@@ -88,18 +94,18 @@ const { work, refs, mappings, systems } = Astro.props;
 	<h2>References ({refs.length})</h2>
 	{
 		refs.length === 0 ? (
-			<p class="empty">No references registered yet.</p>
+			<p class="reg-empty">No references registered yet.</p>
 		) : (
-			<ul class="bare">
+			<ul class="reg-list">
 				{refs.map((r) => (
 					<li>
 						<a href={`/reg/id/${uuidOf(r.id)}/`}>
 							<code>{r.locator}</code>
-						</a>
-						<span class="tag">{r.resolver_targets.length} target(s)</span>
+						</a>{' '}
+						<span class="reg-tag">{r.resolver_targets.length} target(s)</span>
 					</li>
 				))}
 			</ul>
 		)
 	}
-</RegistryLayout>
+</StarlightPage>
