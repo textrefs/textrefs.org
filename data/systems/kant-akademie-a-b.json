@@ -9,7 +9,7 @@
     "valid": ["A51/B75", "A51", "B75"],
     "invalid": ["51", "C12", "A/B"]
   },
-  "status": "active",
+  "status": "candidate",
   "created": "2026-01-01",
   "modified": "2026-01-01"
 }
