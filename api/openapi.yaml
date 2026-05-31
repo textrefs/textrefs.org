@@ -33,8 +33,6 @@ servers:
 tags:
   - name: Resolver
     description: Dereference TextRefs identifiers.
-  - name: Validation
-    description: Validate registry objects against the published Zod schemas.
 paths:
   /id/work/{key}:
     get:
@@ -118,28 +116,6 @@ paths:
             text/html:
               schema: { type: string }
         '404': { $ref: '#/components/responses/NotFound' }
-  /validate:
-    post:
-      tags: [Validation]
-      summary: Validate a registry object
-      description: |
-        Validates the request body against the Zod schema selected by its
-        discriminant `type` field (`Work`, `CitationSystem`,
-        `CanonicalReference`, `MappingAssertion`).
-      operationId: validateRegistryObject
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: '#/components/schemas/RegistryObject' }
-      responses:
-        '200':
-          description: Validation result.
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/ValidationResult' }
-        '400':
-          description: Malformed request body (not parseable as JSON).
 components:
   parameters:
     FlatKey:
@@ -315,20 +291,6 @@ components:
           CitationSystem: '#/components/schemas/CitationSystem'
           CanonicalReference: '#/components/schemas/CanonicalReference'
           MappingAssertion: '#/components/schemas/MappingAssertion'
-    ValidationResult:
-      type: object
-      required: [valid]
-      properties:
-        valid: { type: boolean }
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              path:
-                type: array
-                items: { type: string }
-              message: { type: string }
     Error:
       type: object
       required: [message]
