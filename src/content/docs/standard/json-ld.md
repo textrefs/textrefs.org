@@ -47,7 +47,6 @@ Use `exactMatch` only when the mapped object identifies the same reference with 
     "Work": "tr:Work",
     "CitationSystem": "tr:CitationSystem",
     "CanonicalReference": "tr:CanonicalReference",
-    "ResolverTarget": "tr:ResolverTarget",
     "MappingAssertion": "tr:MappingAssertion",
     "key": "tr:key",
     "preferred_label": "skos:prefLabel",
