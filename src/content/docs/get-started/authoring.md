@@ -116,6 +116,57 @@ references:
 
 Top-level `resolvers:` and per-reference `extra_resolvers:` both contribute to the final `resolver_targets` array.
 
+## Enumerating canonical reference sets
+
+Hand-listing every verse of Genesis or every line of the Iliad is not the right shape for a YAML file. For works whose reference set is regular enough to describe in a few numbers, use `references_range:` instead of (or alongside) `references:`. Each entry is one named expander; the compiler concatenates every expansion with the explicit `references:` list, de-dupes, and validates each generated locator against the citation system's regex.
+
+```yaml
+# 81 references: '1', '2', …, '81'
+references_range:
+  - kind: integer
+    from: 1
+    to: 81
+
+# Iliad — 15,693 references from per-book line counts (Allen OCT):
+#   '1.1', '1.2', …, '24.804'
+references_range:
+  - kind: book_line
+    counts:
+      [
+        611, 877, 461, 544, 909, 529, 482, 565, 713, 579, 848, 471, 837, 522,
+        746, 867, 761, 617, 424, 503, 611, 515, 897, 804,
+      ]
+
+# Analects — 517 references from per-book chapter counts:
+#   '1.1', …, '20.5'
+references_range:
+  - kind: book_chapter
+    counts: [16, 24, 26, 26, 28, 30, 38, 21, 31, 27, 26, 24, 30, 47, 42, 14, 26, 11, 25, 5]
+
+# Genesis — 1,533 references from per-chapter verse counts:
+#   'Genesis.1.1', …, 'Genesis.50.26'
+references_range:
+  - kind: book_chapter_verse
+    book: Genesis
+    counts: [31, 25, 24, 26, 32, 22 /* …, 26 */]
+
+# Bekker — page × {a,b} × lines 1..N, with explicit per-book page ranges:
+#   '1094a1', '1094a2', …, '1181b30'
+references_range:
+  - kind: bekker
+    page_ranges:
+      - [1094, 1103]
+      # …one entry per Aristotelian book
+    lines_per_column: 30
+
+# Stephanus — page × sections {a..e}: '327a', '327b', …, '621e'
+references_range:
+  - kind: stephanus
+    page_range: [327, 621]
+```
+
+Multiple `references_range` entries on one work are concatenated. Combine with explicit `references:` entries for one-off locators that don't fit any range.
+
 ## Citation system files
 
 A citation system declares its locator format once and is reused by every work that cites it.
