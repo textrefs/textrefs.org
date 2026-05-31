@@ -234,7 +234,7 @@ Rejections should be briefly justified.
 2. Each release contains a changelog.
 3. Releases shall be reproducible.
 4. Data exports may be provided in particular as JSON-LD and JSONL.
-5. Important releases shall be archived durably via Git tags and, where possible, via Zenodo or a comparable archiving infrastructure.
+5. Important releases shall be archived durably via Git tags and, where possible, via [Zenodo](https://zenodo.org/communities/textrefs/) or a comparable archiving infrastructure.
 6. Schema changes are versioned.
 7. Breaking changes to schemata require a new major version.
 

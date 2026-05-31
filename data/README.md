@@ -10,7 +10,7 @@ data/
 └── systems/{key}.yaml           # ✍️ One file per CitationSystem
 ```
 
-Only hand-authored YAML lives in this repo. No JSON, no derived indexes, no per-reference files. The compiled registry is an in-memory derivation at build time; the published bundle is attached to GitHub Releases as a single NDJSON.gz artifact.
+Only hand-authored YAML lives in this repo. No JSON, no derived indexes, no per-reference files. The compiled registry is an in-memory derivation at build time; the published bundle is attached to GitHub Releases as a single NDJSON.gz artifact. Published dumps are long-term archived in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) and receive citable DOIs.
 
 See [`docs/get-started/authoring`](../src/content/docs/get-started/authoring.md) for the YAML format.
 

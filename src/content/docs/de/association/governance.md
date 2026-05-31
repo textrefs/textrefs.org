@@ -234,7 +234,7 @@ Ablehnungen sollen kurz begründet werden.
 2. Jeder Release enthält einen Changelog.
 3. Releases sollen reproduzierbar sein.
 4. Datenexports können insbesondere als JSON-LD und JSONL bereitgestellt werden.
-5. Wichtige Releases sollen durch Git-Tags und, soweit möglich, über Zenodo oder eine vergleichbare Archivierungsinfrastruktur dauerhaft archiviert werden.
+5. Wichtige Releases sollen durch Git-Tags und, soweit möglich, über [Zenodo](https://zenodo.org/communities/textrefs/) oder eine vergleichbare Archivierungsinfrastruktur dauerhaft archiviert werden.
 6. Schemaänderungen werden versioniert.
 7. Breaking Changes an Schemata erfordern eine neue Major-Version.
 

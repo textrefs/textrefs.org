@@ -34,6 +34,10 @@ registry/exports/YYYY-MM/resolver-targets.jsonl
 
 Registry exports are organized by object type. This gives consumers stable file names, simple streaming imports, and one predictable place to find each record type. Relationships are represented inside records through standard fields such as `key`, `work_key`, `citation_system_key`, `subject`, and `target`.
 
+## Archival copies and DOIs
+
+GitHub Releases are the primary distribution point for generated registry dumps. Each published data dump is also deposited in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) for long-term archival preservation and DOI minting. Cite the Zenodo DOI when referring to a specific archived dump.
+
 ## Frictionless requirements
 
 Each `datapackage.json` MUST include:

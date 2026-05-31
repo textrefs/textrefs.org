@@ -37,6 +37,7 @@ TextRefs is a non-profit infrastructure project that builds, maintains, and publ
 - **API reference**: <https://textrefs.org/api/>
 - **Association** (mission, statutes, governance, expenses): <https://textrefs.org/association/>
 - **POSI self-assessment** (Principles of Open Scholarly Infrastructure): <https://textrefs.org/association/posi/>
+- **Zenodo community** (archived data dumps and DOIs): <https://zenodo.org/communities/textrefs/>
 - **Statuten** (German original, legally binding): <https://textrefs.org/de/association/statutes/>
 
 ## Repository structure
@@ -86,7 +87,7 @@ Set the repository variable `SITE_DOMAIN` under GitHub Actions variables to the 
 
 ## Citation
 
-If you cite TextRefs, use the metadata in [`CITATION.cff`](./CITATION.cff) — GitHub renders a "Cite this repository" button in the sidebar that reads from this file. The first tagged release will also archive on Zenodo (via [`.zenodo.json`](./.zenodo.json)) and acquire a DOI; the DOI badge will be added here once minted.
+If you cite TextRefs, use the metadata in [`CITATION.cff`](./CITATION.cff) — GitHub renders a "Cite this repository" button in the sidebar that reads from this file. Published data dumps are long-term archived in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) and receive citable DOIs; the DOI badge will be added here once minted.
 
 ## Support
 

@@ -5,7 +5,7 @@ sidebar:
   order: 6
 ---
 
-The TextRefs repo contains only hand-authored YAML under `data/works/` and `data/systems/`. The compiled registry — Works, CitationSystems, CanonicalReferences, MappingAssertions — is produced in memory by `npm run build:data` and published as a single NDJSON.gz bundle attached to each GitHub Release.
+The TextRefs repo contains only hand-authored YAML under `data/works/` and `data/systems/`. The compiled registry — Works, CitationSystems, CanonicalReferences, MappingAssertions — is produced in memory by `npm run build:data` and published as a single NDJSON.gz bundle attached to each GitHub Release. Published dumps are long-term archived in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) and receive citable DOIs.
 
 This page documents the YAML format.
 

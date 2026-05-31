@@ -4,6 +4,11 @@
   "upload_type": "software",
   "access_right": "open",
   "license": "AGPL-3.0-or-later",
+  "communities": [
+    {
+      "identifier": "textrefs"
+    }
+  ],
   "creators": [
     {
       "name": "Mähr, Moritz",
