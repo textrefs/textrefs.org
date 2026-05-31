@@ -1,0 +1,19 @@
+key: daodejing-chapter
+preferred_label: Daodejing chapter (transmitted 81-chapter text)
+normalization_version: 1.0.0
+# The transmitted (received) Daodejing has 81 chapters. The Mawangdui and
+# Guodian witnesses use different orderings and are not addressed by this
+# profile; profile this scheme as the received Wang Bi text.
+locator_regex: '^(?<chapter>[1-9]|[1-7][0-9]|8[01])$'
+examples:
+  valid:
+    - '1'
+    - '42'
+    - '81'
+  invalid:
+    - '0'
+    - '82'
+    - '1.1'
+status: candidate
+created: 2026-05-31
+modified: 2026-05-31

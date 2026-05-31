@@ -1,0 +1,18 @@
+key: genji-chapter
+preferred_label: Genji chapter (54-chapter Aobyōshi sequence)
+normalization_version: 1.0.0
+# The Tale of Genji is conventionally divided into 54 chapters in the
+# Aobyōshi (青表紙本) sequence followed by most modern editions.
+locator_regex: '^(?<chapter>[1-9]|[1-4][0-9]|5[0-4])$'
+examples:
+  valid:
+    - '1'
+    - '25'
+    - '54'
+  invalid:
+    - '0'
+    - '55'
+    - '1.1'
+status: candidate
+created: 2026-05-31
+modified: 2026-05-31

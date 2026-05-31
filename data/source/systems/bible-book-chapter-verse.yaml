@@ -1,0 +1,20 @@
+key: bible-book-chapter-verse
+preferred_label: Bible book-chapter-verse (OSIS-style)
+normalization_version: 1.0.0
+# OSIS-style locator: `Book.Chapter.Verse`. The `book` capture accepts
+# OSIS-compatible book identifiers (alphanumeric, no spaces). Both the
+# Hebrew Bible and the New Testament cite with this grammar.
+locator_regex: '^(?<book>[A-Za-z][A-Za-z0-9_]*)\.(?<chapter>[1-9][0-9]*)\.(?<verse>[1-9][0-9]*)$'
+examples:
+  valid:
+    - 'Genesis.1.1'
+    - 'Psalms.23.1'
+    - 'Matthew.5.3'
+  invalid:
+    - 'Genesis.0.1'
+    - 'Genesis.1'
+    - '1.1.1'
+    - 'Genesis 1:1'
+status: candidate
+created: 2026-05-31
+modified: 2026-05-31

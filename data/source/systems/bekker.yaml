@@ -1,0 +1,19 @@
+key: bekker
+preferred_label: Bekker numbering (Aristotelian corpus)
+normalization_version: 1.0.0
+# Bekker numbering: page, column (a or b), and line, after August Immanuel
+# Bekker's 1831 Berlin edition. Pages span the whole corpus, roughly 1–1462.
+locator_regex: '^(?<page>[0-9]{3,4})(?<column>[ab])(?<line>[0-9]{1,2})$'
+examples:
+  valid:
+    - '1094a1'
+    - '1097b22'
+    - '983b10'
+  invalid:
+    - '983'
+    - '983c10'
+    - '983b'
+    - '983b100'
+status: candidate
+created: 2026-05-31
+modified: 2026-05-31

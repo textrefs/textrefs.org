@@ -1,0 +1,19 @@
+key: analects-book-chapter
+preferred_label: Analects book-chapter
+normalization_version: 1.0.0
+# The Analects (Lunyu) is divided into 20 books; each book contains numbered
+# chapters (passages). Citation form: `book.chapter`, e.g. 1.1, 2.4, 20.3.
+locator_regex: '^(?<book>[1-9]|1[0-9]|20)\.(?<chapter>[1-9][0-9]*)$'
+examples:
+  valid:
+    - '1.1'
+    - '2.4'
+    - '20.3'
+  invalid:
+    - '0.1'
+    - '21.1'
+    - '1.0'
+    - '1'
+status: candidate
+created: 2026-05-31
+modified: 2026-05-31

@@ -1,0 +1,19 @@
+key: stephanus
+preferred_label: Stephanus pagination (Platonic corpus)
+normalization_version: 1.0.0
+# Stephanus pagination: page, section (a–e), and optional sub-line, after
+# Henri Estienne's 1578 edition of Plato's works.
+locator_regex: '^(?<page>[0-9]{1,4})(?<section>[a-e])(?<sub>[0-9]{1,2})?$'
+examples:
+  valid:
+    - '327a'
+    - '514a'
+    - '514a1'
+    - '608b'
+  invalid:
+    - '514f'
+    - '514'
+    - '514a100'
+status: candidate
+created: 2026-05-31
+modified: 2026-05-31
