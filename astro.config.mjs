@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import mermaid from 'astro-mermaid';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
 
 export default defineConfig({
 	site: 'https://textrefs.org',
@@ -12,8 +13,15 @@ export default defineConfig({
 			plugins: [
 				starlightLinksValidator({
 					errorOnFallbackPages: false,
-					exclude: ['/reg/**', '/a/**'],
+					exclude: ['/reg/**', '/a/**', '/api/**'],
 				}),
+				starlightOpenAPI([
+					{
+						base: 'api',
+						label: 'API',
+						schema: './api/openapi.yaml',
+					},
+				]),
 			],
 			title: 'TextRefs',
 			description:
@@ -72,6 +80,7 @@ export default defineConfig({
 					translations: { de: 'Verein' },
 					items: [{ autogenerate: { directory: 'association' } }],
 				},
+				...openAPISidebarGroups,
 			],
 		}),
 	],

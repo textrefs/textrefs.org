@@ -1,0 +1,347 @@
+openapi: 3.1.0
+info:
+  title: TextRefs Resolver & Registry API
+  version: 0.1.0-draft
+  summary: Planned resolver and registry API for textrefs.org.
+  description: |
+    **Status: design draft.** No endpoints are live yet. This document captures
+    the planned shape of the API so it can be discussed and iterated on before
+    any handler is written.
+
+    The resolver dereferences TextRefs identifiers to either a JSON-LD
+    description of the object or, for `ResolverTarget`, a 303 redirect to an
+    external manifestation. Content negotiation is via the `Accept` header.
+
+    All JSON responses use the JSON-LD context at
+    [`/contexts/v1.jsonld`](https://textrefs.org/contexts/v1.jsonld). Schemas
+    here mirror the Zod definitions in
+    [`standard/schema/`](https://github.com/textrefs/textrefs.org/tree/main/standard/schema)
+    — those remain the source of truth.
+  license:
+    name: AGPL-3.0-or-later
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+  contact:
+    name: TextRefs
+    url: https://textrefs.org/community/
+servers:
+  - url: https://textrefs.org
+    description: Production (planned)
+tags:
+  - name: Resolver
+    description: Dereference TextRefs identifiers.
+  - name: Validation
+    description: Validate registry objects against the published Zod schemas.
+paths:
+  /id/work/{key}:
+    get:
+      tags: [Resolver]
+      summary: Resolve a Work
+      operationId: resolveWork
+      parameters:
+        - $ref: '#/components/parameters/FlatKey'
+      responses:
+        '200':
+          description: Work record.
+          content:
+            application/ld+json:
+              schema: { $ref: '#/components/schemas/Work' }
+            text/html:
+              schema: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /id/system/{key}:
+    get:
+      tags: [Resolver]
+      summary: Resolve a CitationSystem
+      operationId: resolveCitationSystem
+      parameters:
+        - $ref: '#/components/parameters/FlatKey'
+      responses:
+        '200':
+          description: CitationSystem record.
+          content:
+            application/ld+json:
+              schema: { $ref: '#/components/schemas/CitationSystem' }
+            text/html:
+              schema: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /id/ref/{uuid}:
+    get:
+      tags: [Resolver]
+      summary: Resolve a CanonicalReference
+      operationId: resolveCanonicalReference
+      parameters:
+        - $ref: '#/components/parameters/Uuid'
+      responses:
+        '200':
+          description: CanonicalReference record.
+          content:
+            application/ld+json:
+              schema: { $ref: '#/components/schemas/CanonicalReference' }
+            text/html:
+              schema: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /id/target/{uuid}:
+    get:
+      tags: [Resolver]
+      summary: Resolve a ResolverTarget
+      description: |
+        Returns a 303 redirect to the external manifestation by default, with
+        language/edition selected via `Accept-Language` and the `edition`
+        query parameter. Clients that send `Accept: application/ld+json`
+        receive a JSON-LD description of the target instead.
+      operationId: resolveResolverTarget
+      parameters:
+        - $ref: '#/components/parameters/Uuid'
+        - in: query
+          name: edition
+          required: false
+          schema: { type: string }
+          description: Preferred edition tag, when the target has multiple.
+      responses:
+        '200':
+          description: ResolverTarget JSON-LD description.
+          content:
+            application/ld+json:
+              schema: { $ref: '#/components/schemas/ResolverTargetEntry' }
+        '303':
+          description: Redirect to the external manifestation.
+          headers:
+            Location:
+              schema: { type: string, format: uri }
+              description: Absolute URL of the chosen manifestation.
+        '404': { $ref: '#/components/responses/NotFound' }
+        '406':
+          description: No acceptable manifestation for the requested language/edition.
+  /id/mapping/{uuid}:
+    get:
+      tags: [Resolver]
+      summary: Resolve a MappingAssertion
+      operationId: resolveMappingAssertion
+      parameters:
+        - $ref: '#/components/parameters/Uuid'
+      responses:
+        '200':
+          description: MappingAssertion record.
+          content:
+            application/ld+json:
+              schema: { $ref: '#/components/schemas/MappingAssertion' }
+            text/html:
+              schema: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /validate:
+    post:
+      tags: [Validation]
+      summary: Validate a registry object
+      description: |
+        Validates the request body against the Zod schema selected by its
+        discriminant `type` field (`Work`, `CitationSystem`,
+        `CanonicalReference`, `MappingAssertion`).
+      operationId: validateRegistryObject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegistryObject' }
+      responses:
+        '200':
+          description: Validation result.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationResult' }
+        '400':
+          description: Malformed request body (not parseable as JSON).
+components:
+  parameters:
+    FlatKey:
+      in: path
+      name: key
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9][a-z0-9._-]*$'
+      description: Flat registry key.
+    Uuid:
+      in: path
+      name: uuid
+      required: true
+      schema:
+        type: string
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+  responses:
+    NotFound:
+      description: No registry object found at this identifier.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+  schemas:
+    FlatKey:
+      type: string
+      pattern: '^[a-z0-9][a-z0-9._-]*$'
+      description: 'Flat registry key: lowercase, starts with [a-z0-9], allows . _ -'
+    Iri:
+      type: string
+      format: uri
+    IsoDate:
+      type: string
+      pattern: '^\d{4}-\d{2}-\d{2}$'
+    SemVer:
+      type: string
+      pattern: '^\d+\.\d+\.\d+(?:-[\w.-]+)?(?:\+[\w.-]+)?$'
+    Status:
+      type: string
+      enum: [candidate, active, deprecated, withdrawn, blocked]
+    AdminMetadata:
+      type: object
+      required: [status, created, modified]
+      properties:
+        status: { $ref: '#/components/schemas/Status' }
+        created: { $ref: '#/components/schemas/IsoDate' }
+        modified: { $ref: '#/components/schemas/IsoDate' }
+    Work:
+      allOf:
+        - $ref: '#/components/schemas/AdminMetadata'
+        - type: object
+          required: [id, key, type, preferred_label]
+          properties:
+            id:
+              type: string
+              pattern: '^https://textrefs\.org/id/work/[^/]+$'
+            key: { $ref: '#/components/schemas/FlatKey' }
+            type: { type: string, enum: [Work] }
+            preferred_label: { type: string, minLength: 1 }
+    CitationSystem:
+      allOf:
+        - $ref: '#/components/schemas/AdminMetadata'
+        - type: object
+          required:
+            [
+              id,
+              key,
+              type,
+              preferred_label,
+              normalization_version,
+              locator_regex,
+              examples,
+            ]
+          properties:
+            id:
+              type: string
+              pattern: '^https://textrefs\.org/id/system/[^/]+$'
+            key: { $ref: '#/components/schemas/FlatKey' }
+            type: { type: string, enum: [CitationSystem] }
+            preferred_label: { type: string, minLength: 1 }
+            normalization_version: { $ref: '#/components/schemas/SemVer' }
+            locator_regex: { type: string, minLength: 1 }
+            examples:
+              type: object
+              required: [valid, invalid]
+              properties:
+                valid:
+                  type: array
+                  items: { type: string }
+                  minItems: 1
+                invalid:
+                  type: array
+                  items: { type: string }
+                  minItems: 1
+    ResolverTargetEntry:
+      type: object
+      required: [url, access]
+      properties:
+        url: { $ref: '#/components/schemas/Iri' }
+        language: { type: string, minLength: 2 }
+        edition: { type: string }
+        provider: { type: string }
+        access:
+          type: string
+          enum: [open, paywalled, restricted, unknown]
+        license: { type: string }
+        license_url:
+          oneOf:
+            - { $ref: '#/components/schemas/Iri' }
+            - { type: 'null' }
+        last_checked: { $ref: '#/components/schemas/IsoDate' }
+    CanonicalReference:
+      allOf:
+        - $ref: '#/components/schemas/AdminMetadata'
+        - type: object
+          required:
+            [
+              id,
+              type,
+              work_key,
+              citation_system_key,
+              locator,
+              normalization_version,
+              resolver_targets,
+            ]
+          properties:
+            id:
+              type: string
+              pattern: '^https://textrefs\.org/id/ref/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+            type: { type: string, enum: [CanonicalReference] }
+            work_key: { $ref: '#/components/schemas/FlatKey' }
+            citation_system_key: { $ref: '#/components/schemas/FlatKey' }
+            locator: { type: string, minLength: 1 }
+            normalization_version: { $ref: '#/components/schemas/SemVer' }
+            resolver_targets:
+              type: array
+              default: []
+              items: { $ref: '#/components/schemas/ResolverTargetEntry' }
+    MappingAssertion:
+      allOf:
+        - $ref: '#/components/schemas/AdminMetadata'
+        - type: object
+          required: [id, type, subject, relation, target, source]
+          properties:
+            id:
+              type: string
+              pattern: '^https://textrefs\.org/id/mapping/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+            type: { type: string, enum: [MappingAssertion] }
+            subject:
+              type: string
+              pattern: '^https://textrefs\.org/id/work/[a-z0-9][a-z0-9._-]*$'
+              description: MUST be a Work IRI.
+            relation:
+              type: string
+              enum: [exactMatch, closeMatch]
+            target:
+              type: object
+              required: [identifier]
+              properties:
+                target_kind: { type: string }
+                identifier: { $ref: '#/components/schemas/Iri' }
+            source: { type: string, minLength: 1 }
+    RegistryObject:
+      oneOf:
+        - { $ref: '#/components/schemas/Work' }
+        - { $ref: '#/components/schemas/CitationSystem' }
+        - { $ref: '#/components/schemas/CanonicalReference' }
+        - { $ref: '#/components/schemas/MappingAssertion' }
+      discriminator:
+        propertyName: type
+        mapping:
+          Work: '#/components/schemas/Work'
+          CitationSystem: '#/components/schemas/CitationSystem'
+          CanonicalReference: '#/components/schemas/CanonicalReference'
+          MappingAssertion: '#/components/schemas/MappingAssertion'
+    ValidationResult:
+      type: object
+      required: [valid]
+      properties:
+        valid: { type: boolean }
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: array
+                items: { type: string }
+              message: { type: string }
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message: { type: string }
+        code: { type: string }
