@@ -1,0 +1,57 @@
+work:
+  key: homer.odyssey
+  preferred_label: Odyssey (Homer)
+  status: candidate
+  created: 2026-05-31
+  modified: 2026-05-31
+
+citation_system: homer-book-line
+
+mappings:
+  - relation: exactMatch
+    target_kind: wikidata
+    identifier: 'https://www.wikidata.org/entity/Q35160'
+    source: manual-curation
+    status: candidate
+    created: 2026-05-31
+    modified: 2026-05-31
+
+resolvers:
+  - provider: Scaife Viewer
+    edition: 'Perseus Greek text (Murray, Loeb)'
+    language: grc
+    access: open
+    license: CC-BY-SA-4.0
+    url: 'https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:{book}.{line}/'
+
+# Per-book line counts (Allen OCT). The compiler expands these into
+# `1.1` … `24.548` — 12,110 references.
+references_range:
+  - kind: book_line
+    counts:
+      [
+        444,
+        434,
+        497,
+        847,
+        493,
+        331,
+        347,
+        586,
+        566,
+        574,
+        640,
+        453,
+        440,
+        533,
+        557,
+        481,
+        606,
+        428,
+        604,
+        394,
+        434,
+        501,
+        372,
+        548,
+      ]

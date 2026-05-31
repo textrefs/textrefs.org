@@ -1,0 +1,57 @@
+work:
+  key: homer.iliad
+  preferred_label: Iliad (Homer)
+  status: candidate
+  created: 2026-05-31
+  modified: 2026-05-31
+
+citation_system: homer-book-line
+
+mappings:
+  - relation: exactMatch
+    target_kind: wikidata
+    identifier: 'https://www.wikidata.org/entity/Q8275'
+    source: manual-curation
+    status: candidate
+    created: 2026-05-31
+    modified: 2026-05-31
+
+resolvers:
+  - provider: Scaife Viewer
+    edition: 'Perseus Greek text (Monro & Allen, OCT)'
+    language: grc
+    access: open
+    license: CC-BY-SA-4.0
+    url: 'https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:{book}.{line}/'
+
+# Per-book line counts (Allen OCT). The compiler expands these into
+# `1.1` … `24.804` — 15,693 references.
+references_range:
+  - kind: book_line
+    counts:
+      [
+        611,
+        877,
+        461,
+        544,
+        909,
+        529,
+        482,
+        565,
+        713,
+        579,
+        848,
+        471,
+        837,
+        522,
+        746,
+        867,
+        761,
+        617,
+        424,
+        503,
+        611,
+        515,
+        897,
+        804,
+      ]

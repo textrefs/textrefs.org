@@ -1,0 +1,24 @@
+work:
+  key: murasaki.genji
+  preferred_label: The Tale of Genji (Murasaki Shikibu)
+  status: candidate
+  created: 2026-05-31
+  modified: 2026-05-31
+
+citation_system: genji-chapter
+
+mappings:
+  - relation: exactMatch
+    target_kind: wikidata
+    identifier: 'https://www.wikidata.org/entity/Q243559'
+    source: manual-curation
+    status: candidate
+    created: 2026-05-31
+    modified: 2026-05-31
+
+# The NINJAL transcription site exposes per-chapter pages but with
+# non-templatable URL slugs; resolvers can be added later via url_by.
+references_range:
+  - kind: integer
+    from: 1
+    to: 54

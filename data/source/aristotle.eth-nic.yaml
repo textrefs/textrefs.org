@@ -1,0 +1,37 @@
+work:
+  key: aristotle.eth-nic
+  preferred_label: Nicomachean Ethics (Aristotle)
+  status: candidate
+  created: 2026-05-31
+  modified: 2026-05-31
+
+citation_system: bekker
+
+mappings:
+  - relation: exactMatch
+    target_kind: wikidata
+    identifier: 'https://www.wikidata.org/entity/Q161024'
+    source: manual-curation
+    status: candidate
+    created: 2026-05-31
+    modified: 2026-05-31
+
+# Bekker numbering doesn't fit a single Perseus URL template; per-locator
+# resolvers can be added later via `extra_resolvers`. Page ranges by book:
+# I 1094a–1103a, II 1103a–1109b, III 1109b–1119b, IV 1119b–1128b,
+# V 1129a–1138b, VI 1138b–1145a, VII 1145a–1154b, VIII 1155a–1163b,
+# IX 1163b–1170a, X 1172a–1181b. Lines 1–30 per column → ~5,220 references.
+references_range:
+  - kind: bekker
+    page_ranges:
+      - [1094, 1103]
+      - [1103, 1109]
+      - [1109, 1119]
+      - [1119, 1128]
+      - [1129, 1138]
+      - [1138, 1145]
+      - [1145, 1154]
+      - [1155, 1163]
+      - [1163, 1170]
+      - [1172, 1181]
+    lines_per_column: 30
