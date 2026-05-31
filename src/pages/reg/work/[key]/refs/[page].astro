@@ -1,0 +1,79 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import {
+	loadWorks,
+	loadReferences,
+	uuidOf,
+} from '../../../../../lib/registry.ts';
+
+export async function getStaticPaths() {
+	const PAGE_SIZE = 200;
+	const works = loadWorks();
+	const refs = loadReferences();
+	return works.flatMap((work) => {
+		const workRefs = refs
+			.filter((r) => r.work_key === work.key)
+			.sort((a, b) =>
+				a.locator.localeCompare(b.locator, undefined, { numeric: true }),
+			);
+		const pageCount = Math.max(1, Math.ceil(workRefs.length / PAGE_SIZE));
+		return Array.from({ length: pageCount }, (_, i) => {
+			const page = i + 1;
+			const slice = workRefs.slice(i * PAGE_SIZE, (i + 1) * PAGE_SIZE);
+			return {
+				params: { key: work.key, page: String(page) },
+				props: {
+					work,
+					refs: slice,
+					page,
+					pageCount,
+					pageSize: PAGE_SIZE,
+					total: workRefs.length,
+				},
+			};
+		});
+	});
+}
+
+const { work, refs, page, pageCount, pageSize, total } = Astro.props;
+const prev = page > 1 ? page - 1 : null;
+const next = page < pageCount ? page + 1 : null;
+const from = (page - 1) * pageSize + 1;
+const to = Math.min(page * pageSize, total);
+---
+
+<StarlightPage
+	frontmatter={{
+		title: `${work.preferred_label} — references (${from}–${to} of ${total})`,
+		description: `Page ${page} of ${pageCount} of references for ${work.preferred_label}.`,
+		template: 'doc',
+		tableOfContents: false,
+	}}
+>
+	<p class="reg-sub">
+		<a href={`/reg/work/${work.key}/`}>← {work.preferred_label}</a>
+	</p>
+
+	<p>
+		Showing references {from}–{to} of {total} · page {page} of {pageCount}.
+	</p>
+
+	<ul class="reg-list">
+		{
+			refs.map((r) => (
+				<li>
+					<a href={`/reg/id/${uuidOf(r.id)}/`}>
+						<code>{r.locator}</code>
+					</a>{' '}
+					<span class="reg-tag">{r.resolver_targets.length} target(s)</span>
+				</li>
+			))
+		}
+	</ul>
+
+	<nav class="reg-pager">
+		{prev && <a href={`/reg/work/${work.key}/refs/${prev}/`}>← page {prev}</a>}
+		{prev && next && <span> · </span>}
+		{next && <a href={`/reg/work/${work.key}/refs/${next}/`}>page {next} →</a>}
+	</nav>
+</StarlightPage>

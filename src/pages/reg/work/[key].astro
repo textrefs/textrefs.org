@@ -9,6 +9,8 @@ import {
 } from '../../../lib/registry.ts';
 
 export async function getStaticPaths() {
+	const PAGE_SIZE = 200;
+	const PREVIEW = 20;
 	const works = loadWorks();
 	const systems = loadSystems();
 	const refs = loadReferences();
@@ -27,11 +29,15 @@ export async function getStaticPaths() {
 		const usedSystems = usedSystemKeys
 			.map((k) => systems.find((s) => s.key === k))
 			.filter((s): s is NonNullable<typeof s> => Boolean(s));
+		const pageCount = Math.max(1, Math.ceil(workRefs.length / PAGE_SIZE));
 		return {
 			params: { key: work.key },
 			props: {
 				work,
-				refs: workRefs,
+				preview: workRefs.slice(0, PREVIEW),
+				refCount: workRefs.length,
+				pageCount,
+				pageSize: PAGE_SIZE,
 				mappings: workMappings,
 				systems: usedSystems,
 			},
@@ -39,7 +45,8 @@ export async function getStaticPaths() {
 	});
 }
 
-const { work, refs, mappings, systems } = Astro.props;
+const { work, preview, refCount, pageCount, pageSize, mappings, systems } =
+	Astro.props;
 ---
 
 <StarlightPage
@@ -91,21 +98,29 @@ const { work, refs, mappings, systems } = Astro.props;
 		)
 	}
 
-	<h2>References ({refs.length})</h2>
+	<h2>References ({refCount})</h2>
 	{
-		refs.length === 0 ? (
+		refCount === 0 ? (
 			<p class="reg-empty">No references registered yet.</p>
 		) : (
-			<ul class="reg-list">
-				{refs.map((r) => (
-					<li>
-						<a href={`/reg/id/${uuidOf(r.id)}/`}>
-							<code>{r.locator}</code>
-						</a>{' '}
-						<span class="reg-tag">{r.resolver_targets.length} target(s)</span>
-					</li>
-				))}
-			</ul>
+			<>
+				<ul class="reg-list">
+					{preview.map((r) => (
+						<li>
+							<a href={`/reg/id/${uuidOf(r.id)}/`}>
+								<code>{r.locator}</code>
+							</a>{' '}
+							<span class="reg-tag">{r.resolver_targets.length} target(s)</span>
+						</li>
+					))}
+				</ul>
+				<p>
+					<a href={`/reg/work/${work.key}/refs/1/`}>
+						Browse all {refCount} reference(s){' '}
+						{pageCount > 1 ? `(${pageCount} pages of ${pageSize})` : ''} →
+					</a>
+				</p>
+			</>
 		)
 	}
 </StarlightPage>

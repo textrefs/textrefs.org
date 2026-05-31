@@ -1,0 +1,86 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import {
+	loadSystems,
+	loadReferences,
+	uuidOf,
+} from '../../../../../lib/registry.ts';
+
+export async function getStaticPaths() {
+	const PAGE_SIZE = 200;
+	const systems = loadSystems();
+	const refs = loadReferences();
+	return systems.flatMap((system) => {
+		const systemRefs = refs
+			.filter((r) => r.citation_system_key === system.key)
+			.sort((a, b) =>
+				a.locator.localeCompare(b.locator, undefined, { numeric: true }),
+			);
+		const pageCount = Math.max(1, Math.ceil(systemRefs.length / PAGE_SIZE));
+		return Array.from({ length: pageCount }, (_, i) => {
+			const page = i + 1;
+			const slice = systemRefs.slice(i * PAGE_SIZE, (i + 1) * PAGE_SIZE);
+			return {
+				params: { key: system.key, page: String(page) },
+				props: {
+					system,
+					refs: slice,
+					page,
+					pageCount,
+					pageSize: PAGE_SIZE,
+					total: systemRefs.length,
+				},
+			};
+		});
+	});
+}
+
+const { system, refs, page, pageCount, pageSize, total } = Astro.props;
+const prev = page > 1 ? page - 1 : null;
+const next = page < pageCount ? page + 1 : null;
+const from = (page - 1) * pageSize + 1;
+const to = Math.min(page * pageSize, total);
+---
+
+<StarlightPage
+	frontmatter={{
+		title: `${system.preferred_label} — references (${from}–${to} of ${total})`,
+		description: `Page ${page} of ${pageCount} of references using ${system.preferred_label}.`,
+		template: 'doc',
+		tableOfContents: false,
+	}}
+>
+	<p class="reg-sub">
+		<a href={`/reg/system/${system.key}/`}>← {system.preferred_label}</a>
+	</p>
+
+	<p>
+		Showing references {from}–{to} of {total} · page {page} of {pageCount}.
+	</p>
+
+	<ul class="reg-list">
+		{
+			refs.map((r) => (
+				<li>
+					<a href={`/reg/id/${uuidOf(r.id)}/`}>
+						<code>{r.work_key}</code> · <code>{r.locator}</code>
+					</a>
+				</li>
+			))
+		}
+	</ul>
+
+	<nav class="reg-pager">
+		{
+			prev && (
+				<a href={`/reg/system/${system.key}/refs/${prev}/`}>← page {prev}</a>
+			)
+		}
+		{prev && next && <span> · </span>}
+		{
+			next && (
+				<a href={`/reg/system/${system.key}/refs/${next}/`}>page {next} →</a>
+			)
+		}
+	</nav>
+</StarlightPage>

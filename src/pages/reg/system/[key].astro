@@ -3,6 +3,8 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import { loadSystems, loadReferences, uuidOf } from '../../../lib/registry.ts';
 
 export async function getStaticPaths() {
+	const PAGE_SIZE = 200;
+	const PREVIEW = 20;
 	const systems = loadSystems();
 	const refs = loadReferences();
 	return systems.map((system) => {
@@ -11,14 +13,21 @@ export async function getStaticPaths() {
 			.sort((a, b) =>
 				a.locator.localeCompare(b.locator, undefined, { numeric: true }),
 			);
+		const pageCount = Math.max(1, Math.ceil(systemRefs.length / PAGE_SIZE));
 		return {
 			params: { key: system.key },
-			props: { system, refs: systemRefs },
+			props: {
+				system,
+				preview: systemRefs.slice(0, PREVIEW),
+				refCount: systemRefs.length,
+				pageCount,
+				pageSize: PAGE_SIZE,
+			},
 		};
 	});
 }
 
-const { system, refs } = Astro.props;
+const { system, preview, refCount, pageCount, pageSize } = Astro.props;
 ---
 
 <StarlightPage
@@ -63,20 +72,28 @@ const { system, refs } = Astro.props;
 		}
 	</p>
 
-	<h2>References using this system ({refs.length})</h2>
+	<h2>References using this system ({refCount})</h2>
 	{
-		refs.length === 0 ? (
+		refCount === 0 ? (
 			<p class="reg-empty">No references registered yet.</p>
 		) : (
-			<ul class="reg-list">
-				{refs.map((r) => (
-					<li>
-						<a href={`/reg/id/${uuidOf(r.id)}/`}>
-							<code>{r.work_key}</code> · <code>{r.locator}</code>
-						</a>
-					</li>
-				))}
-			</ul>
+			<>
+				<ul class="reg-list">
+					{preview.map((r) => (
+						<li>
+							<a href={`/reg/id/${uuidOf(r.id)}/`}>
+								<code>{r.work_key}</code> · <code>{r.locator}</code>
+							</a>
+						</li>
+					))}
+				</ul>
+				<p>
+					<a href={`/reg/system/${system.key}/refs/1/`}>
+						Browse all {refCount} reference(s){' '}
+						{pageCount > 1 ? `(${pageCount} pages of ${pageSize})` : ''} →
+					</a>
+				</p>
+			</>
 		)
 	}
 </StarlightPage>
