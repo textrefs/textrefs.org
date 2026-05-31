@@ -32,8 +32,7 @@ A dataset conforms to the TextRefs Standard if it satisfies all of the following
 5. Every `CitationSystem` declares valid and invalid examples for automated tests.
 6. Every dereferenceable location is represented through a `ResolverTarget`, and every external identifier or cross-reference equivalence through a `MappingAssertion`.
 7. Every registry object includes administrative metadata.
-
-A conforming registry record MUST NOT include full text, apparatus, commentary, translation text, or copyrighted edition content.
+8. Registry records contain identifiers, metadata, mappings, provenance, and resolver targets rather than primary text content.
 
 ## 3. Normative language
 
@@ -48,7 +47,7 @@ TextRefs separates **identity** from **location**.
 
 A reference such as `John 3:16` is the **same identity** whether read in Greek, the King James Version, or the Lutherbibel. The translation is a property of the _location_, never of the identity. This is what lets the model scale to works with hundreds of translations (see [§13](#13-worked-example-a-multi-translation-work)).
 
-TextRefs never stores the text itself. Full text, critical apparatus, commentary, and copyrighted edition content are out of scope and MUST NOT appear in registry records.
+TextRefs registry records store identifiers, metadata, mappings, provenance, and resolver targets. This keeps the registry legally reusable and stable across editions. A conforming record MUST NOT include full text, critical apparatus, commentary, translation text, or copyrighted edition content.
 
 ## 5. Core object types
 
@@ -245,7 +244,7 @@ A `MappingAssertion` records a curated equivalence claim. It connects a TextRefs
 Required: `id`, `type` (`MappingAssertion`), `subject`, `relation`, `target`, `source`, plus administrative metadata.
 
 - `subject` MUST point to a TextRefs object.
-- `target.identifier` MUST be an IRI ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)) that identifies a **textual resource**: a work, edition, manuscript, passage, citation system, citation point, or another TextRefs object. Identifiers of agents, organisations, instruments, or datasets that are not themselves textual resources (e.g. ROR, ORCID, ISNI) are out of scope.
+- `target.identifier` MUST be an IRI ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)) that identifies a **textual resource**: a work, edition, manuscript, passage, citation system, citation point, or another TextRefs object. Use authority, organisation, instrument, or dataset identifiers (e.g. ROR, ORCID, ISNI) in descriptive metadata rather than `MappingAssertion.target`.
 - `target.target_kind` is OPTIONAL and is a human-readable scheme hint (e.g. `"cts"`, `"doi"`, `"wikidata"`, `"textrefs"`). Validators MUST NOT key behaviour off it. The presence or absence of `target_kind` carries no normative weight; the IRI in `identifier` is authoritative. See [Appendix B](#appendix-b-well-known-external-identifier-schemes-informative) for non-normative examples.
 - `relation` MUST be one of the SKOS-compatible values `exactMatch` or `closeMatch`. Use `exactMatch` only when the mapped object identifies the same reference with sufficient precision; if there is any uncertainty about segmentation, edition, translation, scope, or locator alignment, use `closeMatch`.
 - `source` documents the basis for the assertion. A structured [W3C PROV-O](https://www.w3.org/TR/prov-o/) mapping is reserved for a future version.
@@ -383,14 +382,14 @@ This standard relies on the following external standards. Each is normative wher
 
 This standard defines the minimum requirements for a TextRefs registry. Applications, resolvers, editorial tools, APIs, and visualizations may be built on top of it; they conform only insofar as their registry records satisfy this standard.
 
-Outside the current scope:
+Build on the core registry by keeping these concerns in application, extension, or resolver layers:
 
 - full-text hosting, edition/manuscript modelling, translation hosting, textual apparatus, commentary, thematic annotation;
 - citation-style rendering, recommendation systems, legal rights clearance for external content.
 
 ## Appendix B. Well-known external identifier schemes (informative)
 
-The following identifier schemes commonly satisfy [§10](#10-mappingassertion)'s "textual resource" rule and are useful values for `MappingAssertion.target.identifier`. This table is non-normative and non-exhaustive; presence here implies neither endorsement nor commitment to support.
+The following identifier schemes commonly satisfy [§10](#10-mappingassertion)'s "textual resource" rule and are useful values for `MappingAssertion.target.identifier`. Treat this table as implementation guidance: the authoritative rule is still whether the IRI identifies a textual resource.
 
 | Scheme   | `target_kind` hint | Example identifier                                |
 | -------- | ------------------ | ------------------------------------------------- |
@@ -404,4 +403,4 @@ The following identifier schemes commonly satisfy [§10](#10-mappingassertion)'s
 | URN:NBN  | `urn-nbn`          | `urn:nbn:de:bvb:12-bsb00012345-2`                 |
 | Wikidata | `wikidata`         | `https://www.wikidata.org/entity/Q42`             |
 
-Identifiers of agents, organisations, instruments, or non-textual datasets (e.g. ROR, ORCID, ISNI) are explicitly out of scope and MUST NOT appear in `MappingAssertion.target`.
+Use identifiers of agents, organisations, instruments, or non-textual datasets (e.g. ROR, ORCID, ISNI) as descriptive metadata when needed. They MUST NOT appear in `MappingAssertion.target`, which is reserved for textual resources.

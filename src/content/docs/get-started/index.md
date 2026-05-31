@@ -17,13 +17,11 @@ TextRefs is an open registry. For each canonical reference we mint a persistent 
 
 The same model covers a Stephanus passage in Plato, a Bekker line in Aristotle, a chapter-and-verse in the Vulgate, an article in the _Summa_, and a fragment in the _Digesta_ — every traditional reference system is a `CitationSystem` with its own locator rules.
 
-## What TextRefs is not
+## Use TextRefs with existing systems
 
-- not a full-text database — we do not host copyrighted edition texts, critical apparatus, commentaries, or protected translations;
-- not a publisher or critical edition;
-- not a substitute for Perseus, Loeb, TLG, PHI, DTS, CTS, Wikidata, library catalogues, or any of the other systems we map to.
+Use TextRefs for the stable citation identity: the passage, article, line, section, or fragment a scholar means when they write a traditional reference. Keep edition text, commentary, apparatus, translations, and platform-specific records in the systems that already curate them.
 
-We are explicitly **adjacent** to those systems, not replacing them. See the [related systems comparison](/get-started/related-systems/) for the full picture.
+This division is deliberate. TextRefs stays small, persistent, and legally reusable; libraries, editions, catalogues, and reading platforms keep doing the richer work they are built for. The registry connects them through curated mappings instead of trying to replace them. See the [related systems comparison](/get-started/related-systems/) for the full picture.
 
 ## Keep reading
 

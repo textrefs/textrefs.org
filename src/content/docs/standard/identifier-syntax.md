@@ -32,9 +32,9 @@ Serialization rules:
 
 - Encode the seed as UTF-8.
 - Join the four values with a single line feed character, `U+000A`.
-- Do not add leading or trailing whitespace.
-- Do not add a final trailing line feed.
-- Do not substitute labels, URIs, aliases, or external identifiers for the key fields.
+- Use each field exactly as normalized, with no leading or trailing whitespace.
+- End the seed after `normalization_version`, with no final trailing line feed.
+- Use the registry key fields themselves; labels, URIs, aliases, and external identifiers belong in metadata or mappings.
 - Each field MUST already be normalized by its owning profile before UUID generation.
 
 ## Unicode normalization
