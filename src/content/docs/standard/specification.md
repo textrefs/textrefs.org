@@ -31,7 +31,7 @@ A dataset conforms to the TextRefs Standard if it satisfies all of the following
 4. Every `CanonicalReference` points to one known `Work` and one known `CitationSystem`.
 5. Every `CanonicalReference.locator` validates syntactically against the referenced `CitationSystem` and semantically by being a registered reference point for the referenced `Work`.
 6. Every `CitationSystem` declares valid and invalid examples for automated tests.
-7. Every dereferenceable location is represented through a `ResolverTarget`, and every external identifier or cross-reference equivalence through a `MappingAssertion`.
+7. Every dereferenceable location is represented as an entry in the `resolver_targets` array of its `CanonicalReference`, and every external identifier or cross-reference equivalence through a `MappingAssertion`.
 8. Every registry object includes administrative metadata.
 9. Registry records contain identifiers, metadata, mappings, provenance, and resolver targets rather than primary text content.
 
@@ -44,7 +44,7 @@ The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`, `SHOULD`, `S
 TextRefs separates **identity** from **location**.
 
 - **Identity** is abstract and language-independent. `Work`, `CitationSystem`, and `CanonicalReference` answer the question "_which_ passage": for example _the Gospel of John, chapter-and-verse, 3:16_. There is exactly one such identity, regardless of how many editions, translations, or websites carry it.
-- **Location and equivalence** answer "_where_ can I read it" and "_what else_ is this the same as". `ResolverTarget` records a place where a reference can be read (a specific translation, edition, or provider); `MappingAssertion` records that a reference is equivalent to an external identifier or to another reference.
+- **Location and equivalence** answer "_where_ can I read it" and "_what else_ is this the same as". The `resolver_targets` array embedded in each `CanonicalReference` lists places where the reference can be read (specific translations, editions, or providers). `MappingAssertion` records that a `Work` is equivalent to an external identifier or to another `Work`.
 
 A reference such as `John 3:16` is the **same identity** whether read in Greek, the King James Version, or the Lutherbibel. The translation is a property of the _location_, never of the identity. This is what lets the model scale to works with hundreds of translations (see [§13](#13-worked-example-a-multi-translation-work)).
 
@@ -52,17 +52,18 @@ TextRefs registry records store identifiers, metadata, mappings, provenance, and
 
 ## 5. Core object types
 
-A conforming registry MUST support these object types. Each object MUST carry a `type` field matching one of them.
+A conforming registry MUST support these object types. Each top-level object MUST carry a `type` field matching one of them.
 
-| Type                 | Layer       | Purpose                                                       |
-| -------------------- | ----------- | ------------------------------------------------------------- |
-| `Work`               | identity    | An abstract textual work.                                     |
-| `CitationSystem`     | identity    | A notation that fragments works into locators.                |
-| `CanonicalReference` | identity    | One abstract reference point in a work.                       |
-| `ResolverTarget`     | location    | A place where a reference can be read.                        |
-| `MappingAssertion`   | equivalence | A curated equivalence to an external ID or another reference. |
+| Type                 | Layer               | Purpose                                                                 |
+| -------------------- | ------------------- | ----------------------------------------------------------------------- |
+| `Work`               | identity            | An abstract textual work.                                               |
+| `CitationSystem`     | identity            | A notation that fragments works into locators.                          |
+| `CanonicalReference` | identity + location | One abstract reference point in a work, with embedded resolver targets. |
+| `MappingAssertion`   | equivalence         | A curated equivalence between a `Work` and an external identifier.      |
 
-The five types depend on one another as follows. Every object additionally carries the shared administrative metadata of [§12](#12-administrative-metadata) (omitted from the diagram for clarity).
+Dereferenceable locations are not a separate object type. They are recorded as entries in the `resolver_targets` array embedded in each `CanonicalReference` (see [§9](#9-embedded-resolver-targets)). This keeps language-tagged locations co-located with the reference they describe, and means a work with N translations adds N array entries — not N standalone records.
+
+Every object additionally carries the shared administrative metadata of [§12](#12-administrative-metadata) (omitted from the diagram for clarity).
 
 ```mermaid
 classDiagram
@@ -84,9 +85,9 @@ classDiagram
         +string citation_system_key
         +string locator
         +string normalization_version
+        +ResolverTargetEntry[] resolver_targets
     }
-    class ResolverTarget {
-        +URI id
+    class ResolverTargetEntry {
         +IRI url
         +string language
         +string edition
@@ -96,17 +97,17 @@ classDiagram
     }
     class MappingAssertion {
         +URI id
+        +URI subject
         +enum relation
         +string source
     }
     CanonicalReference --> "1" Work : work_key
     CanonicalReference --> "1" CitationSystem : citation_system_key
-    ResolverTarget --> "1" CanonicalReference : subject
-    MappingAssertion --> "1" CanonicalReference : subject
-    MappingAssertion ..> "0..1" CanonicalReference : target (textrefs)
+    CanonicalReference *-- "0..*" ResolverTargetEntry : resolver_targets
+    MappingAssertion --> "1" Work : subject
 ```
 
-A `MappingAssertion.target` may instead be an external identifier (CTS URN, Wikidata Q-ID, DOI, ARK, …); there is no separate object type for external identifiers, so that case is expressed inline in the assertion rather than as a node above (see [§10](#10-mappingassertion) and [Appendix B](#appendix-b-well-known-external-identifier-schemes-informative)).
+`MappingAssertion.subject` MUST be a `Work` IRI. Per-passage external identifiers (e.g. the CTS URN of a single verse) are derived from work-level mappings and the reference locator at resolve time, not stored as separate assertions (see [§10](#10-mappingassertion)).
 
 ## 6. Work
 
@@ -170,7 +171,7 @@ Required: `id`, `key`, `type` (`CitationSystem`), `preferred_label`, `normalizat
 
 ## 8. CanonicalReference
 
-A `CanonicalReference` represents one atomized, **language-independent** reference point, identified by combining a work, a citation system, a normalized locator, and a normalization version.
+A `CanonicalReference` represents one atomized, **language-independent** reference point, identified by combining a work, a citation system, a normalized locator, and a normalization version. It also carries the set of dereferenceable external locations for that reference as an embedded `resolver_targets` array (see [§9](#9-embedded-resolver-targets)).
 
 ```json
 {
@@ -180,13 +181,23 @@ A `CanonicalReference` represents one atomized, **language-independent** referen
   "citation_system_key": "bible-chapter-verse",
   "locator": "3:16",
   "normalization_version": "1.0.0",
+  "resolver_targets": [
+    {
+      "url": "https://www.biblegateway.com/passage/?search=John%203%3A16&version=KJV",
+      "language": "en",
+      "edition": "King James Version",
+      "provider": "Bible Gateway",
+      "access": "open",
+      "license": "CC0-1.0"
+    }
+  ],
   "status": "active",
   "created": "2026-01-01",
   "modified": "2026-01-01"
 }
 ```
 
-Required: `id`, `type` (`CanonicalReference`), `work_key`, `citation_system_key`, `locator`, `normalization_version`, plus administrative metadata.
+Required: `id`, `type` (`CanonicalReference`), `work_key`, `citation_system_key`, `locator`, `normalization_version`, `resolver_targets` (MAY be empty), plus administrative metadata.
 
 - `work_key` MUST reference a known `Work`; `citation_system_key` MUST reference a known `CitationSystem`.
 - `work_key` and `citation_system_key` MUST be treated as opaque flat keys. Implementations MUST NOT infer author, corpus, title, hierarchy, or resolver behaviour by splitting either key.
@@ -194,16 +205,14 @@ Required: `id`, `type` (`CanonicalReference`), `work_key`, `citation_system_key`
 - An accepted `CanonicalReference` MUST represent an attested reference point for the referenced `Work` under the referenced `CitationSystem`.
 - `normalization_version` is part of the reference's identity and is fixed when the reference is minted; it records the normalization in force at that time and need not equal the citation system's current `normalization_version`. Its correctness is verified by the deterministic identifier (see [§14](#14-validation-requirements) and [Identifier syntax](/standard/identifier-syntax/)).
 - The `id` MUST be generated deterministically per [Identifier syntax](/standard/identifier-syntax/); its UUID component is the deterministic seed output.
+- `resolver_targets` MUST validate per [§9](#9-embedded-resolver-targets).
 
-## 9. ResolverTarget
+## 9. Embedded resolver targets
 
-A `ResolverTarget` records a dereferenceable external location where a reference can be read — typically a specific **translation, edition, or provider**. A resolver target never defines TextRefs identity; it points outward from a reference.
+`resolver_targets` is the array on each `CanonicalReference` that records dereferenceable external locations where the reference can be read — typically specific **translations, editions, or providers**. Each entry is a plain object; it has no independent `id` or `type` of its own, because its identity is the parent reference plus its position in the array.
 
 ```json
 {
-  "id": "https://textrefs.org/id/target/{uuid}",
-  "type": "ResolverTarget",
-  "subject": "https://textrefs.org/id/ref/{uuid}",
   "url": "https://www.biblegateway.com/passage/?search=John%203%3A16&version=KJV",
   "language": "en",
   "edition": "King James Version",
@@ -211,36 +220,33 @@ A `ResolverTarget` records a dereferenceable external location where a reference
   "access": "open",
   "license": "CC0-1.0",
   "license_url": null,
-  "last_checked": "2026-01-01",
-  "status": "active",
-  "created": "2026-01-01",
-  "modified": "2026-01-01"
+  "last_checked": "2026-01-01"
 }
 ```
 
-Required: `id`, `type` (`ResolverTarget`), `subject`, `url`, `access`, plus administrative metadata.
+Required per entry: `url`, `access`.
 
-- `subject` MUST point to a TextRefs object (usually a `CanonicalReference`).
 - `url` MUST be a dereferenceable external IRI ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)).
-- `language` MUST be present when the target is language-specific (e.g. a translation), as a [BCP 47](https://www.rfc-editor.org/info/bcp47) language tag ([RFC 5646](https://www.rfc-editor.org/rfc/rfc5646)). Tags MUST include an [ISO 15924](https://www.unicode.org/iso15924/) script subtag when the target uses a non-default script for the language (e.g. `grc-Grek`, `hbo-Hebr`, `grc-Latn`). `edition` SHOULD name the specific edition or version when known.
+- `language` MUST be present when the entry is language-specific (e.g. a translation), as a [BCP 47](https://www.rfc-editor.org/info/bcp47) language tag ([RFC 5646](https://www.rfc-editor.org/rfc/rfc5646)). Tags MUST include an [ISO 15924](https://www.unicode.org/iso15924/) script subtag when the entry uses a non-default script for the language (e.g. `grc-Grek`, `hbo-Hebr`, `grc-Latn`). `edition` SHOULD name the specific edition or version when known.
 - `access` MUST be one of `open`, `paywalled`, `restricted`, `unknown`.
 - `license` SHOULD be a current [SPDX license identifier](https://spdx.org/licenses/) (e.g. `CC0-1.0`, `CC-BY-4.0`) when the licence of the target resource is known. For licences not in the SPDX list, omit `license` and use the optional `license_url` to point at the licence text.
 - Values implying permission to host copyrighted full text (e.g. a `license` of `proprietary` accompanied by hosted text) are forbidden; the no-text rule in [§2](#2-conformance) governs.
-- When a rights or trust dispute is accepted for review, the target SHOULD be set to status `blocked` and retained as a visible tombstone.
+- A `CanonicalReference` whose `resolver_targets` is an empty array remains a valid identity record; adding or removing an entry MUST NOT change the parent reference's `id`.
+- Tombstoning a single bad URL is done by removing the entry; tombstoning the whole reference uses the parent `status` field. There is no independent status on individual entries.
 
 ## 10. MappingAssertion
 
-A `MappingAssertion` records a curated equivalence claim. It connects a TextRefs object either to an **external identifier** (CTS URN, Wikidata Q-ID, DOI, ARK, …) or to **another TextRefs reference** (for example, equating references across two divergent versification systems). There is no separate object type for external identifiers; they are always expressed as mapping targets. The subject MAY be any TextRefs object — most commonly a `CanonicalReference`, but also a `Work` (e.g. to map a `Work` to its Wikidata Q-ID) or a `CitationSystem`.
+A `MappingAssertion` records a curated equivalence claim between a TextRefs `Work` and an **external identifier** (CTS URN, Wikidata Q-ID, DOI, ARK, …) or another TextRefs `Work`. There is no separate object type for external identifiers; they are always expressed as mapping targets.
 
 ```json
 {
   "id": "https://textrefs.org/id/mapping/{uuid}",
   "type": "MappingAssertion",
-  "subject": "https://textrefs.org/id/ref/{uuid}",
-  "relation": "closeMatch",
+  "subject": "https://textrefs.org/id/work/bible.john",
+  "relation": "exactMatch",
   "target": {
-    "target_kind": "cts",
-    "identifier": "urn:cts:greekLit:tlg0031.tlg004:3.16"
+    "target_kind": "wikidata",
+    "identifier": "https://www.wikidata.org/entity/Q42129"
   },
   "source": "manual-curation",
   "status": "candidate",
@@ -251,10 +257,10 @@ A `MappingAssertion` records a curated equivalence claim. It connects a TextRefs
 
 Required: `id`, `type` (`MappingAssertion`), `subject`, `relation`, `target`, `source`, plus administrative metadata.
 
-- `subject` MUST point to a TextRefs object.
-- `target.identifier` MUST be an IRI ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)) that identifies a **textual resource**: a work, edition, manuscript, passage, citation system, citation point, or another TextRefs object.
+- `subject` MUST be a `Work` IRI of the form `https://textrefs.org/id/work/{work_key}`. Per-passage external identifiers (e.g. the CTS URN of a single verse) are derived from work-level mappings combined with the reference locator at resolve time; they MUST NOT be stored as separate `MappingAssertion` records.
+- `target.identifier` MUST be an IRI ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)) that identifies a **textual resource**: a work, edition, manuscript, citation system, or another TextRefs `Work`.
 - `target.target_kind` is OPTIONAL and is a human-readable scheme hint (e.g. `"cts"`, `"doi"`, `"wikidata"`, `"textrefs"`). Validators MUST NOT key behaviour off it. The presence or absence of `target_kind` carries no normative weight; the IRI in `identifier` is authoritative. See [Appendix B](#appendix-b-well-known-external-identifier-schemes-informative) for non-normative examples.
-- `relation` MUST be one of the SKOS-compatible values `exactMatch` or `closeMatch`. Use `exactMatch` only when the mapped object identifies the same reference with sufficient precision; if there is any uncertainty about segmentation, edition, translation, coverage, or locator alignment, use `closeMatch`.
+- `relation` MUST be one of the SKOS-compatible values `exactMatch` or `closeMatch`. Use `exactMatch` only when the mapped resource identifies the same work with sufficient precision; if there is any uncertainty about edition, coverage, or work boundaries, use `closeMatch`.
 - `source` documents the basis for the assertion. A structured [W3C PROV-O](https://www.w3.org/TR/prov-o/) mapping is reserved for a future version.
 
 ## 11. Identifier policy
@@ -265,7 +271,7 @@ TextRefs identifiers MUST be persistent HTTP URIs ([RFC 3986](https://www.rfc-ed
 
 A `CanonicalReference` identifier MUST be generated deterministically. The identity seed MUST include `work_key`, `citation_system_key`, `locator`, and `normalization_version`, in that order (see [Identifier syntax](/standard/identifier-syntax/)).
 
-`ResolverTarget` and `MappingAssertion` identifiers MUST remain UUID-based (`https://textrefs.org/id/target/{uuid}` and `https://textrefs.org/id/mapping/{uuid}`). Their identifiers MUST NOT be derived from provider URLs, external identifiers, corpus paths, or resolver structures.
+A `MappingAssertion` identifier MUST be generated deterministically from `subject`, `relation`, and `target.identifier`, in that order, using the `mapping` namespace (see [Identifier syntax](/standard/identifier-syntax/#mappingassertion-seed)). It MUST remain UUID-based and MUST NOT be derived from provider URLs, corpus paths, or resolver structures. Resolver-target entries do not have their own identifiers.
 
 An implementation MUST NOT silently change the identity-defining fields of an existing `CanonicalReference`. Because those fields seed the deterministic identifier, any change produces a new `CanonicalReference` with a new identifier. The prior reference MUST be retained as a tombstone (`status` `deprecated` or `withdrawn`, [§12](#12-administrative-metadata)) and SHOULD be linked to its replacement through an `exactMatch` `MappingAssertion` ([§10](#10-mappingassertion)).
 
@@ -295,7 +301,7 @@ Deprecated, withdrawn, and blocked records SHOULD remain visible unless removal 
 
 This is the case that motivates separating identity from location. The Bible exists in hundreds of translations, yet `John 3:16` is **one** reference.
 
-**One identity** — a single `Work`, `CitationSystem`, and `CanonicalReference`:
+**One identity** — a single `Work`, `CitationSystem`, and `CanonicalReference`. The reference embeds all language-tagged locations as `resolver_targets`:
 
 ```json
 {
@@ -313,34 +319,29 @@ This is the case that motivates separating identity from location. The Bible exi
     "type": "CanonicalReference",
     "work_key": "bible.john",
     "citation_system_key": "bible-chapter-verse",
-    "locator": "3:16"
+    "locator": "3:16",
+    "resolver_targets": [
+      {
+        "url": "https://www.biblegateway.com/passage/?search=John%203%3A16&version=KJV",
+        "language": "en",
+        "edition": "King James Version",
+        "provider": "Bible Gateway",
+        "access": "open",
+        "license": "CC0-1.0"
+      },
+      {
+        "url": "https://www.die-bibel.de/bibel/LU84/JHN.3.16",
+        "language": "de",
+        "edition": "Lutherbibel 1984",
+        "provider": "die-bibel.de",
+        "access": "open"
+      }
+    ]
   }
 }
 ```
 
-**Many locations** — one `ResolverTarget` per translation, all sharing the same `subject` reference. Adding a 101st language adds a 101st target, never a new reference:
-
-```json
-[
-  {
-    "type": "ResolverTarget",
-    "subject": ".../ref/{john-3-16}",
-    "language": "en",
-    "edition": "King James Version",
-    "provider": "Bible Gateway",
-    "access": "open",
-    "license": "CC0-1.0"
-  },
-  {
-    "type": "ResolverTarget",
-    "subject": ".../ref/{john-3-16}",
-    "language": "de",
-    "edition": "Lutherbibel 1984",
-    "provider": "die-bibel.de",
-    "access": "open"
-  }
-]
-```
+Adding a 101st translation appends one entry to `resolver_targets`. The reference identity — its UUID, its work, its citation system, its locator — does not change.
 
 **Divergent versification** is the one case that _does_ create separate references. Where traditions number verses differently (e.g. the Psalms in the Masoretic text versus the Vulgate/Septuagint), each tradition is a distinct `CitationSystem`, its references are distinct `CanonicalReference`s, and the equivalence between them is recorded as a `closeMatch` `MappingAssertion` — not by collapsing them into one identity.
 
@@ -348,17 +349,17 @@ This is the case that motivates separating identity from location. The Bible exi
 
 A conforming validator MUST check:
 
-1. required fields for each object type;
+1. required fields for each object type and for each `resolver_targets` entry;
 2. object `type` values and TextRefs URI patterns, including `Work` and `CitationSystem` IDs whose keys occupy exactly one path segment;
 3. flat-key syntax and uniqueness for `Work.key` and `CitationSystem.key`;
 4. administrative metadata and `status` values;
 5. citation-system `locator_regex` syntax, and its valid/invalid examples;
 6. canonical-reference locator syntax (the `normalization_version` is the value fixed at minting, verified by the deterministic identifier in item 8, not matched against the system's current version);
 7. canonical-reference semantic validity: accepted records must be registered, attested reference points for their `Work` and `CitationSystem`;
-8. deterministic-identifier correctness for canonical references;
-9. UUID-based identifier shape for `CanonicalReference`, `ResolverTarget`, and `MappingAssertion` records;
-10. resolver-target `access` values, BCP 47 syntax of `language` and its presence for language-specific targets, and SPDX syntax of `license` when present;
-11. mapping `relation` values;
+8. deterministic-identifier correctness for canonical references and mapping assertions;
+9. UUID-based identifier shape for `CanonicalReference` and `MappingAssertion` records;
+10. `resolver_targets` entries: `access` values, BCP 47 syntax of `language` and its presence for language-specific entries, and SPDX syntax of `license` when present;
+11. mapping `relation` values and the Work-IRI shape of `MappingAssertion.subject`;
 12. absence of forbidden full-text/apparatus/commentary content.
 
 A validator SHOULD report errors in a machine-readable format, and SHOULD distinguish syntactically valid, registered, mapped, and resolvable references. An input locator that matches `locator_regex` but has no corresponding registered `CanonicalReference` is syntactically valid but not a valid TextRefs reference.
@@ -419,3 +420,5 @@ The following identifier schemes commonly satisfy [§10](#10-mappingassertion)'s
 | Wikidata | `wikidata`         | `https://www.wikidata.org/entity/Q42`             |
 
 TextRefs keeps mappings focused on textual resources. Identifiers of agents, organisations, instruments, or non-textual datasets (e.g. ROR, ORCID, ISNI) belong in external authority systems reached through mapped textual resources, not in `MappingAssertion.target`.
+
+A passage-level external identifier (e.g. the CTS URN of a single verse) is **derived** at resolve time from the work-level mapping plus the reference locator; it is not stored as a separate `MappingAssertion`. For example, a `Work` mapping `bible.john → urn:cts:greekLit:tlg0031.tlg004` plus the reference locator `3:16` yields the derived passage URN `urn:cts:greekLit:tlg0031.tlg004:3.16`. Source data carries the work-level mapping plus a locator template; the registry does not store one mapping per passage.

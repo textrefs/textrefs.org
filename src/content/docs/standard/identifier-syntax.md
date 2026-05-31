@@ -96,6 +96,30 @@ Canonical URI:
 https://textrefs.org/id/ref/4d0cfb4d-e4b3-5e6a-8b68-c02a8b2f0931
 ```
 
+## MappingAssertion seed
+
+`MappingAssertion` identifiers are also deterministic UUID v5, derived from the assertion's content so that recompiling the same source produces a byte-identical record.
+
+The mapping namespace UUID is:
+
+```text
+f16bb214-4241-549d-ad41-7b011f02befb
+```
+
+This namespace is derived from `uuidv5(uuid.NAMESPACE_DNS, "textrefs.org/mapping")` and is frozen for `v0.1.0-draft`.
+
+The seed string is the following three-field sequence, joined with single line feed characters and no trailing newline:
+
+```text
+subject
+relation
+target.identifier
+```
+
+`subject` MUST be the canonical Work IRI (`https://textrefs.org/id/work/{work_key}`). `relation` MUST be the literal string `exactMatch` or `closeMatch`. `target.identifier` MUST be used as supplied by the source record, after any IRI normalization the source profile already applies. `target.target_kind` is a non-normative hint and does NOT enter the seed.
+
+The canonical URI is `https://textrefs.org/id/mapping/{uuid}`.
+
 ## Immutability
 
 Once a deterministic identifier is published, it is permanent. If a record is found to be wrong, it MUST be marked `deprecated`, `withdrawn`, or `blocked`; the original URI MUST remain dereferenceable as a tombstone.
