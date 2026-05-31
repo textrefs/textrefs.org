@@ -1,0 +1,15 @@
+{
+  "id": "https://textrefs.org/id/system/kant-akademie-a-b",
+  "key": "kant-akademie-a-b",
+  "type": "CitationSystem",
+  "preferred_label": "Kant Akademie-Ausgabe A/B pagination",
+  "normalization_version": "1.0.0",
+  "locator_regex": "^[AB][0-9]+(?:/[AB][0-9]+)?$",
+  "examples": {
+    "valid": ["A51/B75", "A51", "B75"],
+    "invalid": ["51", "C12", "A/B"]
+  },
+  "status": "active",
+  "created": "2026-01-01",
+  "modified": "2026-01-01"
+}

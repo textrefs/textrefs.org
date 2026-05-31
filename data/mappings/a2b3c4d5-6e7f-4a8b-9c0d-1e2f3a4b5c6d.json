@@ -1,0 +1,14 @@
+{
+  "id": "https://textrefs.org/id/mapping/a2b3c4d5-6e7f-4a8b-9c0d-1e2f3a4b5c6d",
+  "type": "MappingAssertion",
+  "subject": "https://textrefs.org/id/work/kant.krv",
+  "relation": "exactMatch",
+  "target": {
+    "target_kind": "wikidata",
+    "identifier": "https://www.wikidata.org/entity/Q213544"
+  },
+  "source": "manual-curation",
+  "status": "candidate",
+  "created": "2026-01-01",
+  "modified": "2026-01-01"
+}
