@@ -1,0 +1,15 @@
+{
+  "id": "https://textrefs.org/id/system/dhammapada-chapter-verse",
+  "key": "dhammapada-chapter-verse",
+  "type": "CitationSystem",
+  "preferred_label": "Dhammapada chapter-and-verse",
+  "normalization_version": "1.0.0",
+  "locator_regex": "^(?<chapter>[1-9]|1[0-9]|2[0-6])\\.(?<verse>[1-9][0-9]*)$",
+  "examples": {
+    "valid": ["1.1", "1.20", "26.423"],
+    "invalid": ["0.1", "27.1", "1", "1.0"]
+  },
+  "status": "candidate",
+  "created": "2026-05-31",
+  "modified": "2026-05-31"
+}

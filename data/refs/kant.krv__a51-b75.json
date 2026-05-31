@@ -5,6 +5,16 @@
   "citation_system_key": "kant-akademie-a-b",
   "locator": "A51/B75",
   "normalization_version": "1.0.0",
+  "resolver_targets": [
+    {
+      "url": "https://korpora.zim.uni-duisburg-essen.de/kant/aa03/057.html",
+      "language": "de",
+      "edition": "Akademie-Ausgabe Band III",
+      "provider": "Korpora.org",
+      "access": "open",
+      "last_checked": "2026-01-01"
+    }
+  ],
   "status": "active",
   "created": "2026-01-01",
   "modified": "2026-01-01"
