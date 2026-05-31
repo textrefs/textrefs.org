@@ -1,0 +1,105 @@
+---
+import RegistryLayout from '../../../layouts/RegistryLayout.astro';
+import {
+	loadWorks,
+	loadSystems,
+	loadReferences,
+	loadMappings,
+	uuidOf,
+} from '../../../lib/registry.ts';
+
+export async function getStaticPaths() {
+	const works = loadWorks();
+	const systems = loadSystems();
+	const refs = loadReferences();
+	const mappings = loadMappings();
+	return works.map((work) => {
+		const workIri = work.id;
+		const workRefs = refs
+			.filter((r) => r.work_key === work.key)
+			.sort((a, b) =>
+				a.locator.localeCompare(b.locator, undefined, { numeric: true }),
+			);
+		const workMappings = mappings.filter((m) => m.subject === workIri);
+		const usedSystemKeys = Array.from(
+			new Set(workRefs.map((r) => r.citation_system_key)),
+		);
+		const usedSystems = usedSystemKeys
+			.map((k) => systems.find((s) => s.key === k))
+			.filter((s): s is NonNullable<typeof s> => Boolean(s));
+		return {
+			params: { key: work.key },
+			props: {
+				work,
+				refs: workRefs,
+				mappings: workMappings,
+				systems: usedSystems,
+			},
+		};
+	});
+}
+
+const { work, refs, mappings, systems } = Astro.props;
+---
+
+<RegistryLayout title={work.preferred_label}>
+	<h1>{work.preferred_label}</h1>
+	<p class="sub">
+		<span class="tag">Work</span>
+		<span class="tag">{work.status}</span>
+		<code class="iri">{work.id}</code>
+	</p>
+
+	<h2>Citation systems</h2>
+	{
+		systems.length === 0 ? (
+			<p class="empty">No citation systems registered for this work yet.</p>
+		) : (
+			<ul class="bare">
+				{systems.map((s) => (
+					<li>
+						<a href={`/reg/system/${s.key}/`}>{s.preferred_label}</a>
+						<code class="iri">{s.key}</code>
+					</li>
+				))}
+			</ul>
+		)
+	}
+
+	<h2>Mappings ({mappings.length})</h2>
+	{
+		mappings.length === 0 ? (
+			<p class="empty">No mappings yet.</p>
+		) : (
+			<ul class="bare">
+				{mappings.map((m) => (
+					<li>
+						<span class="tag">{m.relation}</span>
+						{m.target.target_kind && (
+							<span class="tag">{m.target.target_kind}</span>
+						)}
+						<a href={m.target.identifier}>{m.target.identifier}</a>
+					</li>
+				))}
+			</ul>
+		)
+	}
+
+	<h2>References ({refs.length})</h2>
+	{
+		refs.length === 0 ? (
+			<p class="empty">No references registered yet.</p>
+		) : (
+			<ul class="bare">
+				{refs.map((r) => (
+					<li>
+						<a href={`/reg/id/${uuidOf(r.id)}/`}>
+							<code>{r.locator}</code>
+						</a>
+						<span class="tag">{r.resolver_targets.length} target(s)</span>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</RegistryLayout>

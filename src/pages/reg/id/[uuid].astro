@@ -1,0 +1,103 @@
+---
+import RegistryLayout from '../../../layouts/RegistryLayout.astro';
+import {
+	loadReferences,
+	loadWorks,
+	loadSystems,
+	uuidOf,
+} from '../../../lib/registry.ts';
+
+export async function getStaticPaths() {
+	const refs = loadReferences();
+	const works = loadWorks();
+	const systems = loadSystems();
+	return refs.map((ref) => {
+		const work = works.find((w) => w.key === ref.work_key);
+		const system = systems.find((s) => s.key === ref.citation_system_key);
+		const targets = ref.resolver_targets ?? [];
+		const langs = Array.from(
+			new Set(targets.map((t) => t.language ?? '—')),
+		).sort();
+		const byLang = langs.map((lang) => ({
+			lang,
+			items: targets.filter((t) => (t.language ?? '—') === lang),
+		}));
+		return {
+			params: { uuid: uuidOf(ref.id) },
+			props: { ref, work, system, byLang },
+		};
+	});
+}
+
+const { ref, work, system, byLang } = Astro.props;
+---
+
+<RegistryLayout
+	title={`${work?.preferred_label ?? ref.work_key} ${ref.locator}`}
+>
+	<h1>{ref.locator}</h1>
+	<p class="sub">
+		<span class="tag">CanonicalReference</span>
+		<span class="tag">{ref.status}</span>
+		<code class="iri">{ref.id}</code>
+	</p>
+
+	<h2>In context</h2>
+	<ul class="bare">
+		<li>
+			Work:
+			{
+				work ? (
+					<a href={`/reg/work/${work.key}/`}>{work.preferred_label}</a>
+				) : (
+					<code>{ref.work_key}</code>
+				)
+			}
+		</li>
+		<li>
+			Citation system:
+			{
+				system ? (
+					<a href={`/reg/system/${system.key}/`}>{system.preferred_label}</a>
+				) : (
+					<code>{ref.citation_system_key}</code>
+				)
+			}
+		</li>
+		<li>
+			Locator: <code>{ref.locator}</code>
+			(normalization <code>{ref.normalization_version}</code>)
+		</li>
+	</ul>
+
+	<h2>Resolver targets ({ref.resolver_targets.length})</h2>
+	{
+		ref.resolver_targets.length === 0 ? (
+			<p class="empty">No resolver targets registered for this reference.</p>
+		) : (
+			<div>
+				{byLang.map((group) => (
+					<div class="lang-group">
+						<div class="lang-label">
+							Language: <code>{group.lang}</code>
+						</div>
+						<ul class="bare">
+							{group.items.map((t) => (
+								<li class="target">
+									<a href={t.url} target="_blank" rel="noopener noreferrer">
+										{t.provider ?? t.url}
+									</a>
+									{t.edition && <span class="tag">{t.edition}</span>}
+									<span class="tag">{t.access}</span>
+									{t.license && <span class="tag">{t.license}</span>}
+									<br />
+									<code class="iri">{t.url}</code>
+								</li>
+							))}
+						</ul>
+					</div>
+				))}
+			</div>
+		)
+	}
+</RegistryLayout>

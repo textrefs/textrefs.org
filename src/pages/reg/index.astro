@@ -1,0 +1,46 @@
+---
+import RegistryLayout from '../../layouts/RegistryLayout.astro';
+import { loadWorks, loadSystems } from '../../lib/registry.ts';
+
+const works = loadWorks().sort((a, b) => a.key.localeCompare(b.key));
+const systems = loadSystems().sort((a, b) => a.key.localeCompare(b.key));
+---
+
+<RegistryLayout title="Registry">
+	<h1>Registry</h1>
+	<p class="sub">All works and citation systems currently registered.</p>
+
+	<h2>Works</h2>
+	{
+		works.length === 0 ? (
+			<p class="empty">No works registered.</p>
+		) : (
+			<ul class="bare">
+				{works.map((w) => (
+					<li>
+						<a href={`/reg/work/${w.key}/`}>{w.preferred_label}</a>
+						<span class="tag">{w.status}</span>
+						<code class="iri">{w.key}</code>
+					</li>
+				))}
+			</ul>
+		)
+	}
+
+	<h2>Citation systems</h2>
+	{
+		systems.length === 0 ? (
+			<p class="empty">No citation systems registered.</p>
+		) : (
+			<ul class="bare">
+				{systems.map((s) => (
+					<li>
+						<a href={`/reg/system/${s.key}/`}>{s.preferred_label}</a>
+						<span class="tag">{s.status}</span>
+						<code class="iri">{s.key}</code>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</RegistryLayout>

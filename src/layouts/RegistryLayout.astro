@@ -1,0 +1,158 @@
+---
+interface Props {
+	title: string;
+}
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title} — TextRefs registry</title>
+		<link rel="icon" href="/favicon.svg" />
+		<link
+			rel="stylesheet"
+			href="/fonts/inter-v20-latin-regular.woff2"
+			as="font"
+		/>
+		<style>
+			:root {
+				--fg: #1a1a1a;
+				--muted: #6b6b6b;
+				--bg: #fff;
+				--accent: #1f4e79;
+				--border: #e5e5e5;
+				--code-bg: #f5f5f5;
+			}
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--fg: #f0f0f0;
+					--muted: #a0a0a0;
+					--bg: #111;
+					--accent: #8ab4d8;
+					--border: #2a2a2a;
+					--code-bg: #1a1a1a;
+				}
+			}
+			body {
+				font-family:
+					Inter,
+					system-ui,
+					-apple-system,
+					sans-serif;
+				color: var(--fg);
+				background: var(--bg);
+				margin: 0;
+				padding: 0;
+				line-height: 1.5;
+			}
+			.wrap {
+				max-width: 56rem;
+				margin: 0 auto;
+				padding: 2rem 1.25rem 4rem;
+			}
+			.crumbs {
+				font-size: 0.875rem;
+				color: var(--muted);
+				margin-bottom: 1rem;
+			}
+			.crumbs a {
+				color: inherit;
+			}
+			h1 {
+				margin: 0 0 0.5rem;
+				font-size: 1.875rem;
+				line-height: 1.2;
+			}
+			h2 {
+				font-size: 1.25rem;
+				margin-top: 2rem;
+				margin-bottom: 0.5rem;
+				padding-bottom: 0.25rem;
+				border-bottom: 1px solid var(--border);
+			}
+			.sub {
+				color: var(--muted);
+				font-size: 0.95rem;
+				margin-bottom: 1.5rem;
+			}
+			a {
+				color: var(--accent);
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+			code,
+			.mono {
+				font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+				background: var(--code-bg);
+				padding: 0.05rem 0.25rem;
+				border-radius: 3px;
+				font-size: 0.92em;
+			}
+			.iri {
+				display: inline-block;
+				word-break: break-all;
+			}
+			ul.bare {
+				list-style: none;
+				padding: 0;
+			}
+			ul.bare > li {
+				padding: 0.4rem 0;
+				border-bottom: 1px solid var(--border);
+			}
+			ul.bare > li:last-child {
+				border-bottom: 0;
+			}
+			.target {
+				margin: 0.4rem 0;
+			}
+			.tag {
+				display: inline-block;
+				font-size: 0.72rem;
+				background: var(--code-bg);
+				color: var(--muted);
+				padding: 0.05rem 0.4rem;
+				border-radius: 0.25rem;
+				margin-right: 0.4rem;
+				vertical-align: middle;
+			}
+			.lang-group + .lang-group {
+				margin-top: 1rem;
+			}
+			.lang-label {
+				font-weight: 600;
+				font-size: 0.9rem;
+				color: var(--muted);
+				margin-bottom: 0.25rem;
+			}
+			.empty {
+				color: var(--muted);
+				font-style: italic;
+			}
+			footer {
+				margin-top: 3rem;
+				padding-top: 1rem;
+				border-top: 1px solid var(--border);
+				font-size: 0.85rem;
+				color: var(--muted);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wrap">
+			<div class="crumbs">
+				<a href="/">TextRefs</a> / <a href="/reg/">registry</a>
+			</div>
+			<slot />
+			<footer>
+				<a href="/standard/specification/">Specification</a> ·
+				<a href="/get-started/">Get started</a>
+			</footer>
+		</div>
+	</body>
+</html>

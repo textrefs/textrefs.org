@@ -12,6 +12,7 @@ export default defineConfig({
 			plugins: [
 				starlightLinksValidator({
 					errorOnFallbackPages: false,
+					exclude: ['/reg/**', '/a/**'],
 				}),
 			],
 			title: 'TextRefs',

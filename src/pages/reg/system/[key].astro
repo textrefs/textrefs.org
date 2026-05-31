@@ -1,0 +1,76 @@
+---
+import RegistryLayout from '../../../layouts/RegistryLayout.astro';
+import { loadSystems, loadReferences, uuidOf } from '../../../lib/registry.ts';
+
+export async function getStaticPaths() {
+	const systems = loadSystems();
+	const refs = loadReferences();
+	return systems.map((system) => {
+		const systemRefs = refs
+			.filter((r) => r.citation_system_key === system.key)
+			.sort((a, b) =>
+				a.locator.localeCompare(b.locator, undefined, { numeric: true }),
+			);
+		return {
+			params: { key: system.key },
+			props: { system, refs: systemRefs },
+		};
+	});
+}
+
+const { system, refs } = Astro.props;
+---
+
+<RegistryLayout title={system.preferred_label}>
+	<h1>{system.preferred_label}</h1>
+	<p class="sub">
+		<span class="tag">CitationSystem</span>
+		<span class="tag">{system.status}</span>
+		<code class="iri">{system.id}</code>
+	</p>
+
+	<h2>Locator format</h2>
+	<p>Regex: <code>{system.locator_regex}</code></p>
+	<p>Normalization version: <code>{system.normalization_version}</code></p>
+
+	<h2>Examples</h2>
+	<p>
+		<strong>Valid:</strong>
+		{
+			system.examples.valid
+				.map((v) => <code>{v}</code>)
+				.reduce(
+					(acc, el, i) => acc.concat(i === 0 ? [el] : [' · ', el]),
+					[] as any[],
+				)
+		}
+	</p>
+	<p>
+		<strong>Invalid:</strong>
+		{
+			system.examples.invalid
+				.map((v) => <code>{v}</code>)
+				.reduce(
+					(acc, el, i) => acc.concat(i === 0 ? [el] : [' · ', el]),
+					[] as any[],
+				)
+		}
+	</p>
+
+	<h2>References using this system ({refs.length})</h2>
+	{
+		refs.length === 0 ? (
+			<p class="empty">No references registered yet.</p>
+		) : (
+			<ul class="bare">
+				{refs.map((r) => (
+					<li>
+						<a href={`/reg/id/${uuidOf(r.id)}/`}>
+							<code>{r.work_key}</code> · <code>{r.locator}</code>
+						</a>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</RegistryLayout>
