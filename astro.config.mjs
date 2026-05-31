@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import mermaid from 'astro-mermaid';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
+import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
 
 export default defineConfig({
@@ -22,6 +23,11 @@ export default defineConfig({
 						schema: './api/openapi.yaml',
 					},
 				]),
+				starlightLlmsTxt({
+					projectName: 'TextRefs',
+					description:
+						'An open, persistent, machine-readable registry for canonical text references. The normative JSON-LD context is at /contexts/, individual registry records resolve under /reg/{uuid}, and the HTTP API is described by /api/openapi.yaml.',
+				}),
 			],
 			title: 'TextRefs',
 			description:
