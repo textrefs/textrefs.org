@@ -79,6 +79,8 @@ The compiler treats every resolver `url` as an [RFC 6570](https://www.rfc-editor
 
 1. **Named capture groups** in the citation system's `locator_regex`. For example, a regex like `^(?<chapter>\d+)\.(?<verse>\d+)$` exposes `{chapter}` and `{verse}` to every template.
 2. **Zero-padded variants** of any numeric capture, generated automatically: `{chapter02}`, `{chapter03}`, `{chapter04}`, `{verse02}`, `{verse03}`. Use the padding width that matches the target site's URL.
+3. **Roman-numeral variants** of any numeric capture in 1..3999, generated automatically: `{chapterRoman}` produces `I`, `VIII`, `XXVI`. Useful for sites that anchor sections by Roman chapter (e.g. Wikisource's `#I:8` Dhammapada verses).
+4. **Cumulative `{verseGlobal}`** — for systems whose locators have numeric `chapter` and `verse` groups _and_ declare `chapter_sizes:` (see below), the compiler exposes a global 1..N verse counter. Useful for single-page resolvers (e.g. palikanon.com's `#dhp_8`, `#dhp_102`) whose anchors use one running index across all chapters.
 
 If a template references a variable that doesn't exist for a given reference, the compiler skips that resolver entry for that reference and warns. Empty `resolver_targets` arrays are valid; references stay registered.
 
@@ -150,6 +152,12 @@ references_range:
     book: Genesis
     counts: [31, 25, 24, 26, 32, 22 /* …, 26 */]
 
+# Dhammapada — 423 references from per-chapter verse counts (no book prefix):
+#   '1.1', …, '26.41'
+references_range:
+  - kind: chapter_verse
+    counts: [20, 12, 11, 16, 16, 14, 10, 16, 13, 17, 11, 10, 12, 18, 12, 12, 14, 21, 17, 17, 16, 14, 14, 26, 23, 41]
+
 # Bekker — page × {a,b} × lines 1..N, with explicit per-book page ranges:
 #   '1094a1', '1094a2', …, '1181b30'
 references_range:
@@ -177,15 +185,46 @@ key: dhammapada-chapter-verse
 preferred_label: Dhammapada chapter-and-verse
 normalization_version: 1.0.0
 locator_regex: '^(?<chapter>[1-9]|1[0-9]|2[0-6])\.(?<verse>[1-9][0-9]*)$'
+# Optional: per-chapter verse counts. When present, the compiler exposes
+# `{verseGlobal}` (cumulative 1..N) to URL templates of works using this system.
+chapter_sizes:
+  [
+    20,
+    12,
+    11,
+    16,
+    16,
+    14,
+    10,
+    16,
+    13,
+    17,
+    11,
+    10,
+    12,
+    18,
+    12,
+    12,
+    14,
+    21,
+    17,
+    17,
+    16,
+    14,
+    14,
+    26,
+    23,
+    41,
+  ]
 examples:
-  valid: ['1.1', '1.20', '26.423']
+  valid: ['1.1', '1.20', '8.3', '26.41']
   invalid: ['0.1', '27.1', '1', '1.0']
 status: candidate
 created: 2026-05-31
-modified: 2026-05-31
+modified: 2026-06-01
 ```
 
-Name your capture groups deliberately — every URL template in every work that uses this system can refer to them.
+Name your capture groups deliberately — every URL template in every work that uses this system can refer to them. Add `chapter_sizes:` only when (a) the locator has numeric `chapter` and `verse` groups and (b) at least one resolver actually needs the global counter.
 
 ## Building, validating, and previewing
 

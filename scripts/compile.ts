@@ -46,6 +46,7 @@ type ReferenceRange =
 	| { kind: 'book_line'; counts: number[] }
 	| { kind: 'book_chapter'; counts: number[] }
 	| { kind: 'book_chapter_verse'; book: string; counts: number[] }
+	| { kind: 'chapter_verse'; counts: number[] }
 	| {
 			kind: 'bekker';
 			page_ranges: Array<[number, number]>;
@@ -85,6 +86,14 @@ function expandRange(range: ReferenceRange): string[] {
 			for (let ch = 1; ch <= range.counts.length; ch++) {
 				const verses = range.counts[ch - 1];
 				for (let v = 1; v <= verses; v++) out.push(`${range.book}.${ch}.${v}`);
+			}
+			return out;
+		}
+		case 'chapter_verse': {
+			const out: string[] = [];
+			for (let ch = 1; ch <= range.counts.length; ch++) {
+				const verses = range.counts[ch - 1];
+				for (let v = 1; v <= verses; v++) out.push(`${ch}.${v}`);
 			}
 			return out;
 		}
@@ -151,7 +160,39 @@ type SystemSource = {
 	status: string;
 	created: string;
 	modified: string;
+	// Per-chapter verse counts for chapter/verse systems. When present, the
+	// compiler exposes a `verseGlobal` template variable (cumulative 1..N
+	// across chapters) for resolvers whose anchors use a single running counter.
+	chapter_sizes?: number[];
 };
+
+const ROMAN_NUMERALS: Array<[number, string]> = [
+	[1000, 'M'],
+	[900, 'CM'],
+	[500, 'D'],
+	[400, 'CD'],
+	[100, 'C'],
+	[90, 'XC'],
+	[50, 'L'],
+	[40, 'XL'],
+	[10, 'X'],
+	[9, 'IX'],
+	[5, 'V'],
+	[4, 'IV'],
+	[1, 'I'],
+];
+
+function toRoman(n: number): string {
+	let out = '';
+	let v = n;
+	for (const [value, sym] of ROMAN_NUMERALS) {
+		while (v >= value) {
+			out += sym;
+			v -= value;
+		}
+	}
+	return out;
+}
 
 function listYaml(dir: string): string[] {
 	if (!existsSync(dir)) return [];
@@ -176,6 +217,29 @@ function deriveLocatorVars(
 				vars[`${k}02`] = v.padStart(2, '0');
 				vars[`${k}03`] = v.padStart(3, '0');
 				vars[`${k}04`] = v.padStart(4, '0');
+				const n = Number(v);
+				if (n >= 1 && n <= 3999) vars[`${k}Roman`] = toRoman(n);
+			}
+		}
+		// `verseGlobal`: cumulative verse index across chapters. Emitted only
+		// when the system declares per-chapter sizes and the locator has both
+		// `chapter` and `verse` numeric groups. Used by resolvers (e.g.
+		// palikanon.com) whose anchors use a single 1..N counter.
+		const chStr = vars.chapter;
+		const vsStr = vars.verse;
+		if (
+			system.chapter_sizes &&
+			chStr !== undefined &&
+			vsStr !== undefined &&
+			/^\d+$/.test(chStr) &&
+			/^\d+$/.test(vsStr)
+		) {
+			const ch = Number(chStr);
+			const vs = Number(vsStr);
+			if (ch >= 1 && ch <= system.chapter_sizes.length) {
+				let offset = 0;
+				for (let i = 0; i < ch - 1; i++) offset += system.chapter_sizes[i];
+				vars.verseGlobal = String(offset + vs);
 			}
 		}
 	}
