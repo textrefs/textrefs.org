@@ -83,6 +83,7 @@ export default defineConfig({
 					translations: { de: 'Verzeichnis' },
 					items: [{ label: 'Browse', link: '/reg/' }],
 				},
+				...openAPISidebarGroups,
 				{
 					label: 'Standard',
 					items: [{ autogenerate: { directory: 'standard' } }],
@@ -96,7 +97,6 @@ export default defineConfig({
 					translations: { de: 'Verein' },
 					items: [{ autogenerate: { directory: 'association' } }],
 				},
-				...openAPISidebarGroups,
 			],
 		}),
 	],

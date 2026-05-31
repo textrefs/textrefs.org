@@ -72,28 +72,30 @@ const { system, preview, refCount, pageCount, pageSize } = Astro.props;
 		}
 	</p>
 
-	<h2>References using this system ({refCount})</h2>
-	{
-		refCount === 0 ? (
-			<p class="reg-empty">No references registered yet.</p>
-		) : (
-			<>
-				<ul class="reg-list">
-					{preview.map((r) => (
-						<li>
-							<a href={`/reg/id/${uuidOf(r.id)}/`}>
-								<code>{r.work_key}</code> · <code>{r.locator}</code>
-							</a>
-						</li>
-					))}
-				</ul>
-				<p>
-					<a href={`/reg/system/${system.key}/refs/1/`}>
-						Browse all {refCount} reference(s){' '}
-						{pageCount > 1 ? `(${pageCount} pages of ${pageSize})` : ''} →
-					</a>
-				</p>
-			</>
-		)
-	}
+	<section data-pagefind-ignore>
+		<h2>References using this system ({refCount})</h2>
+		{
+			refCount === 0 ? (
+				<p class="reg-empty">No references registered yet.</p>
+			) : (
+				<>
+					<ul class="reg-list">
+						{preview.map((r) => (
+							<li>
+								<a href={`/reg/id/${uuidOf(r.id)}/`}>
+									<code>{r.work_key}</code> · <code>{r.locator}</code>
+								</a>
+							</li>
+						))}
+					</ul>
+					<p>
+						<a href={`/reg/system/${system.key}/refs/1/`}>
+							Browse all {refCount} reference(s){' '}
+							{pageCount > 1 ? `(${pageCount} pages of ${pageSize})` : ''} →
+						</a>
+					</p>
+				</>
+			)
+		}
+	</section>
 </StarlightPage>
