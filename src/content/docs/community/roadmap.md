@@ -5,7 +5,7 @@ sidebar:
   order: 7
 ---
 
-This is the public roadmap. The same content is mirrored on the docs site at [textrefs.org/community/roadmap/](/community/roadmap/). The GitHub project board (link TBD) tracks day-to-day status.
+This is the public roadmap. The same content is mirrored on the docs site at [textrefs.org/community/roadmap/](/community/roadmap/).
 
 ## Status
 

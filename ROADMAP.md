@@ -1,6 +1,6 @@
 # TextRefs roadmap
 
-This is the public roadmap. The same content is mirrored on the docs site at <https://textrefs.org/community/roadmap/>. The GitHub project board (link TBD) tracks day-to-day status.
+This is the public roadmap. The same content is mirrored on the docs site at <https://textrefs.org/community/roadmap/>.
 
 ## Status
 

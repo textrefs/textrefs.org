@@ -19,7 +19,6 @@ Husky installs on `npm install`: Prettier runs on staged files, `commitlint` enf
 - `src/styles/brand.css` — brand tokens
 - `public/{logo.svg,favicon.svg,fonts/}` — brand assets
 - `standard/`, `data/`, `api/` — scaffolds for the future repo split
-- `docs-internal/` — gitignored working drafts
 
 ## Conventions
 
@@ -43,5 +42,5 @@ Husky installs on `npm install`: Prettier runs on staged files, `commitlint` enf
 
 - Licences (code AGPL-3.0, docs CC BY-SA 4.0, data CC0) — [`LICENSE.md`](./LICENSE.md).
 - Cross-PR decisions — [`decisions/`](./decisions/) (MADR format; template at `ADR-TEMPLATE.md`).
-- Public roadmap — [`ROADMAP.md`](./ROADMAP.md); detail in `docs-internal/roadmap.md`.
+- Public roadmap — [`ROADMAP.md`](./ROADMAP.md).
 - Issue / PR templates — `.github/`.

@@ -14,7 +14,6 @@ export const ResolverTargetEntry = z.object({
 
 export type ResolverTargetEntry = z.infer<typeof ResolverTargetEntry>;
 
-// TODO(spec §11, §14): verify deterministic UUID seed (work_key, citation_system_key, locator, normalization_version)
 export const CanonicalReference = AdminMetadata.extend({
 	id: z
 		.string()
