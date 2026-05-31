@@ -2,7 +2,7 @@
 title: Authoring registry data
 description: How contributors add a work, references, and resolver URLs in compact YAML.
 sidebar:
-  order: 5
+  order: 6
 ---
 
 The published registry under `data/` is **compiler output**: flat JSON files, one per record, validated against the canonical Zod schemas. Contributors do not edit those files by hand. Instead, every work is described by one compact YAML file under `data/source/`, and a reference compiler expands it into the flat records when you run `npm run build:data`.

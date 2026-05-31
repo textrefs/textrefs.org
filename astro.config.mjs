@@ -74,13 +74,13 @@ export default defineConfig({
 					items: [{ autogenerate: { directory: 'get-started' } }],
 				},
 				{
-					label: 'Standard',
-					items: [{ autogenerate: { directory: 'standard' } }],
-				},
-				{
 					label: 'Registry',
 					translations: { de: 'Verzeichnis' },
 					items: [{ label: 'Browse', link: '/reg/' }],
+				},
+				{
+					label: 'Standard',
+					items: [{ autogenerate: { directory: 'standard' } }],
 				},
 				{
 					label: 'Community',

@@ -2,7 +2,7 @@
 title: How it works
 description: A practical walkthrough of TextRefs identity, mappings, and resolver targets.
 sidebar:
-  order: 2
+  order: 3
 ---
 
 TextRefs turns traditional scholarly citations into stable, machine-readable identifiers without choosing one edition, translation, website, or provider as authoritative.
@@ -20,7 +20,7 @@ TextRefs uses three records for identity and one record for work-level equivalen
 | `CanonicalReference` | Which point inside the work?      | `514a`, with embedded `resolver_targets`      |
 | `MappingAssertion`   | What else identifies this _work_? | a CTS URN, Wikidata item, or DOI for the work |
 
-`MappingAssertion.subject` is always a `Work` IRI. Passage-level external identifiers are derived from the work-level mapping plus the locator; they are not stored one per passage. See [the specification](/standard/specification/) for the normative rules and [ADR-0002](https://github.com/textrefs/textrefs.org/blob/main/docs-internal/ADR-0002-embed-resolver-targets-constrain-mapping-subject.md) for the rationale.
+`MappingAssertion.subject` is always a `Work` IRI. Passage-level external identifiers are derived from the work-level mapping plus the locator; they are not stored one per passage. See [the specification](/standard/specification/) for the normative rules.
 
 ## From citation string to TextRefs ID
 

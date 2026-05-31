@@ -2,7 +2,7 @@
 title: Contact
 description: Postal address and email for the TextRefs association.
 sidebar:
-  order: 7
+  order: 8
 ---
 
 ## Postal address

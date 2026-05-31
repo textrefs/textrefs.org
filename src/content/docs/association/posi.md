@@ -2,7 +2,7 @@
 title: Open infrastructure principles (POSI)
 description: How TextRefs adopts the Principles of Open Scholarly Infrastructure, with a public self-assessment.
 sidebar:
-  order: 6
+  order: 7
 ---
 
 TextRefs commits to the [Principles of Open Scholarly Infrastructure (POSI) v2.0](https://openscholarlyinfrastructure.org/) — the governance, sustainability, and insurance framework also adopted by Crossref, DataCite, OpenCitations, and ROR. This page is a living self-assessment: the Board reviews it at least once a year and reports to the General Assembly. Most principles are already secured by our [statutes](/association/statutes/), [mission](/association/mission/), and [governance regulation](/association/governance/); the commitments below close the remaining gaps so this is an honest statement rather than an aspiration.
