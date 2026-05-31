@@ -8,7 +8,7 @@ description: Der Verein TextRefs — Leitbild, Statuten, Governance, Spesen.
 Diese Seiten enthalten die rechtlich verbindlichen Dokumente in der ursprünglichen deutschen Fassung:
 
 - [Leitbild und gemeinnützige Ausrichtung](/de/association/mission/)
-- [Statuten](/de/association/statutes/) — Art. 1–26
+- [Statuten](/de/association/statutes/) — Art. 1–22
 - [Organisations- und Governance-Reglement](/de/association/governance/)
 - [Spesen- und Vergütungsreglement](/de/association/expenses/)
 

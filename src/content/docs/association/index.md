@@ -10,7 +10,7 @@ sidebar:
 These pages contain the founding documents:
 
 - [Mission and non-profit alignment](/association/mission/)
-- [Statutes](/association/statutes/) — Art. 1–26
+- [Statutes](/association/statutes/) — Art. 1–22
 - [Organizational and governance regulation](/association/governance/)
 - [Expense and compensation regulation](/association/expenses/)
 - [Open infrastructure principles (POSI)](/association/posi/) — adherence to the Principles of Open Scholarly Infrastructure
