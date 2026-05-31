@@ -102,17 +102,17 @@ The compiler looks up the value of the chosen variable (`chapter`) in the map an
 
 ## When even that isn't enough
 
-For one-off URLs that don't fit any pattern (the typical case for older citation systems like Kant's A/B pagination), put the URL directly on the reference using `extra_resolvers`:
+For one-off URLs that don't fit any pattern (the typical case for older citation systems like Stephanus or Bekker pagination), put the URL directly on the reference using `extra_resolvers`:
 
 ```yaml
 references:
-  - locator: 'A51/B75'
+  - locator: '514a'
     extra_resolvers:
-      - provider: Korpora.org
-        edition: 'Akademie-Ausgabe Band III'
-        language: de
+      - provider: Perseus Digital Library
+        edition: 'Plato, Republic'
+        language: grc-Grek
         access: open
-        url: 'https://korpora.zim.uni-duisburg-essen.de/kant/aa03/057.html'
+        url: 'https://www.perseus.tufts.edu/...'
         last_checked: '2026-01-01'
 ```
 
