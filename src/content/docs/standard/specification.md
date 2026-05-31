@@ -43,10 +43,10 @@ The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`, `SHOULD`, `S
 
 TextRefs separates **identity** from **location**.
 
-- **Identity** is abstract and language-independent. `Work`, `CitationSystem`, and `CanonicalReference` answer the question "_which_ passage": for example _the Gospel of John, chapter-and-verse, 3:16_. There is exactly one such identity, regardless of how many editions, translations, or websites carry it.
+- **Identity** is abstract and language-independent. `Work`, `CitationSystem`, and `CanonicalReference` answer the question "_which_ passage": for example _the New Testament, book-chapter-verse, John.3.16_. There is exactly one such identity, regardless of how many editions, translations, or websites carry it.
 - **Location and equivalence** answer "_where_ can I read it" and "_what else_ is this the same as". The `resolver_targets` array embedded in each `CanonicalReference` lists places where the reference can be read (specific translations, editions, or providers). `MappingAssertion` records that a `Work` is equivalent to an external identifier or to another `Work`.
 
-A reference such as `John 3:16` is the **same identity** whether read in Greek, the King James Version, or the Lutherbibel. The translation is a property of the _location_, never of the identity. This is what lets the model scale to works with hundreds of translations (see [§13](#13-worked-example-a-multi-translation-work)).
+A reference such as `John.3.16` is the **same identity** whether read in Greek, the King James Version, or the Lutherbibel. The translation is a property of the _location_, never of the identity. This is what lets the model scale to works with many editions and translations (see [§13](#13-worked-example-a-multi-translation-work)).
 
 TextRefs registry records store identifiers, metadata, mappings, provenance, and resolver targets. This keeps the registry legally reusable and stable across editions. A conforming record MUST NOT include full text, critical apparatus, commentary, translation text, or copyrighted edition content.
 
@@ -115,17 +115,17 @@ A `Work` represents an abstract textual work, independent of editions, translati
 
 Only canonical texts with an established reference system SHOULD be accepted as `Work` records. The existence of an author, title, edition, file, or web page is not by itself sufficient.
 
-A `Work.key` is a single flat registry key used to identify the abstract work in references and deterministic UUID seeds. Choose a stable, human-readable key such as `kant.krv` or `bible.john`, and treat the whole string as the identifier. Rich bibliographic and authority data belongs in external systems and is connected to TextRefs records through `MappingAssertion`s.
+A `Work.key` is a single flat registry key used to identify the abstract work in references and deterministic UUID seeds. Choose a stable, human-readable key such as `plato.respublica` or `new-testament`, and treat the whole string as the identifier. Rich bibliographic and authority data belongs in external systems and is connected to TextRefs records through `MappingAssertion`s.
 
 ```json
 {
-  "id": "https://textrefs.org/id/work/kant.krv",
-  "key": "kant.krv",
+  "id": "https://textrefs.org/id/work/plato.respublica",
+  "key": "plato.respublica",
   "type": "Work",
-  "preferred_label": "Critique of Pure Reason",
-  "status": "active",
-  "created": "2026-01-01",
-  "modified": "2026-01-01"
+  "preferred_label": "Republic (Plato)",
+  "status": "candidate",
+  "created": "2026-05-31",
+  "modified": "2026-05-31"
 }
 ```
 
@@ -137,23 +137,23 @@ External identifiers for a `Work` (e.g. Wikidata Q-ID, DOI, VIAF) are recorded a
 
 A `CitationSystem` defines the notation and validation rules used to identify locations within one or more works. It is independent of any edition, provider, resolver service, or software implementation. Different versification or pagination traditions are different citation systems.
 
-A `CitationSystem.key` is a single flat registry key for a locator notation and its validation rules. Choose a stable, human-readable key such as `bekker`, `stephanus`, or `bible-chapter-verse`. The key is used by canonical references through `citation_system_key`, so changing the key changes identity.
+A `CitationSystem.key` is a single flat registry key for a locator notation and its validation rules. Choose a stable, human-readable key such as `bekker`, `stephanus`, or `bible-book-chapter-verse`. The key is used by canonical references through `citation_system_key`, so changing the key changes identity.
 
 ```json
 {
-  "id": "https://textrefs.org/id/system/bible-chapter-verse",
-  "key": "bible-chapter-verse",
+  "id": "https://textrefs.org/id/system/bible-book-chapter-verse",
+  "key": "bible-book-chapter-verse",
   "type": "CitationSystem",
-  "preferred_label": "Bible chapter and verse",
+  "preferred_label": "Bible book-chapter-verse (OSIS-style)",
   "normalization_version": "1.0.0",
-  "locator_regex": "^[0-9]{1,3}:[0-9]{1,3}$",
+  "locator_regex": "^(?<book>[A-Za-z][A-Za-z0-9_]*)\\.(?<chapter>[1-9][0-9]*)\\.(?<verse>[1-9][0-9]*)$",
   "examples": {
-    "valid": ["3:16", "1:1"],
-    "invalid": ["3", "3:", "iii:16"]
+    "valid": ["Genesis.1.1", "Psalms.23.1", "Matthew.5.3"],
+    "invalid": ["Genesis.0.1", "Genesis.1", "1.1.1", "Genesis 1:1"]
   },
-  "status": "active",
-  "created": "2026-01-01",
-  "modified": "2026-01-01"
+  "status": "candidate",
+  "created": "2026-05-31",
+  "modified": "2026-05-31"
 }
 ```
 
@@ -177,23 +177,23 @@ A `CanonicalReference` represents one atomized, **language-independent** referen
 {
   "id": "https://textrefs.org/id/ref/{uuid}",
   "type": "CanonicalReference",
-  "work_key": "bible.john",
-  "citation_system_key": "bible-chapter-verse",
-  "locator": "3:16",
+  "work_key": "new-testament",
+  "citation_system_key": "bible-book-chapter-verse",
+  "locator": "John.3.16",
   "normalization_version": "1.0.0",
   "resolver_targets": [
     {
-      "url": "https://www.biblegateway.com/passage/?search=John%203%3A16&version=KJV",
-      "language": "en",
-      "edition": "King James Version",
-      "provider": "Bible Gateway",
+      "url": "https://www.stepbible.org/?q=version=SBLG|reference=John.3.16",
+      "language": "grc",
+      "edition": "SBL Greek New Testament",
+      "provider": "STEP Bible",
       "access": "open",
-      "license": "CC0-1.0"
+      "license": "CC-BY-4.0"
     }
   ],
-  "status": "active",
-  "created": "2026-01-01",
-  "modified": "2026-01-01"
+  "status": "candidate",
+  "created": "2026-05-31",
+  "modified": "2026-05-31"
 }
 ```
 
@@ -242,16 +242,16 @@ A `MappingAssertion` records a curated equivalence claim between a TextRefs `Wor
 {
   "id": "https://textrefs.org/id/mapping/{uuid}",
   "type": "MappingAssertion",
-  "subject": "https://textrefs.org/id/work/bible.john",
+  "subject": "https://textrefs.org/id/work/new-testament",
   "relation": "exactMatch",
   "target": {
     "target_kind": "wikidata",
-    "identifier": "https://www.wikidata.org/entity/Q42129"
+    "identifier": "https://www.wikidata.org/entity/Q18813"
   },
   "source": "manual-curation",
   "status": "candidate",
-  "created": "2026-01-01",
-  "modified": "2026-01-01"
+  "created": "2026-05-31",
+  "modified": "2026-05-31"
 }
 ```
 
@@ -267,7 +267,7 @@ Required: `id`, `type` (`MappingAssertion`), `subject`, `relation`, `target`, `s
 
 TextRefs identifiers MUST be persistent HTTP URIs ([RFC 3986](https://www.rfc-editor.org/rfc/rfc3986)) or IRIs ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)), independent of external URLs, resolver targets, edition identifiers, provider-specific identifiers, and website structures. The deterministic UUID seed remains ASCII-only; see [Identifier syntax](/standard/identifier-syntax/).
 
-`Work` identifiers MUST use `https://textrefs.org/id/work/{key}` and `CitationSystem` identifiers MUST use `https://textrefs.org/id/system/{key}`. In both cases `{key}` is the complete flat key and MUST NOT contain additional path segments. For example, `https://textrefs.org/id/work/wittgenstein.pu` is valid; `https://textrefs.org/id/work/wittgenstein/pu` is not.
+`Work` identifiers MUST use `https://textrefs.org/id/work/{key}` and `CitationSystem` identifiers MUST use `https://textrefs.org/id/system/{key}`. In both cases `{key}` is the complete flat key and MUST NOT contain additional path segments. For example, `https://textrefs.org/id/work/plato.respublica` is valid; `https://textrefs.org/id/work/plato/respublica` is not.
 
 A `CanonicalReference` identifier MUST be generated deterministically. The identity seed MUST include `work_key`, `citation_system_key`, `locator`, and `normalization_version`, in that order (see [Identifier syntax](/standard/identifier-syntax/)).
 
@@ -299,49 +299,42 @@ Deprecated, withdrawn, and blocked records SHOULD remain visible unless removal 
 
 ## 13. Worked example: a multi-translation work
 
-This is the case that motivates separating identity from location. The Bible exists in hundreds of translations, yet `John 3:16` is **one** reference.
+This is the case that motivates separating identity from location. The New Testament exists in many editions and translations, yet `John.3.16` is **one** reference in the OSIS-style book-chapter-verse system.
 
 **One identity** — a single `Work`, `CitationSystem`, and `CanonicalReference`. The reference embeds all language-tagged locations as `resolver_targets`:
 
 ```json
 {
   "work": {
-    "key": "bible.john",
+    "key": "new-testament",
     "type": "Work",
-    "preferred_label": "Gospel of John"
+    "preferred_label": "New Testament (SBLGNT)"
   },
   "citation_system": {
-    "key": "bible-chapter-verse",
+    "key": "bible-book-chapter-verse",
     "type": "CitationSystem",
-    "locator_regex": "^[0-9]{1,3}:[0-9]{1,3}$"
+    "locator_regex": "^(?<book>[A-Za-z][A-Za-z0-9_]*)\\.(?<chapter>[1-9][0-9]*)\\.(?<verse>[1-9][0-9]*)$"
   },
   "canonical_reference": {
     "type": "CanonicalReference",
-    "work_key": "bible.john",
-    "citation_system_key": "bible-chapter-verse",
-    "locator": "3:16",
+    "work_key": "new-testament",
+    "citation_system_key": "bible-book-chapter-verse",
+    "locator": "John.3.16",
     "resolver_targets": [
       {
-        "url": "https://www.biblegateway.com/passage/?search=John%203%3A16&version=KJV",
-        "language": "en",
-        "edition": "King James Version",
-        "provider": "Bible Gateway",
+        "url": "https://www.stepbible.org/?q=version=SBLG|reference=John.3.16",
+        "language": "grc",
+        "edition": "SBL Greek New Testament",
+        "provider": "STEP Bible",
         "access": "open",
-        "license": "CC0-1.0"
-      },
-      {
-        "url": "https://www.die-bibel.de/bibel/LU84/JHN.3.16",
-        "language": "de",
-        "edition": "Lutherbibel 1984",
-        "provider": "die-bibel.de",
-        "access": "open"
+        "license": "CC-BY-4.0"
       }
     ]
   }
 }
 ```
 
-Adding a 101st translation appends one entry to `resolver_targets`. The reference identity — its UUID, its work, its citation system, its locator — does not change.
+Adding another edition or translation appends one entry to `resolver_targets`. The reference identity — its UUID, its work, its citation system, its locator — does not change.
 
 **Divergent versification** is the one case that _does_ create separate references. Where traditions number verses differently (e.g. the Psalms in the Masoretic text versus the Vulgate/Septuagint), each tradition is a distinct `CitationSystem`, its references are distinct `CanonicalReference`s, and the equivalence between them is recorded as a `closeMatch` `MappingAssertion` — not by collapsing them into one identity.
 
@@ -421,4 +414,4 @@ The following identifier schemes commonly satisfy [§10](#10-mappingassertion)'s
 
 TextRefs keeps mappings focused on textual resources. Identifiers of agents, organisations, instruments, or non-textual datasets (e.g. ROR, ORCID, ISNI) belong in external authority systems reached through mapped textual resources, not in `MappingAssertion.target`.
 
-A passage-level external identifier (e.g. the CTS URN of a single verse) is **derived** at resolve time from the work-level mapping plus the reference locator; it is not stored as a separate `MappingAssertion`. For example, a `Work` mapping `bible.john → urn:cts:greekLit:tlg0031.tlg004` plus the reference locator `3:16` yields the derived passage URN `urn:cts:greekLit:tlg0031.tlg004:3.16`. Source data carries the work-level mapping plus a locator template; the registry does not store one mapping per passage.
+A passage-level external identifier (e.g. the CTS URN of a single verse) is **derived** at resolve time from the work-level mapping plus the reference locator; it is not stored as a separate `MappingAssertion`. For example, a `Work` mapping `new-testament → urn:cts:greekLit:tlg0031.tlg004` plus the reference locator `John.3.16` can yield a derived passage URN for that verse. Source data carries the work-level mapping plus a locator template; the registry does not store one mapping per passage.

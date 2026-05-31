@@ -7,7 +7,7 @@ sidebar:
 
 ## The gap
 
-Citations like "Plato, _Republic_ 514a" or "Aquinas, _ST_ I-II.94.2" are foundational to scholarship in classics, theology, law, philosophy, and adjacent disciplines. Every serious edition, commentary, and database uses them. Yet none of them has a native, persistent, machine-readable identifier you can paste into a tool, link from a paper, or feed to an indexing pipeline. They live as plain text inside footnotes and prose, dependent on the reader knowing the citation convention.
+Citations like "Plato, _Republic_ 514a" or "Aristotle, _Eth. Nic._ 1094a1" are foundational to scholarship in classics, theology, law, philosophy, and adjacent disciplines. Every serious edition, commentary, and database uses them. Yet none of them has a native, persistent, machine-readable identifier you can paste into a tool, link from a paper, or feed to an indexing pipeline. They live as plain text inside footnotes and prose, dependent on the reader knowing the citation convention.
 
 That mismatch — central in scholarship, invisible to software — is what TextRefs addresses.
 
@@ -36,5 +36,5 @@ This division is deliberate. TextRefs stays small, persistent, and legally reusa
 ## Live examples
 
 - [`/reg/work/dhammapada/`](/reg/work/dhammapada/) — Dhammapada with four real providers (Gutenberg, Wikisource, ancient-buddhist-texts.net, palikanon.com) across English and German.
-- [`/reg/work/kant.krv/`](/reg/work/kant.krv/) — Kant's _Critique of Pure Reason_ with the Akademie-Ausgabe A/B pagination.
+- [`/reg/work/plato.respublica/`](/reg/work/plato.respublica/) — Plato's _Republic_ with Stephanus pagination.
 - [`/reg/`](/reg/) — the registry index.

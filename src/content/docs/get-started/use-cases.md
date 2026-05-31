@@ -21,13 +21,13 @@ These scenarios are illustrative, not exhaustive. Each pairs "what happens today
 
 ## Library or institutional repository indexing scholarly works
 
-**Today.** Your full-text indexer extracts citations from a PDF — "Aquinas, _ST_ I.13.5" — as a string. It can match other strings literally but it can't cluster, can't infer the work, can't expand `ST` to _Summa Theologiae_.
+**Today.** Your full-text indexer extracts citations from a PDF — "Aristotle, _Eth. Nic._ 1094a1" — as a string. It can match other strings literally but it can't cluster, can't infer the work, can't expand abbreviations to _Nicomachean Ethics_.
 
-**With TextRefs.** The indexer parses the citation against the `aquinas-summa` `CitationSystem` and stores the resulting TextRefs ID. Now you have FRBR-style work clustering for free, cross-corpus passage search, and authority alignment with Wikidata via mappings.
+**With TextRefs.** The indexer parses the citation against the `bekker` `CitationSystem` and stores the resulting TextRefs ID. Now you have FRBR-style work clustering for free, cross-corpus passage search, and authority alignment with Wikidata via mappings.
 
 ## Theologian or legal scholar working with traditional reference systems
 
-**Today.** Stuttgart numbering for the Vulgate, Pandekten numbering for Roman law, biblical book-chapter-verse, Aquinas Part–Question–Article — every tradition has its own implicit, untyped notation. There is no machine-readable contract for what is a valid citation in each system.
+**Today.** Stephanus pagination, Bekker numbering, Homeric book-and-line references, and biblical book-chapter-verse — every tradition has its own implicit, untyped notation. There is no machine-readable contract for what is a valid citation in each system.
 
 **With TextRefs.** Each tradition is a `CitationSystem` with a documented locator regex, a normalisation rule, and a list of valid reference types. A parser can validate "Vulg. Gen. 1:1" or reject "ST I-II.300.99" because no registered canonical reference exists for that locator. The reference identifier is independent of any single edition.
 

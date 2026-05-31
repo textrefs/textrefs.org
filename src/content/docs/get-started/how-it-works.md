@@ -26,7 +26,7 @@ TextRefs uses three records for identity and one record for work-level equivalen
 
 For a citation such as "Plato, _Republic_ 514a", a registry contributor or parser does four things.
 
-1. Identify the work: `plato.republic`.
+1. Identify the work: `plato.respublica`.
 2. Identify the citation system: `stephanus`.
 3. Normalize the locator according to that citation system: `514a`.
 4. Mint the `CanonicalReference` ID from the tuple `work_key`, `citation_system_key`, `locator`, and `normalization_version`.
@@ -35,35 +35,47 @@ The result is a persistent TextRefs URI for the cited point itself. That URI sta
 
 ## Example: Plato, Republic 514a
 
-The identity is the Stephanus reference, not any one Greek text, translation, or platform page:
+The identity is the Stephanus reference, not any one Greek text, translation, or platform page. The compiled registry record for [`plato.respublica` `514a`](/reg/id/c9e0b270-39de-503c-a231-33d8ae4503b4/) is:
 
 ```json
 {
+  "id": "https://textrefs.org/id/ref/c9e0b270-39de-503c-a231-33d8ae4503b4",
   "type": "CanonicalReference",
-  "work_key": "plato.republic",
-  "citation_system_key": "stephanus",
-  "locator": "514a",
-  "normalization_version": "1.0.0"
-}
-```
-
-Reading locations are embedded on the reference itself, one entry per provider or translation:
-
-```json
-{
-  "type": "CanonicalReference",
-  "work_key": "plato.republic",
+  "work_key": "plato.respublica",
   "citation_system_key": "stephanus",
   "locator": "514a",
   "normalization_version": "1.0.0",
+  "resolver_targets": [],
+  "status": "candidate",
+  "created": "2026-05-31",
+  "modified": "2026-05-31"
+}
+```
+
+When reading locations exist, they are embedded on the reference itself, one entry per provider or translation. For example, the compiled registry record for [`new-testament` `John.3.16`](/reg/id/59a2d83f-6aff-5fbf-b8f7-b243c3ed0594/) contains a resolver target to STEP Bible:
+
+```json
+{
+  "id": "https://textrefs.org/id/ref/59a2d83f-6aff-5fbf-b8f7-b243c3ed0594",
+  "type": "CanonicalReference",
+  "work_key": "new-testament",
+  "citation_system_key": "bible-book-chapter-verse",
+  "locator": "John.3.16",
+  "normalization_version": "1.0.0",
   "resolver_targets": [
     {
-      "url": "https://www.perseus.tufts.edu/...",
-      "language": "grc-Grek",
-      "provider": "Perseus Digital Library",
-      "access": "open"
+      "url": "https://www.stepbible.org/?q=version=SBLG|reference=John.3.16",
+      "language": "grc",
+      "edition": "SBL Greek New Testament",
+      "provider": "STEP Bible",
+      "access": "open",
+      "license": "CC-BY-4.0",
+      "license_url": "https://sblgnt.com/license/"
     }
-  ]
+  ],
+  "status": "candidate",
+  "created": "2026-05-31",
+  "modified": "2026-05-31"
 }
 ```
 
@@ -72,35 +84,38 @@ Work-level equivalences live in a `MappingAssertion`:
 ```json
 {
   "type": "MappingAssertion",
-  "subject": "https://textrefs.org/id/work/plato.republic",
+  "subject": "https://textrefs.org/id/work/plato.respublica",
   "relation": "exactMatch",
   "target": {
     "target_kind": "wikidata",
-    "identifier": "https://www.wikidata.org/entity/Q193760"
+    "identifier": "https://www.wikidata.org/entity/Q165492"
   },
-  "source": "manual-curation"
+  "source": "manual-curation",
+  "status": "candidate",
+  "created": "2026-05-31",
+  "modified": "2026-05-31"
 }
 ```
 
-Adding a translation adds one entry to `resolver_targets`; adding a Wikidata QID adds one `MappingAssertion`. No new records are minted per passage.
+Adding a resolver target adds one entry to `resolver_targets`; adding a Wikidata QID adds one `MappingAssertion`. No new records are minted per passage. A reference with no curated reading URL yet, such as the Plato example above, is still a valid identity record.
 
-## Example: John 3:16
+## Example: John.3.16
 
-For a heavily translated work, many locations can share one reference identity:
+For a heavily translated work, many locations can share one reference identity. The current data-backed example is [`new-testament` `John.3.16`](/reg/id/59a2d83f-6aff-5fbf-b8f7-b243c3ed0594/):
 
 ```json
 {
   "type": "CanonicalReference",
-  "work_key": "bible.john",
-  "citation_system_key": "bible-chapter-verse",
-  "locator": "3:16",
+  "work_key": "new-testament",
+  "citation_system_key": "bible-book-chapter-verse",
+  "locator": "John.3.16",
   "normalization_version": "1.0.0"
 }
 ```
 
 An English translation, a German translation, a Greek edition, and a library scan can all sit in the `resolver_targets` array on the same reference. Adding a new translation adds another entry, not another canonical reference.
 
-For a complete worked example, see the live [Dhammapada work page](/reg/work/dhammapada/) (four providers, two languages, 20 references in chapter 1) or the [Kant _Critique of Pure Reason_](/reg/work/kant.krv/) example. The contributor YAML behind them is documented in [Authoring registry data](/get-started/authoring/).
+For complete worked examples, see the live [Dhammapada work page](/reg/work/dhammapada/) (four providers, two languages, 423 references) or the [Plato _Republic_ work page](/reg/work/plato.respublica/) (Stephanus pagination). The contributor YAML behind them is documented in [Authoring registry data](/get-started/authoring/).
 
 Where traditions number passages differently, create separate references under separate citation systems and connect them with `closeMatch` mappings. Do not collapse divergent versification, pagination, or segmentation into one identity.
 

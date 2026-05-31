@@ -69,31 +69,31 @@ The seed bytes used for UUID v5 generation are ASCII-restricted (keys) and NFC-n
 Input tuple:
 
 ```text
-work_key = kant.krv
-citation_system_key = kant-akademie-a-b
-locator = A51/B75
+work_key = plato.respublica
+citation_system_key = stephanus
+locator = 514a
 normalization_version = 1.0.0
 ```
 
 Seed string:
 
 ```text
-kant.krv
-kant-akademie-a-b
-A51/B75
+plato.respublica
+stephanus
+514a
 1.0.0
 ```
 
 Result:
 
 ```text
-4d0cfb4d-e4b3-5e6a-8b68-c02a8b2f0931
+c9e0b270-39de-503c-a231-33d8ae4503b4
 ```
 
 Canonical URI:
 
 ```text
-https://textrefs.org/id/ref/4d0cfb4d-e4b3-5e6a-8b68-c02a8b2f0931
+https://textrefs.org/id/ref/c9e0b270-39de-503c-a231-33d8ae4503b4
 ```
 
 ## MappingAssertion seed

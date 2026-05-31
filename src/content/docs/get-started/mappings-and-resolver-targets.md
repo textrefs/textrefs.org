@@ -47,7 +47,7 @@ Use `exactMatch` only when the target identifies the same work with enough preci
 }
 ```
 
-Passage-level external identifiers (e.g. the CTS URN for John 3:16) are not stored as records. They are derived from the work-level mapping plus the locator at resolve time.
+Passage-level external identifiers (e.g. the CTS URN for `John.3.16`) are not stored as records. They are derived from the work-level mapping plus the locator at resolve time.
 
 ## Add resolver targets for reading locations
 
@@ -88,33 +88,24 @@ Each entry records what a reader needs to understand the link: `language` (BCP 4
 }
 ```
 
-Contributors author resolver targets as URL templates, not raw URLs — see [Authoring registry data](/get-started/authoring/). The compiler expands them per reference. Browse the live output at [`/reg/work/dhammapada/`](/reg/work/dhammapada/) or [`/reg/work/kant.krv/`](/reg/work/kant.krv/).
+Contributors author resolver targets as URL templates, not raw URLs — see [Authoring registry data](/get-started/authoring/). The compiler expands them per reference. Browse the live output at [`/reg/work/dhammapada/`](/reg/work/dhammapada/) or [`/reg/work/plato.respublica/`](/reg/work/plato.respublica/).
 
 ## Good first candidates
 
 The best TextRefs candidates are works with established, edition-independent citation systems. The examples below are illustrative; each actual profile still needs documented normalization rules, valid examples, invalid examples, and review.
 
-| Area       | Citation example                                | Likely citation system                    | Notes                                                                                 |
-| ---------- | ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------- |
-| Philosophy | Plato, _Republic_ `514a`                        | Stephanus pagination                      | Strong candidate; maps well to CTS-aware classical infrastructure.                    |
-| Philosophy | Aristotle, _Metaphysics_ `983b10`               | Bekker numbering                          | Strong candidate; already used as a seed profile pattern.                             |
-| Philosophy | Kant, _Critique of Pure Reason_ `A51/B75`       | Akademie A/B pagination                   | Strong candidate if normalization covers A-only, B-only, and shared references.       |
-| Philosophy | Hegel, _Phenomenology of Spirit_ paragraph 178  | paragraph or section numbering            | Use only a documented stable scheme; edition page numbers are resolver metadata.      |
-| Philosophy | Marx, _Capital_ I.1.4                           | volume, chapter, section, subdivision     | Prefer structural citations; edition-specific page systems need separate treatment.   |
-| Philosophy | Wittgenstein, _Philosophical Investigations_ 43 | numbered remarks                          | Strong candidate where the cited unit is the stable remark number.                    |
-| Law        | U.S. Constitution art. I, sec. 8, cl. 3         | article, section, clause, amendment       | Strong candidate; amendments and clauses need explicit locator rules.                 |
-| Bible      | John `3:16`                                     | book, chapter, verse                      | Strong candidate; divergent versification traditions require separate systems.        |
-| Qur'an     | Qur'an `2:255`                                  | surah, ayah                               | Strong candidate; edition and translation belong in resolver targets.                 |
-| Tanakh     | Genesis `1:1`                                   | book, chapter, verse                      | Strong candidate; distinguish the relevant canon and versification tradition.         |
-| Talmud     | Berakhot `2a`                                   | tractate, daf, amud                       | Strong candidate if tractate names and folio normalization are controlled.            |
-| Vedic text | Rigveda `1.1.1`                                 | mandala, hymn, verse                      | Strong candidate if the profile states allowed numbering and text scope.              |
-| Buddhist   | Vinaya reference                                | tradition-specific rule or section system | Candidate, but likely needs separate profiles by canon, school, and edition practice. |
-| Chinese    | _Analects_ `2.1`                                | book and section                          | Strong candidate if chapter and saying divisions are documented.                      |
-| Chinese    | _Daodejing_ `1`                                 | chapter                                   | Candidate; line-level or version-specific divisions should be modelled separately.    |
-| Japanese   | _Kojiki_ reference                              | agreed book, episode, or section system   | Candidate only after a stable reference profile is selected.                          |
-| Sanskrit   | _Bhagavad Gita_ `2:47`                          | chapter and verse                         | Strong candidate; translations and editions are resolver targets.                     |
-| Buddhist   | _Dhammapada_ `1`                                | verse                                     | Strong candidate if verse numbering is stable for the chosen textual tradition.       |
-| Classics   | Homer, _Iliad_ `1.1`                            | book and line                             | Strong candidate; CTS mappings are likely useful.                                     |
+| Area       | Citation example                         | Citation system      | Notes                                                         |
+| ---------- | ---------------------------------------- | -------------------- | ------------------------------------------------------------- |
+| Philosophy | Plato, _Republic_ `514a`                 | Stephanus pagination | Present as `plato.respublica` with `stephanus`.               |
+| Philosophy | Aristotle, _Nicomachean Ethics_ `1094a1` | Bekker numbering     | Present as `aristotle.eth-nic` with `bekker`.                 |
+| Buddhist   | _Dhammapada_ `1.1`                       | chapter and verse    | Present as `dhammapada` with `dhammapada-chapter-verse`.      |
+| Tanakh     | Genesis `Genesis.1.1`                    | book, chapter, verse | Present as `tanakh` with `bible-book-chapter-verse`.          |
+| Bible      | John `John.3.16`                         | book, chapter, verse | Present as `new-testament` with `bible-book-chapter-verse`.   |
+| Chinese    | _Analects_ `2.1`                         | book and chapter     | Present as `confucius.analects` with `analects-book-chapter`. |
+| Chinese    | _Daodejing_ `1`                          | chapter              | Present as `laozi.daodejing` with `daodejing-chapter`.        |
+| Japanese   | _The Tale of Genji_ `2`                  | chapter              | Present as `murasaki.genji` with `genji-chapter`.             |
+| Classics   | Homer, _Iliad_ `1.1`                     | book and line        | Present as `homer.iliad` with `homer-book-line`.              |
+| Classics   | Homer, _Odyssey_ `1.426`                 | book and line        | Present as `homer.odyssey` with `homer-book-line`.            |
 
 An author's name alone is not a `Work`. For example, "Confucius" is an authority or attribution problem; _Analects_ is the textual work that can receive canonical references.
 
