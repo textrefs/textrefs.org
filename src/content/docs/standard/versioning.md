@@ -32,6 +32,8 @@ registry/exports/YYYY-MM/mappings.jsonl
 registry/exports/YYYY-MM/resolver-targets.jsonl
 ```
 
+Registry exports are organized by object type. This gives consumers stable file names, simple streaming imports, and one predictable place to find each record type. Relationships are represented inside records through standard fields such as `key`, `work_key`, `citation_system_key`, `subject`, and `target`.
+
 ## Frictionless requirements
 
 Each `datapackage.json` MUST include:

@@ -10,7 +10,7 @@ Citation-system profiles constrain locator syntax through strict regular express
 ## Required profile fields
 
 - `id`: persistent system URI.
-- `key`: stable key used for deterministic UUID seeds.
+- `key`: flat stable key used for deterministic UUID seeds.
 - `type`: `CitationSystem`.
 - `preferred_label`: human-readable label.
 - `normalization_version`: SemVer version.
@@ -18,11 +18,9 @@ Citation-system profiles constrain locator syntax through strict regular express
 - `examples.valid`: locator examples that MUST match.
 - `examples.invalid`: locator examples that MUST NOT match.
 
-`scope` (corpus or tradition) is OPTIONAL but SHOULD be provided to disambiguate divergent traditions.
-
 See [Specification §7](/standard/specification/#7-citationsystem) for the full normative field list.
 
-Profiles MUST follow the key and locator Unicode rules in [Identifier syntax](/standard/identifier-syntax/#unicode-normalization). A profile MAY add stricter locator rules for case, digits, punctuation, whitespace, or allowed scripts, but those rules MUST be reflected in its examples and `locator_regex`.
+Profiles MUST follow the flat key and locator Unicode rules in [Identifier syntax](/standard/identifier-syntax/). A profile MAY add stricter locator rules for case, digits, punctuation, whitespace, or allowed scripts, but those rules MUST be reflected in its examples and `locator_regex`. The machine-actionable contract is the flat key, `normalization_version`, `locator_regex`, and examples.
 
 ## Seed profiles
 

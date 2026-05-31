@@ -37,11 +37,25 @@ Serialization rules:
 - Use the registry key fields themselves; labels, URIs, aliases, and external identifiers belong in metadata or mappings.
 - Each field MUST already be normalized by its owning profile before UUID generation.
 
+## Flat key syntax
+
+`work_key` and `citation_system_key` are flat, opaque registry keys. Treat the whole string as the identifier when validating records, generating UUIDs, and constructing TextRefs URIs.
+
+Keys MUST match this regular expression:
+
+```text
+^[a-z0-9][a-z0-9._-]*$
+```
+
+Keys therefore MUST start with a lowercase letter or digit and contain only ASCII lowercase letters, ASCII digits, `.`, `_`, and `-`.
+
+The canonical Work URI is `https://textrefs.org/id/work/{work_key}`. The canonical CitationSystem URI is `https://textrefs.org/id/system/{citation_system_key}`. In both cases the key occupies exactly one URI path segment.
+
 ## Unicode normalization
 
 Deterministic identifiers depend on byte-identical seed strings. Before validation and UUID generation:
 
-- `work_key` and `citation_system_key` MUST contain only ASCII lowercase letters, ASCII digits, `-`, `_`, and `:`.
+- `work_key` and `citation_system_key` MUST follow the flat key syntax above.
 - `locator` MUST be normalized to Unicode NFC.
 - `locator` MUST NOT contain leading or trailing whitespace, control characters, or internal whitespace unless the citation-system profile explicitly allows it.
 - Implementations MUST NOT apply NFKC, case folding, digit folding, punctuation folding, transliteration, or script conversion unless the citation-system profile explicitly defines that rule.
@@ -55,31 +69,31 @@ The seed bytes used for UUID v5 generation are ASCII-restricted (keys) and NFC-n
 Input tuple:
 
 ```text
-work_key = aristotle:metaphysics
-citation_system_key = bekker
-locator = 983b10
+work_key = kant.krv
+citation_system_key = kant-akademie-a-b
+locator = A51/B75
 normalization_version = 1.0.0
 ```
 
 Seed string:
 
 ```text
-aristotle:metaphysics
-bekker
-983b10
+kant.krv
+kant-akademie-a-b
+A51/B75
 1.0.0
 ```
 
 Result:
 
 ```text
-988e0b39-88eb-537b-aee5-8ad318cb534f
+4d0cfb4d-e4b3-5e6a-8b68-c02a8b2f0931
 ```
 
 Canonical URI:
 
 ```text
-https://textrefs.org/id/ref/988e0b39-88eb-537b-aee5-8ad318cb534f
+https://textrefs.org/id/ref/4d0cfb4d-e4b3-5e6a-8b68-c02a8b2f0931
 ```
 
 ## Immutability

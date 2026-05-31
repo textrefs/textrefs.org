@@ -4,6 +4,7 @@
     "skos": "http://www.w3.org/2004/02/skos/core#",
     "dcterms": "http://purl.org/dc/terms/",
     "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
     "id": "@id",
     "type": "@type",
     "Work": "tr:Work",
@@ -11,7 +12,12 @@
     "CanonicalReference": "tr:CanonicalReference",
     "ResolverTarget": "tr:ResolverTarget",
     "MappingAssertion": "tr:MappingAssertion",
+    "key": "tr:key",
     "preferred_label": "skos:prefLabel",
+    "inScheme": {
+      "@id": "skos:inScheme",
+      "@type": "@id"
+    },
     "work_key": "tr:workKey",
     "citation_system_key": "tr:citationSystemKey",
     "locator": "tr:locator",
@@ -20,11 +26,11 @@
     "source": "dcterms:source",
     "created": {
       "@id": "dcterms:created",
-      "@type": "schema:Date"
+      "@type": "xsd:date"
     },
     "modified": {
       "@id": "dcterms:modified",
-      "@type": "schema:Date"
+      "@type": "xsd:date"
     },
     "relation": "tr:relation",
     "exactMatch": {
@@ -37,7 +43,10 @@
     },
     "target": "tr:target",
     "target_kind": "tr:targetKind",
-    "identifier": "tr:identifier",
+    "identifier": {
+      "@id": "tr:identifier",
+      "@type": "@id"
+    },
     "provider": "schema:provider",
     "url": {
       "@id": "schema:url",
@@ -46,7 +55,7 @@
     "language": "dcterms:language",
     "edition": "schema:bookEdition",
     "access": "tr:access",
-    "rights_status": "tr:rightsStatus",
+    "license": "dcterms:license",
     "license_url": {
       "@id": "dcterms:license",
       "@type": "@id"

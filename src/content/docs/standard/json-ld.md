@@ -5,7 +5,7 @@ sidebar:
   order: 5
 ---
 
-TextRefs records are plain JSON that becomes linked data through a published JSON-LD context. The context maps TextRefs terms onto a small TextRefs ontology namespace (`tr:`) plus established vocabularies — SKOS for typed concepts and mapping relations, Dublin Core Terms for dates and provenance, schema.org for URLs and providers, and XSD for date typing.
+TextRefs records are plain JSON that becomes linked data through a published JSON-LD context. The context maps TextRefs terms onto a small TextRefs ontology namespace (`tr:`) plus established vocabularies — SKOS for labels, schemes, and mapping relations, Dublin Core Terms for dates and provenance, schema.org for URLs and providers, and XSD for date typing.
 
 The `v1` context is served at:
 
@@ -15,13 +15,13 @@ https://textrefs.org/contexts/v1.jsonld
 
 ## Vocabularies
 
-| Prefix    | Namespace                              | Used for                                                                   |
-| --------- | -------------------------------------- | -------------------------------------------------------------------------- |
-| `tr`      | `https://textrefs.org/ontology#`       | TextRefs object types and properties                                       |
-| `skos`    | `http://www.w3.org/2004/02/skos/core#` | Typed concepts (`Concept`, `ConceptScheme`, `inScheme`), mapping relations |
-| `dcterms` | `http://purl.org/dc/terms/`            | `created`, `modified`, `source`, `language`, `license`                     |
-| `schema`  | `https://schema.org/`                  | `CreativeWork`, `url`, `provider`, `edition`                               |
-| `xsd`     | `http://www.w3.org/2001/XMLSchema#`    | `xsd:date` typing for `created` / `modified`                               |
+| Prefix    | Namespace                              | Used for                                                    |
+| --------- | -------------------------------------- | ----------------------------------------------------------- |
+| `tr`      | `https://textrefs.org/ontology#`       | TextRefs object types, keys, and TextRefs-specific metadata |
+| `skos`    | `http://www.w3.org/2004/02/skos/core#` | Labels, schemes (`inScheme`), and mapping relations         |
+| `dcterms` | `http://purl.org/dc/terms/`            | `created`, `modified`, `source`, `language`, `license`      |
+| `schema`  | `https://schema.org/`                  | `url`, `provider`, `edition`                                |
+| `xsd`     | `http://www.w3.org/2001/XMLSchema#`    | `xsd:date` typing for `created` / `modified`                |
 
 ## Mapping relations
 
@@ -30,7 +30,7 @@ The MVP mapping relations map directly onto SKOS:
 - `exactMatch` → `skos:exactMatch`
 - `closeMatch` → `skos:closeMatch`
 
-Use `exactMatch` only when the mapped object identifies the same reference with sufficient precision. If there is uncertainty about segmentation, edition, translation, scope, or locator alignment, use `closeMatch`. See [Specification §10](/standard/specification/#10-mappingassertion).
+Use `exactMatch` only when the mapped object identifies the same reference with sufficient precision. If there is uncertainty about segmentation, edition, translation, coverage, or locator alignment, use `closeMatch`. See [Specification §10](/standard/specification/#10-mappingassertion).
 
 ## The context document
 
@@ -44,11 +44,12 @@ Use `exactMatch` only when the mapped object identifies the same reference with 
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "id": "@id",
     "type": "@type",
-    "Work": ["tr:Work", "schema:CreativeWork", "skos:Concept"],
-    "CitationSystem": ["tr:CitationSystem", "skos:ConceptScheme"],
-    "CanonicalReference": ["tr:CanonicalReference", "skos:Concept"],
+    "Work": "tr:Work",
+    "CitationSystem": "tr:CitationSystem",
+    "CanonicalReference": "tr:CanonicalReference",
     "ResolverTarget": "tr:ResolverTarget",
     "MappingAssertion": "tr:MappingAssertion",
+    "key": "tr:key",
     "preferred_label": "skos:prefLabel",
     "inScheme": { "@id": "skos:inScheme", "@type": "@id" },
     "work_key": "tr:workKey",
@@ -76,4 +77,4 @@ Use `exactMatch` only when the mapped object identifies the same reference with 
 }
 ```
 
-The `license` term carries an SPDX identifier string; `license_url` (optional fallback) carries an IRI. `MappingAssertion.source` is a plain string in v0.1 — a structured **W3C PROV-O** mapping (`prov:wasDerivedFrom`) is reserved for a later context version. `rights_status` has been removed; see [Specification §9](/standard/specification/#9-resolvertarget).
+`key`, `work_key`, and `citation_system_key` are plain strings in the core JSON format. Rich bibliographic and authority data belongs in external systems and is connected to TextRefs records through `MappingAssertion`s. The `license` term carries an SPDX identifier string; `license_url` (optional fallback) carries an IRI. `MappingAssertion.source` is a plain string in v0.1 — a structured **W3C PROV-O** mapping (`prov:wasDerivedFrom`) is reserved for a later context version.
