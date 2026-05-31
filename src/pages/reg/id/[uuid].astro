@@ -1,6 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import {
+	loadAliases,
 	loadReferences,
 	loadWorks,
 	loadSystems,
@@ -11,9 +12,14 @@ export async function getStaticPaths() {
 	const refs = loadReferences();
 	const works = loadWorks();
 	const systems = loadSystems();
+	const aliases = loadAliases();
 	return refs.map((ref) => {
 		const work = works.find((w) => w.key === ref.work_key);
 		const system = systems.find((s) => s.key === ref.citation_system_key);
+		const refAliases = Object.entries(aliases)
+			.filter(([key, target]) => target === ref.id && !key.includes('://'))
+			.map(([key]) => key)
+			.sort();
 		const targets = ref.resolver_targets ?? [];
 		const langs = Array.from(
 			new Set(targets.map((t) => t.language ?? '—')),
@@ -24,12 +30,12 @@ export async function getStaticPaths() {
 		}));
 		return {
 			params: { uuid: uuidOf(ref.id) },
-			props: { ref, work, system, byLang },
+			props: { ref, work, system, aliases: refAliases, byLang },
 		};
 	});
 }
 
-const { ref, work, system, byLang } = Astro.props;
+const { ref, work, system, aliases, byLang } = Astro.props;
 const pageTitle = `${work?.preferred_label ?? ref.work_key} ${ref.locator}`;
 ---
 
@@ -74,6 +80,23 @@ const pageTitle = `${work?.preferred_label ?? ref.work_key} ${ref.locator}`;
 			(normalization <code>{ref.normalization_version}</code>)
 		</li>
 	</ul>
+
+	<h2>Aliases ({aliases.length})</h2>
+	{
+		aliases.length === 0 ? (
+			<p class="reg-empty">No aliases registered for this reference.</p>
+		) : (
+			<ul class="reg-list">
+				{aliases.map((alias) => (
+					<li>
+						<a href={`/a/${alias}/`}>
+							<code>{alias}</code>
+						</a>
+					</li>
+				))}
+			</ul>
+		)
+	}
 
 	<h2>Resolver targets ({ref.resolver_targets.length})</h2>
 	{

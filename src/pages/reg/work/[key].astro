@@ -1,6 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import {
+	loadAliases,
 	loadWorks,
 	loadSystems,
 	loadReferences,
@@ -15,6 +16,7 @@ export async function getStaticPaths() {
 	const systems = loadSystems();
 	const refs = loadReferences();
 	const mappings = loadMappings();
+	const aliases = loadAliases();
 	return works.map((work) => {
 		const workIri = work.id;
 		const workRefs = refs
@@ -29,6 +31,10 @@ export async function getStaticPaths() {
 		const usedSystems = usedSystemKeys
 			.map((k) => systems.find((s) => s.key === k))
 			.filter((s): s is NonNullable<typeof s> => Boolean(s));
+		const workAliases = Object.entries(aliases)
+			.filter(([, target]) => target === workIri)
+			.map(([key]) => key)
+			.sort();
 		const pageCount = Math.max(1, Math.ceil(workRefs.length / PAGE_SIZE));
 		return {
 			params: { key: work.key },
@@ -40,13 +46,22 @@ export async function getStaticPaths() {
 				pageSize: PAGE_SIZE,
 				mappings: workMappings,
 				systems: usedSystems,
+				aliases: workAliases,
 			},
 		};
 	});
 }
 
-const { work, preview, refCount, pageCount, pageSize, mappings, systems } =
-	Astro.props;
+const {
+	work,
+	preview,
+	refCount,
+	pageCount,
+	pageSize,
+	mappings,
+	systems,
+	aliases,
+} = Astro.props;
 ---
 
 <StarlightPage
@@ -73,6 +88,23 @@ const { work, preview, refCount, pageCount, pageSize, mappings, systems } =
 					<li>
 						<a href={`/reg/system/${s.key}/`}>{s.preferred_label}</a>{' '}
 						<code class="reg-iri">{s.key}</code>
+					</li>
+				))}
+			</ul>
+		)
+	}
+
+	<h2>Aliases ({aliases.length})</h2>
+	{
+		aliases.length === 0 ? (
+			<p class="reg-empty">No aliases registered for this work.</p>
+		) : (
+			<ul class="reg-list">
+				{aliases.map((alias) => (
+					<li>
+						<a href={alias}>
+							<code class="reg-iri">{alias}</code>
+						</a>
 					</li>
 				))}
 			</ul>
