@@ -2,7 +2,7 @@
 title: Use cases
 description: Six scenarios where a persistent ID for a canonical reference changes the workflow.
 sidebar:
-  order: 2
+  order: 3
 ---
 
 These scenarios are illustrative, not exhaustive. Each pairs "what happens today" with "what TextRefs gives you" so the value is concrete.

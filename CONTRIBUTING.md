@@ -20,6 +20,8 @@ Thanks for helping build TextRefs. This guide covers how to get the site running
 - Mapping proposals — additions, corrections, or status changes to external-identifier mappings.
 - Domain feedback — comments on works, citation systems, normalization rules.
 
+For registry-data contributions, first read [How it works](https://textrefs.org/get-started/how-it-works/) and [Mappings and resolver targets](https://textrefs.org/get-started/mappings-and-resolver-targets/). They explain how to distinguish canonical reference identity from external identifiers and reading URLs.
+
 A contribution does not create a claim to acceptance, prioritization, publication, compensation, or membership. See the [governance regulation](https://textrefs.org/association/governance/) for the full review tracks.
 
 ## Review tracks

@@ -2,12 +2,14 @@
 title: Related identifier systems
 description: How TextRefs relates to DOI, ARK, Handle, PURL, CTS, DTS, Wikidata, VIAF, TEI, and platform URLs.
 sidebar:
-  order: 3
+  order: 5
 ---
 
 Use TextRefs for _canonical references inside a work_ — Stephanus 514a, Bekker 983b10, _ST_ I-II.94.2 — and use existing identifier systems for the editions, files, authority records, catalogues, and platforms that carry those references. The difference matters: you can cite Plato's _Republic_ 514a across a dozen editions and centuries without naming any specific edition, while a DOI identifies one published object at a time.
 
 So the relationship is almost always: TextRefs holds the canonical reference, and the system in the table below is one of its mappings.
+
+For the practical modelling distinction between external identifiers and reading URLs, see [Mappings and resolver targets](/get-started/mappings-and-resolver-targets/).
 
 ## Comparison
 

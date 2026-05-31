@@ -13,7 +13,7 @@ That mismatch — central in scholarship, invisible to software — is what Text
 
 ## What TextRefs is
 
-TextRefs is an open registry. For each canonical reference we mint a persistent HTTP URI, attach curated mappings to relevant external identifiers (CTS URNs, Wikidata QIDs, DOIs, library and edition URLs), record provenance and uncertainty, and publish everything as JSON-LD under non-profit governance. The registry is read-only and changes happen via reviewed pull requests; data is released under CC0 so it can flow into any tool that needs it.
+TextRefs is an open registry. For each canonical reference we mint a persistent HTTP URI, attach curated mappings to relevant external identifiers (CTS URNs, Wikidata QIDs, DOIs, library and edition URLs), record resolver targets where readers can inspect the passage, document provenance and uncertainty, and publish everything as JSON-LD under non-profit governance. The registry is read-only and changes happen via reviewed pull requests; data is released under CC0 so it can flow into any tool that needs it.
 
 The same model covers a Stephanus passage in Plato, a Bekker line in Aristotle, a chapter-and-verse in the Vulgate, an article in the _Summa_, and a fragment in the _Digesta_ — every traditional reference system is a `CitationSystem` with its own locator rules.
 
@@ -25,7 +25,9 @@ This division is deliberate. TextRefs stays small, persistent, and legally reusa
 
 ## Keep reading
 
+- [How it works](/get-started/how-it-works/) — the practical model: identity, mappings, resolver targets, and examples.
 - [Use cases](/get-started/use-cases/) — concrete scenarios across research, libraries, digital editions, and AI grounding.
+- [Mappings and resolver targets](/get-started/mappings-and-resolver-targets/) — how to model external identifiers, reading URLs, and canonical-citation candidates.
 - [Related identifier systems](/get-started/related-systems/) — how TextRefs relates to DOI, ARK, CTS, DTS, Wikidata, VIAF, and friends.
 - [The standard](/standard/) — the normative specification text (`v0.1.0-draft`).
 - [The association](/association/) — the non-profit behind TextRefs, its statutes, and the open board search.
