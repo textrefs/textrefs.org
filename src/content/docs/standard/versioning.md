@@ -88,7 +88,7 @@ Registry identity is permanent: the IRI of a `Work`, `CitationSystem`, `Canonica
 - `replaces`: optional array of IRIs the new record subsumes (set on the **successor** for traceability).
 - `tombstone_reason`: short free-text rationale.
 
-The `status` enum gains `superseded` (replaced by a successor; carries `superseded_by`) alongside `withdrawn` (removed without replacement; MUST NOT carry `superseded_by`).
+The `status` enum (see [Specification §11](/standard/specification/)) includes `superseded` (replaced by a successor; carries `superseded_by`) alongside `withdrawn` (removed without replacement; MUST NOT carry `superseded_by`).
 
 ### On-disk representation
 

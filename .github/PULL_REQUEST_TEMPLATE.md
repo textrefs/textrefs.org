@@ -23,7 +23,7 @@
 ## Testing
 
 - [ ] `npm run verify` passes locally (Prettier, astro check, build)
-- [ ] `npm run validate` passes (for `data` and `standard` PRs, once available)
+- [ ] `npm run validate:data` passes (for `data` and `standard` PRs)
 - [ ] `npm test` passes (for `data` and `standard` PRs that touch the conformance suite, once available)
 
 ## Re-mint checklist (only if this PR renames a key or changes content of an existing reference / mapping)
