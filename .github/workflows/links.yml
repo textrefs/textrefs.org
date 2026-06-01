@@ -13,6 +13,7 @@ permissions:
 jobs:
   linkcheck:
     runs-on: ubuntu-latest
+    if: github.repository == 'textrefs/textrefs.org'
     steps:
       - uses: actions/checkout@v6
 
