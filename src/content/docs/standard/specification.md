@@ -6,10 +6,6 @@ sidebar:
   order: 2
 ---
 
-:::caution[Working draft]
-TextRefs `v0.1.0-draft` is an **unstable working draft**. The data model and this specification may change without notice and without a version bump while the core is being settled. Do not rely on it for production use yet.
-:::
-
 **Version:** 0.1.0-draft\
 **Status:** Draft\
 **Scope:** a minimal standard for machine-addressable canonical text references.

@@ -2,14 +2,12 @@
 import { loadAliases, iriToLocal } from '../../lib/registry.ts';
 
 export async function getStaticPaths() {
-	const { loadAliases: loadA, iriToLocal: toLocal } =
-		await import('../../lib/registry.ts');
-	const aliases = loadA();
+	const aliases = loadAliases();
 	return Object.entries(aliases)
 		.filter(([key]) => !key.includes('://'))
 		.map(([key, target]) => ({
 			params: { alias: key },
-			props: { target: toLocal(target) },
+			props: { target: iriToLocal(target) },
 		}));
 }
 

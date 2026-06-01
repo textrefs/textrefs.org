@@ -2,7 +2,7 @@
 title: Statuten
 description: Teil B — Statuten des Vereins TextRefs (Art. 1–22).
 sidebar:
-  order: 2
+  order: 3
 ---
 
 :::note[Arbeitsentwurf]

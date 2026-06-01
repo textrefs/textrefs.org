@@ -20,6 +20,7 @@ Status legend: done · in progress · planned · blocked.
 - done: Seed registry data and static registry browsing pages.
 - in progress: Replace remaining community placeholder pages with contributor-facing guidance.
 - done: Serve canonical record pages under `/id/work/{key}/`, `/id/system/{key}/`, `/id/ref/{uuid}/`, `/id/mapping/{uuid}/`, each with a `.json` JSON-LD sibling advertised via `<link rel="alternate">`.
+- done: Decide how the `data/` repo split is packaged — extracted to [`textrefs/registry`](https://github.com/textrefs/registry) and included here as a git submodule.
 
 ## Next
 
@@ -32,7 +33,6 @@ Status legend: done · in progress · planned · blocked.
 ## Later
 
 - planned: Define conformance tests for clients and registry data.
-- done: Decide how the `data/` repo split is packaged — extracted to [`textrefs/registry`](https://github.com/textrefs/registry) and included here as a git submodule.
 - planned: Apply the same submodule split to `standard/` and `api/` once those interfaces stabilize.
 - planned: Add structured PROV-O provenance for mapping assertions if the draft standard adopts it.
 

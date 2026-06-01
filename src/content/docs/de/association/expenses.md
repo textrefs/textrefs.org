@@ -2,7 +2,7 @@
 title: Spesen- und Vergütungsreglement
 description: Grundsätze für Spesen, Entschädigungen und Dokumentation.
 sidebar:
-  order: 4
+  order: 5
 ---
 
 :::note[Arbeitsentwurf]

@@ -6,10 +6,6 @@ sidebar:
   order: 1
 ---
 
-:::caution[Working draft]
-TextRefs `v0.1.0-draft` is an **unstable working draft**. The data model and this specification may change without notice and without a version bump while the core is being settled. Do not rely on it for production use yet.
-:::
-
 TextRefs defines a minimal registry standard for stable, machine-addressable references to texts. Its centre is the separation of **identity** from **location**: a reference such as `John.3.16` is one abstract, language-independent identity, while the translations, editions, and providers that carry it are recorded as locations embedded on the reference. `Work` and `CitationSystem` records use flat stable keys; richer bibliographic and authority data is connected through mappings to external systems. The model has four registry object types — `Work`, `CitationSystem`, and `CanonicalReference` for identity, plus `MappingAssertion` for equivalence. Locations are recorded as `resolver_targets` entries embedded on each `CanonicalReference`; they are not a separate object type. TextRefs never hosts full text, apparatus, commentary, or copyrighted edition content.
 
 One identity fans out to many locations and equivalences — adding a translation adds a resolver-target entry to the reference, never a new reference:

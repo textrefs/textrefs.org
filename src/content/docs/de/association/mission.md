@@ -2,7 +2,7 @@
 title: Leitbild und gemeinnützige Ausrichtung
 description: Leitbild und gemeinnützige Ausrichtung von TextRefs.
 sidebar:
-  order: 1
+  order: 2
 ---
 
 :::note[Arbeitsentwurf]

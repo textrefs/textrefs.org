@@ -1,6 +1,8 @@
 ---
 title: Verein
 description: Der Verein TextRefs — Leitbild, Statuten, Governance, Spesen.
+sidebar:
+  order: 1
 ---
 
 **TextRefs** ist ein gemeinnütziger, offener und nicht-kommerzieller Verein mit Sitz in Zürich. Er baut, pflegt und veröffentlicht ein offenes, persistentes und maschinenlesbares Register für kanonische Textreferenzen.

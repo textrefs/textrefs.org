@@ -2,7 +2,7 @@
 title: Organisations- und Governance-Reglement
 description: Organisation, Verantwortlichkeiten und Entscheidungsprozesse von TextRefs.
 sidebar:
-  order: 3
+  order: 4
 ---
 
 :::note[Arbeitsentwurf]

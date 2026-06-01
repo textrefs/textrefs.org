@@ -1,0 +1,10 @@
+---
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+import MaturityBanner from './MaturityBanner.astro';
+
+const { entry } = Astro.props;
+const maturity = entry?.data?.maturity;
+---
+
+{maturity && <MaturityBanner maturity={maturity} />}
+<Default {...Astro.props}><slot /></Default>
