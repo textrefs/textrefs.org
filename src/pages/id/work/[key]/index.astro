@@ -33,7 +33,7 @@ export async function getStaticPaths() {
 			.map((k) => systems.find((s) => s.key === k))
 			.filter((s): s is NonNullable<typeof s> => Boolean(s));
 		const workAliases = Object.entries(aliases)
-			.filter(([, target]) => target === workIri)
+			.filter(([key, target]) => target === workIri && !key.includes('://'))
 			.map(([key]) => key)
 			.sort();
 		const pageCount = Math.max(1, Math.ceil(workRefs.length / PAGE_SIZE));
