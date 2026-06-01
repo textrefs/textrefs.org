@@ -1,12 +1,5 @@
 import { z } from 'zod';
-import {
-	AdminMetadata,
-	FlatKey,
-	Iri,
-	IsoDate,
-	SemVer,
-	validateTombstone,
-} from './common.js';
+import { AdminMetadata, FlatKey, Iri, IsoDate, SemVer } from './common.js';
 
 export const ResolverTargetEntry = z.object({
 	url: Iri,
@@ -35,10 +28,6 @@ export const CanonicalReferenceBase = AdminMetadata.extend({
 	resolver_targets: z.array(ResolverTargetEntry).default([]),
 });
 
-export const CanonicalReference = CanonicalReferenceBase.superRefine(
-	(r, ctx) => {
-		validateTombstone(r, ctx);
-	},
-);
+export const CanonicalReference = CanonicalReferenceBase;
 
 export type CanonicalReference = z.infer<typeof CanonicalReference>;

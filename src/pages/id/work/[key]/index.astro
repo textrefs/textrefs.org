@@ -92,12 +92,7 @@ const jsonHref = `/id/work/${work.key}.json`;
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
 
-	<Tombstone
-		status={work.status}
-		superseded_by={work.superseded_by}
-		replaces={work.replaces}
-		tombstone_reason={work.tombstone_reason}
-	/>
+	<Tombstone status={work.status} />
 
 	<h2>Citation systems</h2>
 	{

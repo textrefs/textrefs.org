@@ -74,7 +74,7 @@ Each `datapackage.json` MUST include:
 
 ## Per-record versioning
 
-Records do **not** carry their own SemVer. The registry is append-only with status transitions (`candidate` → `active` → `deprecated` / `superseded` / `withdrawn` / `blocked`). Consumers pin to a registry tag (or its DOI) for reproducibility. Identifier-level changes are expressed via tombstones, below.
+Records do **not** carry their own SemVer. The registry is append-only with status transitions (`candidate` → `active` → `deprecated` / `withdrawn` / `blocked`). Consumers pin to a registry tag (or its DOI) for reproducibility. Identifier-level changes are expressed via tombstones, below.
 
 ## Tombstones and re-minted records
 
@@ -82,21 +82,15 @@ Registry identity is permanent: the IRI of a `Work`, `CitationSystem`, `Canonica
 
 ### Schema
 
-`AdminMetadata` carries three optional tombstone fields:
-
-- `superseded_by`: an IRI pointing to the successor record. Required when `status === 'superseded'`; forbidden otherwise.
-- `replaces`: optional array of IRIs the new record subsumes (set on the **successor** for traceability).
-- `tombstone_reason`: short free-text rationale.
-
-The `status` enum (see [Specification §11](/standard/specification/)) includes `superseded` (replaced by a successor; carries `superseded_by`) alongside `withdrawn` (removed without replacement; MUST NOT carry `superseded_by`).
+Tombstones use one status value, no extra fields. The old record stays in the data tree with `status: withdrawn`. If a successor exists, a single `MappingAssertion` with `relation: exactMatch`, `subject: <old IRI>`, and `target: <new IRI>` carries the link. Consumers walk the mapping to find the successor.
 
 ### On-disk representation
 
-Tombstones are full records, not deletions. The old record stays in the data tree with `status` flipped to `superseded` (or `withdrawn`) and the tombstone fields filled in. A new record is added for the successor (if any) with `replaces: [<old IRI>]`.
+Tombstones are full records, not deletions. The old record retains every other field unchanged; only `status` flips to `withdrawn` and `modified` is bumped. If a successor exists, the successor is a separately authored record at the new IRI, and the linking `MappingAssertion` is committed alongside.
 
 ### HTTP behavior
 
-Old IRI HTML pages render a tombstone banner with a link to the successor (if any). The `.json` JSON-LD sibling returns the tombstone record verbatim, including `status`, `superseded_by`, `tombstone_reason`. Old IRIs are **not** hard-redirected: archival consumers MUST be able to inspect the tombstone payload.
+Old IRI HTML pages render a tombstone banner. The page already lists every `MappingAssertion` whose subject is this record, so the successor (if any) appears in that list with no extra rendering logic. The `.json` JSON-LD sibling returns the withdrawn record verbatim. Old IRIs are **not** hard-redirected: archival consumers MUST be able to inspect the tombstone payload.
 
 ### Export inclusion
 
@@ -104,11 +98,7 @@ Tombstones MUST appear in monthly exports inside the same `.jsonl` file as their
 
 ### Compiler invariants
 
-The compiler enforces:
-
-1. An active record (`status` not in `{superseded, withdrawn}`) MUST NOT reference a tombstoned IRI through `work_key`, `citation_system_key`, `subject`, or an internal `target.identifier`.
-2. A `superseded_by` IRI MUST exist in the current snapshot.
-3. `superseded_by` chains longer than one hop emit a warning; consumers SHOULD resolve transitively.
+The compiler enforces: an active `CanonicalReference` MUST NOT reference a tombstoned `Work` or `CitationSystem` through `work_key` or `citation_system_key`. `MappingAssertion`s are exempt — successor links from a withdrawn subject to an active target are exactly the documented pattern.
 
 ### Aliases vs. tombstones
 

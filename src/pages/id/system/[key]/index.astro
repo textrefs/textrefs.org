@@ -61,12 +61,7 @@ const jsonHref = `/id/system/${system.key}.json`;
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
 
-	<Tombstone
-		status={system.status}
-		superseded_by={system.superseded_by}
-		replaces={system.replaces}
-		tombstone_reason={system.tombstone_reason}
-	/>
+	<Tombstone status={system.status} />
 
 	<h2>Locator format</h2>
 	<p>Regex: <code>{system.locator_regex}</code></p>

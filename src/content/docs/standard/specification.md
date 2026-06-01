@@ -291,8 +291,7 @@ Every registry object MUST include:
   - `candidate` — proposed but not yet accepted as stable.
   - `active` — accepted and recommended for use.
   - `deprecated` — retained but no longer recommended.
-  - `superseded` — replaced by a successor record (carries `superseded_by`; see [Versioning](/standard/versioning/) for tombstones).
-  - `withdrawn` — removed from active use because it was erroneous (without a successor).
+  - `withdrawn` — removed from active use because it was erroneous or has been superseded. If a successor exists, it is linked by an `exactMatch` `MappingAssertion`; see [Versioning](/standard/versioning/) for tombstones.
   - `blocked` — retained as a visible tombstone because of a rights, trust, or policy dispute.
 
 Deprecated, withdrawn, and blocked records SHOULD remain visible unless removal is required for legal, privacy, or safety reasons.

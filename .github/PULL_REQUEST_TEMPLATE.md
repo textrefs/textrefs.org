@@ -30,9 +30,9 @@
 
 Re-minting changes a record's IRI. The old IRI must continue to resolve as a tombstone. See the [tombstones section in versioning.md](https://textrefs.org/standard/versioning/#tombstones-and-re-minted-records).
 
-- [ ] Old record retained with `status: superseded` and `superseded_by: <new IRI>` and `tombstone_reason: <short rationale>`
-- [ ] New record carries `replaces: [<old IRI>]`
-- [ ] All other records that reference the old IRI have been audited (re-targeted to the new IRI, or themselves marked `superseded`)
+- [ ] Old record retained with `status: withdrawn`
+- [ ] A new `MappingAssertion` with `relation: exactMatch`, `subject: <old IRI>`, `target: <new IRI>` links the old record to its successor (omit if there is no successor)
+- [ ] All other records that reference the old IRI have been audited (re-targeted to the new IRI, or themselves marked `withdrawn`)
 - [ ] Commit message uses `feat!:` / `fix!:` to signal the breaking IRI change
 
 ## Checklist

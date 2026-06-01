@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AdminMetadata, Iri, validateTombstone } from './common.js';
+import { AdminMetadata, Iri } from './common.js';
 
 // Subject MUST be a Work IRI. Per-passage equivalences are derived via
 // work-level mapping + locator templates at resolve time, not stored as records.
@@ -26,8 +26,6 @@ export const MappingAssertionBase = AdminMetadata.extend({
 	source: z.string().min(1),
 });
 
-export const MappingAssertion = MappingAssertionBase.superRefine((m, ctx) => {
-	validateTombstone(m, ctx);
-});
+export const MappingAssertion = MappingAssertionBase;
 
 export type MappingAssertion = z.infer<typeof MappingAssertion>;

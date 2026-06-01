@@ -68,12 +68,7 @@ const jsonHref = `/id/ref/${uuidOf(ref.id)}.json`;
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
 
-	<Tombstone
-		status={ref.status}
-		superseded_by={ref.superseded_by}
-		replaces={ref.replaces}
-		tombstone_reason={ref.tombstone_reason}
-	/>
+	<Tombstone status={ref.status} />
 
 	<h2>In context</h2>
 	<ul class="reg-list">

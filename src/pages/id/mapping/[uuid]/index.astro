@@ -46,12 +46,7 @@ const jsonHref = `/id/mapping/${uuidOf(mapping.id)}.json`;
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
 
-	<Tombstone
-		status={mapping.status}
-		superseded_by={mapping.superseded_by}
-		replaces={mapping.replaces}
-		tombstone_reason={mapping.tombstone_reason}
-	/>
+	<Tombstone status={mapping.status} />
 
 	<ul class="reg-list">
 		<li>

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AdminMetadata, FlatKey, SemVer, validateTombstone } from './common.js';
+import { AdminMetadata, FlatKey, SemVer } from './common.js';
 
 export const CitationSystemBase = AdminMetadata.extend({
 	id: z.string().regex(/^https:\/\/textrefs\.org\/id\/system\/[^/]+$/),
@@ -49,7 +49,6 @@ export const CitationSystem = CitationSystemBase.superRefine((s, ctx) => {
 				path: ['examples', 'invalid', i],
 			});
 	});
-	validateTombstone(s, ctx);
 });
 
 export type CitationSystem = z.infer<typeof CitationSystem>;

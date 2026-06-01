@@ -515,10 +515,9 @@ export function compileRegistry(): CompiledRegistry {
 type TombstoneRecord = {
 	id: string;
 	status: string;
-	superseded_by?: string;
 };
 
-const TOMBSTONE_STATUSES = new Set(['superseded', 'withdrawn']);
+const TOMBSTONE_STATUSES = new Set(['withdrawn']);
 
 function enforceTombstoneInvariants(reg: {
 	works: Work[];
@@ -532,8 +531,6 @@ function enforceTombstoneInvariants(reg: {
 		...reg.references,
 		...reg.mappings,
 	];
-	const byIri = new Map<string, TombstoneRecord>();
-	for (const r of all) byIri.set(r.id, r);
 
 	const tombstoneIris = new Set<string>();
 	for (const r of all) {
@@ -541,20 +538,11 @@ function enforceTombstoneInvariants(reg: {
 	}
 
 	const errors: string[] = [];
-	let warnings = 0;
 
-	// 1. superseded_by must point to a known record in the current snapshot.
-	for (const r of all) {
-		if (r.status === 'superseded' && r.superseded_by) {
-			if (!byIri.has(r.superseded_by)) {
-				errors.push(
-					`${r.id}: superseded_by ${r.superseded_by} does not exist in the current registry snapshot`,
-				);
-			}
-		}
-	}
-
-	// 2. Active records MUST NOT point at tombstoned IRIs.
+	// Active CanonicalReferences MUST NOT point at tombstoned work/system —
+	// those break resolution. MappingAssertions are intentionally exempt:
+	// successor links are carried by active exactMatch mappings whose subject
+	// is the withdrawn IRI and whose target is the active successor.
 	const isActive = (r: TombstoneRecord) => !TOMBSTONE_STATUSES.has(r.status);
 	for (const ref of reg.references) {
 		if (!isActive(ref)) continue;
@@ -569,35 +557,6 @@ function enforceTombstoneInvariants(reg: {
 				`${ref.id}: active reference points at tombstoned system ${systemIri}`,
 			);
 	}
-	for (const m of reg.mappings) {
-		if (!isActive(m)) continue;
-		if (tombstoneIris.has(m.subject))
-			errors.push(
-				`${m.id}: active mapping points at tombstoned work ${m.subject}`,
-			);
-		// target.identifier is an external IRI by design; only check if it
-		// happens to be a textrefs.org IRI.
-		if (
-			m.target.identifier.startsWith('https://textrefs.org/id/') &&
-			tombstoneIris.has(m.target.identifier)
-		) {
-			errors.push(
-				`${m.id}: active mapping points at tombstoned target ${m.target.identifier}`,
-			);
-		}
-	}
-
-	// 3. Warn on superseded_by chains longer than one hop.
-	for (const r of all) {
-		if (r.status !== 'superseded' || !r.superseded_by) continue;
-		const successor = byIri.get(r.superseded_by);
-		if (successor && successor.status === 'superseded') {
-			console.warn(
-				`⚠ ${r.id}: superseded_by chain >1 hop (→ ${r.superseded_by} which is itself superseded)`,
-			);
-			warnings++;
-		}
-	}
 
 	if (errors.length > 0) {
 		for (const e of errors) console.error(`✗ ${e}`);
@@ -605,7 +564,7 @@ function enforceTombstoneInvariants(reg: {
 			`${errors.length} tombstone invariant violation(s); fix the offending records`,
 		);
 	}
-	return warnings;
+	return 0;
 }
 
 function readPackageVersion(): string {

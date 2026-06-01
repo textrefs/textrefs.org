@@ -133,7 +133,7 @@ Two release trains live in two repositories:
 - **TextRefs Standard** (this repo) — tags `vMAJOR.MINOR.PATCH[-prerelease]` advance the spec, schemas, and site together. The spec's maturity level (`working-draft` → `candidate-recommendation` → `recommendation`) is encoded in each `/standard/*` page's frontmatter; the SemVer tag encodes pre-release status.
 - **TextRefs Registry** ([`textrefs/registry`](https://github.com/textrefs/registry)) — calendar tags `vYYYY.MM.N` cut monthly registry exports. The data-package `version` inside `datapackage.json` follows SemVer-without-`v`.
 
-Records can be re-minted (e.g. when a `work` key is renamed). The old IRI continues to resolve as a tombstone; consumers transitively follow `superseded_by`. See [versioning policy](https://textrefs.org/standard/versioning/) for the full rules.
+Records can be re-minted (e.g. when a `work` key is renamed). The old IRI continues to resolve as a tombstone (`status: withdrawn`); successors are linked by an `exactMatch` `MappingAssertion`. See [versioning policy](https://textrefs.org/standard/versioning/) for the full rules.
 
 ## Contributors and roles
 
