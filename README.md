@@ -51,6 +51,11 @@ TextRefs is a non-profit infrastructure project that builds, maintains, and publ
 │   ├── content/docs/           # site content (English at root, German under de/)
 │   ├── styles/brand.css        # brand tokens (see public/BRAND notes)
 │   └── content.config.ts
+├── data/                       # git submodule → textrefs/registry (hand-authored YAML)
+├── scripts/                    # data compile + validate pipeline
+├── standard/, api/             # scaffolds reserved for future repo splits
+├── decisions/                  # Architecture Decision Records (MADR)
+├── docs-internal/              # maintainer-only notes, not published
 ├── astro.config.mjs            # Astro + Starlight config (i18n, sidebar)
 ├── cliff.toml                  # git-cliff config for CHANGELOG generation
 ├── commitlint.config.js        # conventional-commit enforcement
@@ -63,20 +68,20 @@ Prerequisites: Node 20+ and npm.
 
 Configuration lives in `.env`; use [`.env.example`](./.env.example) as the starting point. `SITE_DOMAIN` controls Astro's canonical `site` URL and defaults to `textrefs.org` when unset.
 
-| Command                 | Action                                                                         |
-| :---------------------- | :----------------------------------------------------------------------------- |
-| `npm install`           | Install dependencies; wires git hooks (husky + lint-staged)                    |
-| `npm run dev`           | Start local dev server at `localhost:4321`                                     |
-| `npm run build`         | Build the production site to `./dist/`                                         |
-| `npm run build:fast`    | Build the site against a tiny fixture registry, without compiling full data    |
-| `npm run preview`       | Preview the build locally                                                      |
-| `npm run compile:data`  | Expand `data/source/*.yaml` into flat registry records under `data/{works,…}/` |
-| `npm run validate:data` | Validate every record in `data/` against the canonical Zod schemas             |
-| `npm run build:data`    | `compile:data` then `validate:data` — the contributor data pipeline            |
-| `npm run verify:fast`   | Fast local check using fixture registry data                                   |
-| `npm run verify`        | Prettier + `astro check` + production build — the CI gate                      |
-| `npm run commit`        | Guided Conventional Commit prompt (cz-git)                                     |
-| `npm run changelog`     | Regenerate `CHANGELOG.md` from git history (git-cliff)                         |
+| Command                 | Action                                                                                                                                         |
+| :---------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm install`           | Install dependencies; wires git hooks (husky + lint-staged)                                                                                    |
+| `npm run dev`           | Start local dev server at `localhost:4321`                                                                                                     |
+| `npm run build`         | Build the production site to `./dist/`                                                                                                         |
+| `npm run build:fast`    | Build the site against a tiny fixture registry, without compiling full data                                                                    |
+| `npm run preview`       | Preview the build locally                                                                                                                      |
+| `npm run compile:data`  | Read hand-authored YAML under `data/works/` and `data/systems/`, expand the in-memory registry, and emit the NDJSON.gz dump under `dist/dump/` |
+| `npm run validate:data` | Validate every compiled record against the canonical Zod schemas                                                                               |
+| `npm run build:data`    | `compile:data` then `validate:data` — the contributor data pipeline                                                                            |
+| `npm run verify:fast`   | Fast local check using fixture registry data                                                                                                   |
+| `npm run verify`        | Prettier + `astro check` + production build — the CI gate                                                                                      |
+| `npm run commit`        | Guided Conventional Commit prompt (cz-git)                                                                                                     |
+| `npm run changelog`     | Regenerate `CHANGELOG.md` from git history (git-cliff)                                                                                         |
 
 Contributors edit the YAML under [`data/works/`](https://github.com/textrefs/registry/tree/main/works) and [`data/systems/`](https://github.com/textrefs/registry/tree/main/systems); the directory is a git submodule pointing at [`textrefs/registry`](https://github.com/textrefs/registry). Run `git submodule update --init --recursive` after cloning. The compiler expands these into the flat in-memory registry records (works, systems, refs, mappings). See [`docs/get-started/authoring`](https://textrefs.org/get-started/authoring/) for the format. For documentation, styling, and route work, use `npm run verify:fast` locally; run the full `npm run verify` before PRs that touch registry data, release output, or CI behavior.
 

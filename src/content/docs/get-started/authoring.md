@@ -5,7 +5,7 @@ sidebar:
   order: 6
 ---
 
-The TextRefs repo contains only hand-authored YAML under `data/works/` and `data/systems/`. The compiled registry — Works, CitationSystems, CanonicalReferences, MappingAssertions — is produced in memory by `npm run build:data` and published as a single NDJSON.gz bundle attached to each GitHub Release. Published dumps are long-term archived in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) and receive citable DOIs.
+Hand-authored YAML lives in the separate [`textrefs/registry`](https://github.com/textrefs/registry) repository, mounted in this repo as a git submodule at `data/` (run `git submodule update --init --recursive` after cloning; see [`CONTRIBUTING.md`](https://github.com/textrefs/textrefs.org/blob/main/CONTRIBUTING.md) for the full workflow). Contributors edit `data/works/{work_key}.yaml` and `data/systems/{system_key}.yaml` there. The compiled registry — Works, CitationSystems, CanonicalReferences, MappingAssertions — is produced in memory by `npm run build:data` and published as a single NDJSON.gz bundle attached to each GitHub Release. Published dumps are long-term archived in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) and receive citable DOIs.
 
 This page documents the YAML format.
 
@@ -229,7 +229,7 @@ Name your capture groups deliberately — every URL template in every work that 
 ## Building, validating, and previewing
 
 ```sh
-npm run compile:data    # expand YAML → flat JSON records under data/
+npm run compile:data    # expand YAML → NDJSON.gz dump under dist/dump/
 npm run validate:data   # check every record against the canonical Zod schemas
 npm run build:data      # both, in order
 npm run dev             # browse at http://localhost:4321/reg/ ; records live under /id/

@@ -25,7 +25,8 @@ Husky installs on `npm install`: Prettier runs on staged files, `commitlint` enf
 - `src/pages/cite/` — short-alias redirects (`/cite/{work}/{locator}` → canonical `/id/` URL)
 - `src/styles/brand.css` — brand tokens
 - `public/{logo.svg,favicon.svg,fonts/}` — brand assets
-- `standard/`, `data/`, `api/` — scaffolds for the future repo split
+- `data/` — git submodule pointing at [`textrefs/registry`](https://github.com/textrefs/registry); hand-authored YAML lives there. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the submodule workflow.
+- `standard/`, `api/` — scaffolds reserved for future repo splits
 
 ## Conventions
 
