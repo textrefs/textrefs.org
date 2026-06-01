@@ -12,6 +12,7 @@ Status legend: done · in progress · planned · blocked.
 ## Now
 
 - done: GitHub issue & PR templates and PR-template Conventional-Commit checklist.
+- done: Repository-wide CODEOWNERS routing to `@textrefs/maintainers`.
 - done: ADR directory and template (`decisions/`).
 - done: This roadmap, mirrored on the site.
 - done: Get-started section (welcome, use cases, related identifier systems, mappings, and authoring guidance).

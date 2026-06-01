@@ -97,7 +97,7 @@ The changelog is generated from this history via `npm run changelog` (git-cliff)
 2. Keep PRs focused — one logical change per PR.
 3. Link related issues in the PR description.
 4. Make sure `npm run verify` passes.
-5. Open the PR against `main`. The maintainers will assign reviewers based on the track.
+5. Open the PR against `main`. GitHub requests `@textrefs/maintainers` by default via `.github/CODEOWNERS`; maintainers may add technical or expert reviewers based on the track.
 
 ## Project layout
 
