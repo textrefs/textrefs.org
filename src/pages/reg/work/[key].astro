@@ -1,5 +1,6 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import AliasList from '../../../components/AliasList.astro';
 import {
 	loadAliases,
 	loadWorks,
@@ -95,21 +96,7 @@ const {
 	}
 
 	<h2>Aliases ({aliases.length})</h2>
-	{
-		aliases.length === 0 ? (
-			<p class="reg-empty">No aliases registered for this work.</p>
-		) : (
-			<ul class="reg-list">
-				{aliases.map((alias) => (
-					<li>
-						<a href={alias}>
-							<code class="reg-iri">{alias}</code>
-						</a>
-					</li>
-				))}
-			</ul>
-		)
-	}
+	<AliasList aliases={aliases} empty="No aliases registered for this work." />
 
 	<h2>Mappings ({mappings.length})</h2>
 	{

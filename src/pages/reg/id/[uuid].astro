@@ -1,5 +1,6 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import AliasList from '../../../components/AliasList.astro';
 import {
 	loadAliases,
 	loadReferences,
@@ -83,21 +84,10 @@ const pageTitle = `${work?.preferred_label ?? ref.work_key} ${ref.locator}`;
 	</ul>
 
 	<h2>Aliases ({aliases.length})</h2>
-	{
-		aliases.length === 0 ? (
-			<p class="reg-empty">No aliases registered for this reference.</p>
-		) : (
-			<ul class="reg-list">
-				{aliases.map((alias) => (
-					<li>
-						<a href={`/a/${alias}/`}>
-							<code>{alias}</code>
-						</a>
-					</li>
-				))}
-			</ul>
-		)
-	}
+	<AliasList
+		aliases={aliases}
+		empty="No aliases registered for this reference."
+	/>
 
 	<h2>Resolver targets ({ref.resolver_targets.length})</h2>
 	{

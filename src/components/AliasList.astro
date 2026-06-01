@@ -1,0 +1,32 @@
+---
+import { Code } from '@astrojs/starlight/components';
+
+interface Props {
+	aliases: string[];
+	empty: string;
+}
+
+const { aliases, empty } = Astro.props;
+const site = Astro.site ?? new URL('https://textrefs.org');
+const aliasUrls = aliases.map((alias) =>
+	alias.includes('://') ? alias : new URL(`/a/${alias}/`, site).toString(),
+);
+---
+
+{
+	aliasUrls.length === 0 ? (
+		<p class="reg-empty">{empty}</p>
+	) : (
+		<ul class="reg-list reg-alias-list">
+			{aliasUrls.map((aliasUrl) => (
+				<li>
+					<div class="reg-alias-header">
+						<span class="reg-tag">Alias URL</span>
+						<a href={aliasUrl}>Open alias</a>
+					</div>
+					<Code code={aliasUrl} lang="text" class="reg-alias-code" />
+				</li>
+			))}
+		</ul>
+	)
+}

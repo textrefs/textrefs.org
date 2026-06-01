@@ -172,6 +172,27 @@ ul.reg-list > li:last-child {
 	color: var(--sl-color-gray-3);
 	font-style: italic;
 }
+.reg-alias-list > li {
+	padding: 0.8rem 0;
+}
+.reg-alias-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.4rem 0.75rem;
+	margin-bottom: 0.4rem;
+}
+.reg-alias-code {
+	margin: 0;
+}
+.reg-alias-code .expressive-code {
+	margin: 0;
+}
+.reg-alias-code pre {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
 .reg-filter {
 	display: block;
 	width: 100%;
