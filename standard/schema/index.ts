@@ -3,9 +3,10 @@ import { Work, WorkBase } from './work.js';
 import { CitationSystem, CitationSystemBase } from './citation-system.js';
 import {
 	CanonicalReference,
+	CanonicalReferenceBase,
 	ResolverTargetEntry,
 } from './canonical-reference.js';
-import { MappingAssertion } from './mapping-assertion.js';
+import { MappingAssertion, MappingAssertionBase } from './mapping-assertion.js';
 
 export * from './common.js';
 export {
@@ -19,8 +20,8 @@ export {
 export const RegistryObject = z.discriminatedUnion('type', [
 	WorkBase,
 	CitationSystemBase,
-	CanonicalReference,
-	MappingAssertion,
+	CanonicalReferenceBase,
+	MappingAssertionBase,
 ]);
 
 export const schemaByType = {

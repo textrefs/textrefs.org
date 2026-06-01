@@ -27,3 +27,9 @@ keywords:
   - JSON-LD
   - open research infrastructure
   - persistent identifiers
+# Zenodo concept DOI is minted on the first tagged release; this block will be
+# filled in then. Registry data has its own concept DOI at textrefs/registry.
+# identifiers:
+#   - type: doi
+#     value: 10.5281/zenodo.XXXXXXX
+#     description: Concept DOI for TextRefs Standard

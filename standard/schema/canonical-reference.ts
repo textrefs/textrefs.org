@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { AdminMetadata, FlatKey, Iri, IsoDate, SemVer } from './common.js';
+import {
+	AdminMetadata,
+	FlatKey,
+	Iri,
+	IsoDate,
+	SemVer,
+	validateTombstone,
+} from './common.js';
 
 export const ResolverTargetEntry = z.object({
 	url: Iri,
@@ -14,7 +21,7 @@ export const ResolverTargetEntry = z.object({
 
 export type ResolverTargetEntry = z.infer<typeof ResolverTargetEntry>;
 
-export const CanonicalReference = AdminMetadata.extend({
+export const CanonicalReferenceBase = AdminMetadata.extend({
 	id: z
 		.string()
 		.regex(
@@ -27,5 +34,11 @@ export const CanonicalReference = AdminMetadata.extend({
 	normalization_version: SemVer,
 	resolver_targets: z.array(ResolverTargetEntry).default([]),
 });
+
+export const CanonicalReference = CanonicalReferenceBase.superRefine(
+	(r, ctx) => {
+		validateTombstone(r, ctx);
+	},
+);
 
 export type CanonicalReference = z.infer<typeof CanonicalReference>;

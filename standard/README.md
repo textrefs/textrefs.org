@@ -17,6 +17,6 @@ When the standard is extracted, these move into this directory (e.g. `standard/s
 
 ## What does **not** belong here
 
-- Registry data records → `/data/`
+- Registry data records → `data/` (now a git submodule pointing at [`textrefs/registry`](https://github.com/textrefs/registry); the data/ split is done)
 - Resolver API code → `/api/`
 - Site chrome (Astro layouts, components, styles) → `/src/`

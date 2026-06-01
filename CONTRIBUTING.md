@@ -54,11 +54,13 @@ flowchart TD
 Prerequisites: Node 20+ and npm.
 
 ```sh
-git clone https://github.com/textrefs/textrefs.org.git
+git clone --recurse-submodules https://github.com/textrefs/textrefs.org.git
 cd textrefs.org
 npm install              # also wires git hooks via husky
 npm run dev              # http://localhost:4321
 ```
+
+Registry data lives in [`textrefs/registry`](https://github.com/textrefs/registry), mounted here as a git submodule at `data/`. If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`. To bump the submodule to the latest `dev`, `git -C data pull origin dev` and commit the new pointer.
 
 Before pushing, run the gate locally:
 
@@ -102,6 +104,27 @@ The changelog is generated from this history via `npm run changelog` (git-cliff)
 ## Project layout
 
 See [`AGENTS.md`](./AGENTS.md) for the high-level layout: where the brand assets live, how the bilingual association section is organised, and which docs are mirrored at the repo root vs under `src/content/docs/community/`.
+
+## Maintainer release checklist
+
+Two release trains. The Zenodo–GitHub webhook MUST be enabled once per repository (one-time, manual in the Zenodo UI under "GitHub" → toggle the repo on); after that, every GitHub Release auto-deposits.
+
+**Standard + site** (this repo):
+
+1. Bump `version` in `package.json` to match the new tag.
+2. `npm run changelog` to regenerate `CHANGELOG.md`.
+3. Update spec page frontmatter `maturity:` if the release transitions the ladder.
+4. Commit, open PR, merge to `main`.
+5. Tag `vX.Y.Z[-pre]` on `main`; push the tag.
+6. Verify the GitHub Release fires and Zenodo mints the version DOI.
+7. Fill the concept DOI into `CITATION.cff` `identifiers:` and the badge in `README.md` (once, after the first release).
+
+**Registry** ([`textrefs/registry`](https://github.com/textrefs/registry)):
+
+1. From `dev`, open a PR `dev → main` containing the cut.
+2. Tag `vYYYY.MM.N` on `main`; push the tag.
+3. Verify the GitHub Release fires and Zenodo mints the version DOI.
+4. Back here in `textrefs.org`: bump the `data/` submodule pointer to the new tag (`git -C data fetch && git -C data checkout vYYYY.MM.N`) and commit.
 
 ## Questions
 

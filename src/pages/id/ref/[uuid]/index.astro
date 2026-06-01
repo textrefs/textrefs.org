@@ -1,6 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import AliasList from '../../../../components/AliasList.astro';
+import Tombstone from '../../../../components/Tombstone.astro';
 import {
 	loadAliases,
 	loadReferences,
@@ -66,6 +67,13 @@ const jsonHref = `/id/ref/${uuidOf(ref.id)}.json`;
 		<code class="reg-iri">{ref.id}</code>
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
+
+	<Tombstone
+		status={ref.status}
+		superseded_by={ref.superseded_by}
+		replaces={ref.replaces}
+		tombstone_reason={ref.tombstone_reason}
+	/>
 
 	<h2>In context</h2>
 	<ul class="reg-list">

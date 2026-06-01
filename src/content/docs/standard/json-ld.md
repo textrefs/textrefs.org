@@ -1,6 +1,7 @@
 ---
 title: JSON-LD context
 description: The JSON-LD context that maps TextRefs records to RDF vocabularies.
+maturity: working-draft
 sidebar:
   order: 5
 ---

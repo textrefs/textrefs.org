@@ -1,5 +1,6 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import Tombstone from '../../../../components/Tombstone.astro';
 import {
 	loadSystems,
 	loadReferences,
@@ -59,6 +60,13 @@ const jsonHref = `/id/system/${system.key}.json`;
 		<code class="reg-iri">{system.id}</code>
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
+
+	<Tombstone
+		status={system.status}
+		superseded_by={system.superseded_by}
+		replaces={system.replaces}
+		tombstone_reason={system.tombstone_reason}
+	/>
 
 	<h2>Locator format</h2>
 	<p>Regex: <code>{system.locator_regex}</code></p>

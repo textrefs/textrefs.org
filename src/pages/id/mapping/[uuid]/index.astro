@@ -1,5 +1,6 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import Tombstone from '../../../../components/Tombstone.astro';
 import { loadMappings, loadWorks, uuidOf } from '../../../../lib/registry.ts';
 
 export async function getStaticPaths() {
@@ -44,6 +45,13 @@ const jsonHref = `/id/mapping/${uuidOf(mapping.id)}.json`;
 		<code class="reg-iri">{mapping.id}</code>
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
+
+	<Tombstone
+		status={mapping.status}
+		superseded_by={mapping.superseded_by}
+		replaces={mapping.replaces}
+		tombstone_reason={mapping.tombstone_reason}
+	/>
 
 	<ul class="reg-list">
 		<li>

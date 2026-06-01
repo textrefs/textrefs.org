@@ -1,6 +1,7 @@
 ---
 title: The TextRefs standard
 description: Specification for canonical text references.
+maturity: working-draft
 sidebar:
   order: 1
 ---

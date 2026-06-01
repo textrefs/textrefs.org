@@ -1,0 +1,82 @@
+---
+interface Props {
+	status: string;
+	superseded_by?: string;
+	replaces?: string[];
+	tombstone_reason?: string;
+}
+
+const { status, superseded_by, replaces, tombstone_reason } = Astro.props;
+
+const isTombstone = status === 'superseded' || status === 'withdrawn';
+
+function iriToPath(iri: string): string {
+	return iri.replace(/^https:\/\/textrefs\.org/, '') + '/';
+}
+---
+
+{
+	isTombstone && (
+		<aside class="reg-tombstone" role="note">
+			<p class="reg-tombstone-title">
+				<strong>
+					{status === 'superseded'
+						? 'This record has been superseded.'
+						: 'This record has been withdrawn.'}
+				</strong>
+			</p>
+			{superseded_by && (
+				<p>
+					Successor:{' '}
+					<a href={iriToPath(superseded_by)}>
+						<code>{superseded_by}</code>
+					</a>
+				</p>
+			)}
+			{tombstone_reason && (
+				<p>
+					Reason: <em>{tombstone_reason}</em>
+				</p>
+			)}
+		</aside>
+	)
+}
+
+{
+	!isTombstone && replaces && replaces.length > 0 && (
+		<aside class="reg-tombstone reg-tombstone-successor" role="note">
+			<p>
+				This record replaces:
+				<ul>
+					{replaces.map((iri) => (
+						<li>
+							<a href={iriToPath(iri)}>
+								<code>{iri}</code>
+							</a>
+						</li>
+					))}
+				</ul>
+			</p>
+		</aside>
+	)
+}
+
+<style>
+	.reg-tombstone {
+		border-left: 4px solid var(--sl-color-orange, #d97706);
+		background: var(--sl-color-bg-nav, rgba(217, 119, 6, 0.08));
+		padding: 0.75rem 1rem;
+		margin: 1rem 0;
+		border-radius: 0.25rem;
+	}
+	.reg-tombstone-successor {
+		border-left-color: var(--sl-color-blue, #2563eb);
+		background: rgba(37, 99, 235, 0.06);
+	}
+	.reg-tombstone-title {
+		margin-top: 0;
+	}
+	.reg-tombstone p {
+		margin: 0.25rem 0;
+	}
+</style>

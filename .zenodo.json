@@ -32,6 +32,11 @@
       "identifier": "https://textrefs.org",
       "relation": "isDocumentedBy",
       "resource_type": "publication-other"
+    },
+    {
+      "identifier": "https://github.com/textrefs/registry",
+      "relation": "isSupplementedBy",
+      "resource_type": "dataset"
     }
   ]
 }

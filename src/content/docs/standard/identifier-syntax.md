@@ -1,6 +1,7 @@
 ---
 title: Identifier syntax
 description: How TextRefs canonical-reference identifiers are deterministically generated.
+maturity: working-draft
 sidebar:
   order: 3
 ---

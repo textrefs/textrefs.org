@@ -1,6 +1,7 @@
 ---
 title: Specification
 description: Normative specification of the TextRefs format.
+maturity: working-draft
 sidebar:
   order: 2
 ---

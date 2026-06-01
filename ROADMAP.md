@@ -32,7 +32,8 @@ Status legend: done · in progress · planned · blocked.
 ## Later
 
 - planned: Define conformance tests for clients and registry data.
-- planned: Decide how the future `standard/`, `data/`, and `api/` repo split will be packaged and synchronized.
+- done: Decide how the `data/` repo split is packaged — extracted to [`textrefs/registry`](https://github.com/textrefs/registry) and included here as a git submodule.
+- planned: Apply the same submodule split to `standard/` and `api/` once those interfaces stabilize.
 - planned: Add structured PROV-O provenance for mapping assertions if the draft standard adopts it.
 
 ## How this roadmap is maintained

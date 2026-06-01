@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AdminMetadata, FlatKey } from './common.js';
+import { AdminMetadata, FlatKey, validateTombstone } from './common.js';
 
 export const WorkBase = AdminMetadata.extend({
 	id: z.string().regex(/^https:\/\/textrefs\.org\/id\/work\/[^/]+$/),
@@ -16,6 +16,7 @@ export const Work = WorkBase.superRefine((w, ctx) => {
 			path: ['id'],
 		});
 	}
+	validateTombstone(w, ctx);
 });
 
 export type Work = z.infer<typeof Work>;

@@ -1,6 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import AliasList from '../../../../components/AliasList.astro';
+import Tombstone from '../../../../components/Tombstone.astro';
 import {
 	loadAliases,
 	loadWorks,
@@ -90,6 +91,13 @@ const jsonHref = `/id/work/${work.key}.json`;
 		<code class="reg-iri">{work.id}</code>
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
+
+	<Tombstone
+		status={work.status}
+		superseded_by={work.superseded_by}
+		replaces={work.replaces}
+		tombstone_reason={work.tombstone_reason}
+	/>
 
 	<h2>Citation systems</h2>
 	{

@@ -78,7 +78,7 @@ Configuration lives in `.env`; use [`.env.example`](./.env.example) as the start
 | `npm run commit`        | Guided Conventional Commit prompt (cz-git)                                     |
 | `npm run changelog`     | Regenerate `CHANGELOG.md` from git history (git-cliff)                         |
 
-Contributors edit the compact YAML under `data/source/`; the compiler expands URI templates into the flat published records under `data/{works,systems,refs,mappings}/`. See [`docs/get-started/authoring`](https://textrefs.org/get-started/authoring/) for the format. For documentation, styling, and route work, use `npm run verify:fast` locally; run the full `npm run verify` before PRs that touch registry data, release output, or CI behavior.
+Contributors edit the YAML under [`data/works/`](https://github.com/textrefs/registry/tree/dev/works) and [`data/systems/`](https://github.com/textrefs/registry/tree/dev/systems); the directory is a git submodule pointing at [`textrefs/registry`](https://github.com/textrefs/registry). Run `git submodule update --init --recursive` after cloning. The compiler expands these into the flat in-memory registry records (works, systems, refs, mappings). See [`docs/get-started/authoring`](https://textrefs.org/get-started/authoring/) for the format. For documentation, styling, and route work, use `npm run verify:fast` locally; run the full `npm run verify` before PRs that touch registry data, release output, or CI behavior.
 
 See [`AGENTS.md`](./AGENTS.md) for the full layout and conventions.
 
@@ -90,7 +90,14 @@ Set the repository variable `SITE_DOMAIN` under GitHub Actions variables to the 
 
 ## Citation
 
-If you cite TextRefs, use the metadata in [`CITATION.cff`](./CITATION.cff) — GitHub renders a "Cite this repository" button in the sidebar that reads from this file. Published data dumps are long-term archived in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) and receive citable DOIs; the DOI badge will be added here once minted.
+If you cite TextRefs, use the metadata in [`CITATION.cff`](./CITATION.cff) — GitHub renders a "Cite this repository" button in the sidebar that reads from this file.
+
+Two distinct concept DOIs cover the project, minted via the [Zenodo GitHub integration](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content) once enabled:
+
+- **TextRefs Standard** (this repository) — cite for the specification, JSON-LD context, Zod schemas, and site. DOI badge will be added once the first `v*` tag is released.
+- **TextRefs Registry** ([`textrefs/registry`](https://github.com/textrefs/registry)) — cite for a specific registry data export. DOI badge will be added once the first `v*` tag is released there.
+
+Both deposits live in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/).
 
 ## Support
 
@@ -115,6 +122,13 @@ Contributions are welcome — issues, pull requests, mapping proposals, document
 ## Versioning
 
 This project follows [Semantic Versioning](https://semver.org/). Pre-1.0 releases are considered unstable. The changelog is generated from Conventional Commits via `npm run changelog` (git-cliff).
+
+Two release trains live in two repositories:
+
+- **TextRefs Standard** (this repo) — tags `vMAJOR.MINOR.PATCH[-prerelease]` advance the spec, schemas, and site together. The spec's maturity level (`working-draft` → `candidate-recommendation` → `recommendation`) is encoded in each `/standard/*` page's frontmatter; the SemVer tag encodes pre-release status.
+- **TextRefs Registry** ([`textrefs/registry`](https://github.com/textrefs/registry)) — calendar tags `vYYYY.MM.N` cut monthly registry exports. The data-package `version` inside `datapackage.json` follows SemVer-without-`v`.
+
+Records can be re-minted (e.g. when a `work` key is renamed). The old IRI continues to resolve as a tombstone; consumers transitively follow `superseded_by`. See [versioning policy](https://textrefs.org/standard/versioning/) for the full rules.
 
 ## Contributors and roles
 

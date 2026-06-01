@@ -1,6 +1,7 @@
 ---
 title: Citation-system profiles
 description: How citation systems constrain locators, with the seed Bekker and Stephanus profiles.
+maturity: working-draft
 sidebar:
   order: 4
 ---

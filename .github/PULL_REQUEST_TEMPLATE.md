@@ -26,6 +26,15 @@
 - [ ] `npm run validate` passes (for `data` and `standard` PRs, once available)
 - [ ] `npm test` passes (for `data` and `standard` PRs that touch the conformance suite, once available)
 
+## Re-mint checklist (only if this PR renames a key or changes content of an existing reference / mapping)
+
+Re-minting changes a record's IRI. The old IRI must continue to resolve as a tombstone. See the [tombstones section in versioning.md](https://textrefs.org/standard/versioning/#tombstones-and-re-minted-records).
+
+- [ ] Old record retained with `status: superseded` and `superseded_by: <new IRI>` and `tombstone_reason: <short rationale>`
+- [ ] New record carries `replaces: [<old IRI>]`
+- [ ] All other records that reference the old IRI have been audited (re-targeted to the new IRI, or themselves marked `superseded`)
+- [ ] Commit message uses `feat!:` / `fix!:` to signal the breaking IRI change
+
 ## Checklist
 
 - [ ] Commit message follows [Conventional Commits](https://www.conventionalcommits.org/)
