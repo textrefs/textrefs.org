@@ -60,7 +60,7 @@ npm install              # also wires git hooks via husky
 npm run dev              # http://localhost:4321
 ```
 
-Registry data lives in [`textrefs/registry`](https://github.com/textrefs/registry), mounted here as a git submodule at `data/`. If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`. To bump the submodule to the latest `dev`, `git -C data pull origin dev` and commit the new pointer.
+Registry data lives in [`textrefs/registry`](https://github.com/textrefs/registry), mounted here as a git submodule at `data/`. If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`. To bump the submodule to the latest `main`, `git -C data pull origin main` and commit the new pointer.
 
 Before pushing, run the gate locally:
 
@@ -121,8 +121,8 @@ Two release trains. The Zenodo–GitHub webhook MUST be enabled once per reposit
 
 **Registry** ([`textrefs/registry`](https://github.com/textrefs/registry)):
 
-1. From `dev`, open a PR `dev → main` containing the cut.
-2. Tag `vYYYY.MM.N` on `main`; push the tag.
+1. From a short-lived feature branch off `main`, open a PR into `main` containing the cut.
+2. Once merged, tag `vYYYY.MM.N` on `main` and push the tag.
 3. Verify the GitHub Release fires and Zenodo mints the version DOI.
 4. Back here in `textrefs.org`: bump the `data/` submodule pointer to the new tag (`git -C data fetch && git -C data checkout vYYYY.MM.N`) and commit.
 
