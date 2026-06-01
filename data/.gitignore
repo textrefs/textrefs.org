@@ -1,7 +1,0 @@
-*
-!.gitignore
-!README.md
-!works/
-!systems/
-!works/*.yaml
-!systems/*.yaml
