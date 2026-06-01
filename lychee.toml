@@ -33,6 +33,7 @@ exclude = [
 	"^https?://([a-z0-9-]+\\.)*linkedin\\.com",
 	"^https?://([a-z0-9-]+\\.)*twitter\\.com",
 	"^https?://([a-z0-9-]+\\.)*x\\.com",
+	"^https?://localhost(:\\d+)?(/|$)",
 ]
 
 # Don't check mailto: links

@@ -404,9 +404,9 @@ The following identifier schemes commonly satisfy [§10](#10-mappingassertion)'s
 | TextRefs | `textrefs`         | `https://textrefs.org/id/ref/988e0b39-…`          |
 | CTS URN  | `cts`              | `urn:cts:greekLit:tlg0031.tlg004:3.16`            |
 | DTS      | `dts`              | `https://dts.example/api/collection?id=urn:cts:…` |
-| DOI      | `doi`              | `https://doi.org/10.1093/oseo/instance.00266836`  |
+| DOI      | `doi`              | `https://doi.org/10.5281/zenodo.7702622`          |
 | ARK      | `ark`              | `https://n2t.net/ark:/12148/btv1b8451636f`        |
-| Handle   | `handle`           | `https://hdl.handle.net/2027/uc1.b000123456`      |
+| Handle   | `handle`           | `https://hdl.handle.net/1887/4531`                |
 | PURL     | `purl`             | `https://purl.org/dc/terms/`                      |
 | URN:NBN  | `urn-nbn`          | `urn:nbn:de:bvb:12-bsb00012345-2`                 |
 | Wikidata | `wikidata`         | `https://www.wikidata.org/entity/Q42`             |
