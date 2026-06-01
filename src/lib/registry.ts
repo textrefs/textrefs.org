@@ -2,9 +2,11 @@ import {
 	compileRegistry,
 	type CompiledRegistry,
 } from '../../scripts/compile.js';
+import { fixtureRegistry } from './registry.fixture.js';
 
 let cached: CompiledRegistry | null = null;
 function registry(): CompiledRegistry {
+	if (process.env.TEXTREFS_REGISTRY_FIXTURE === '1') return fixtureRegistry;
 	cached ??= compileRegistry();
 	return cached;
 }

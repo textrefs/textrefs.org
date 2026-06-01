@@ -6,9 +6,13 @@ Astro + Starlight site for textrefs.org. See [`README.md`](./README.md) for the 
 
 - `npm run dev` — local dev server
 - `npm run build` — production build
+- `npm run build:fast` — site build against a tiny fixture registry, without compiling full data
 - `npm run format` — Prettier (with `prettier-plugin-astro`)
 - `npm run check` — `astro check`
+- `npm run verify:fast` — fast local verification: format:check + fixture-backed check + fixture-backed build
 - `npm run verify` — format:check + check + build (the CI gate)
+
+Use `npm run verify:fast` by default for local validation and agent work. Only use the full `npm run verify` and/or `npm run validate:data` when changes affect registry data, release artifacts, production build behavior, or CI parity.
 
 Husky installs on `npm install`: Prettier runs on staged files, `commitlint` enforces Conventional Commits.
 
