@@ -88,7 +88,7 @@ Each entry records what a reader needs to understand the link: `language` (BCP 4
 }
 ```
 
-Contributors author resolver targets as URL templates, not raw URLs — see [Authoring registry data](/get-started/authoring/). The compiler expands them per reference. Browse the live output at [`/reg/work/dhammapada/`](/reg/work/dhammapada/) or [`/reg/work/plato.respublica/`](/reg/work/plato.respublica/).
+Contributors author resolver targets as URL templates, not raw URLs — see [Authoring registry data](/get-started/authoring/). The compiler expands them per reference. Browse the live output at [`/id/work/dhammapada/`](/id/work/dhammapada/) or [`/id/work/plato.respublica/`](/id/work/plato.respublica/).
 
 ## Good first candidates
 

@@ -1,14 +1,23 @@
-# TextRefs API
+# TextRefs API documentation
 
-Future home of the resolver/registry API. Empty by design — the directory exists so the first API file lands here rather than under `/src/`, keeping it co-located with the site for the planned "site & api" repo.
+`/api/` documents the HTTP contract for the canonical `/id/` namespace. The API itself is `/id/`; this directory holds the OpenAPI document that describes how it behaves.
 
-## Planned scope
+## How it works
 
-- Resolver endpoints for `https://textrefs.org/id/work/{key}`, `/id/system/{key}`, `/id/ref/{uuid}`, `/id/mapping/{uuid}`.
-- Content negotiation: HTML (Starlight-rendered detail page) vs JSON-LD (using `/contexts/v1.jsonld`).
-- On `/id/ref/{uuid}`: HTTP 303 redirect to an embedded `resolver_targets` entry's external `url`, based on language / edition negotiation. Resolver-target entries do not have their own IRIs (see [specification §9](../src/content/docs/standard/specification.md)).
+Every TextRefs record is served at two static URLs:
 
-## Out of scope
+- `/id/{type}/{key}/` — HTML for browsers (Starlight-rendered).
+- `/id/{type}/{key}.json` — JSON-LD for machines (uses [`/contexts/v1.jsonld`](../public/contexts/v1.jsonld)).
+
+There is no `Accept`-header content negotiation. Clients either follow the `<link rel="alternate" type="application/json" href="…json">` advertised in the HTML head, or simply append `.json` to the canonical URL.
+
+The four record types are `work`, `system`, `ref`, and `mapping`. See [URL layout](../src/content/docs/get-started/url-layout.md) for the user-facing explainer.
+
+## Planned
+
+- `Accept-Language` and `edition`-based 303 redirect on `/id/ref/{uuid}` to a matching `resolver_targets` entry's external URL. Resolver-target entries do not have their own IRIs (see [specification §9](../src/content/docs/standard/specification.md)).
+
+## Out of scope here
 
 - Spec authoring → `/standard/`
 - Registry data → `/data/`

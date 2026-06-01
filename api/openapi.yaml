@@ -1,26 +1,26 @@
 openapi: 3.1.0
 info:
-  title: TextRefs Resolver & Registry API
-  version: 0.1.0-draft
-  summary: Planned resolver and registry API for textrefs.org.
+  title: TextRefs Registry & Resolver
+  version: 0.1.0
+  summary: HTTP contract for the canonical `/id/` namespace on textrefs.org.
   description: |
-    **Status: design draft.** No endpoints are live yet. This document captures
-    the planned shape of the API so it can be discussed and iterated on before
-    any handler is written.
+    Every TextRefs record is served at two static URLs:
 
-    The resolver dereferences TextRefs identifiers to a JSON-LD description
-    of the object, or to an HTML detail page via `Accept`-header content
-    negotiation. Resolver targets are embedded entries on a
-    `CanonicalReference` (not a separate object type with their own IRI), so
-    302/303 redirects to external manifestations are negotiated on the
-    `/id/ref/{uuid}` endpoint via `Accept-Language` and the `edition` query
-    parameter.
+    - `/id/{type}/{key}/` — HTML for browsers.
+    - `/id/{type}/{key}.json` — JSON-LD for machines.
 
-    All JSON responses use the JSON-LD context at
-    [`/contexts/v1.jsonld`](https://textrefs.org/contexts/v1.jsonld). Schemas
-    here mirror the Zod definitions in
+    There is **no** `Accept`-header content negotiation. Clients either
+    follow the `<link rel="alternate" type="application/json" href="…json">`
+    advertised in the HTML head, or simply append `.json` to the canonical
+    URL. JSON bodies carry the JSON-LD `@context` at
+    [`/contexts/v1.jsonld`](https://textrefs.org/contexts/v1.jsonld); the
+    Zod schemas in
     [`standard/schema/`](https://github.com/textrefs/textrefs.org/tree/main/standard/schema)
-    — those remain the source of truth.
+    remain the source of truth.
+
+    The `Accept-Language` / `edition`-based 303 redirect on
+    `/id/ref/{uuid}` to a resolver-target manifestation is planned but not
+    yet live.
   license:
     name: AGPL-3.0-or-later
     url: https://www.gnu.org/licenses/agpl-3.0.html
@@ -29,92 +29,122 @@ info:
     url: https://textrefs.org/community/
 servers:
   - url: https://textrefs.org
-    description: Production (planned)
+    description: Production
 tags:
-  - name: Resolver
-    description: Dereference TextRefs identifiers.
+  - name: Records
+    description: Canonical record URLs under `/id/`.
 paths:
-  /id/work/{key}:
+  /id/work/{key}/:
     get:
-      tags: [Resolver]
-      summary: Resolve a Work
-      operationId: resolveWork
+      tags: [Records]
+      summary: Work — HTML
+      operationId: getWorkHtml
       parameters:
         - $ref: '#/components/parameters/FlatKey'
       responses:
         '200':
-          description: Work record.
+          description: Work landing page.
           content:
-            application/ld+json:
+            text/html:
+              schema: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /id/work/{key}.json:
+    get:
+      tags: [Records]
+      summary: Work — JSON-LD
+      operationId: getWorkJson
+      parameters:
+        - $ref: '#/components/parameters/FlatKey'
+      responses:
+        '200':
+          description: Work record as JSON-LD.
+          content:
+            application/json:
               schema: { $ref: '#/components/schemas/Work' }
-            text/html:
-              schema: { type: string }
         '404': { $ref: '#/components/responses/NotFound' }
-  /id/system/{key}:
+  /id/system/{key}/:
     get:
-      tags: [Resolver]
-      summary: Resolve a CitationSystem
-      operationId: resolveCitationSystem
+      tags: [Records]
+      summary: CitationSystem — HTML
+      operationId: getCitationSystemHtml
       parameters:
         - $ref: '#/components/parameters/FlatKey'
       responses:
         '200':
-          description: CitationSystem record.
+          description: CitationSystem landing page.
           content:
-            application/ld+json:
+            text/html:
+              schema: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /id/system/{key}.json:
+    get:
+      tags: [Records]
+      summary: CitationSystem — JSON-LD
+      operationId: getCitationSystemJson
+      parameters:
+        - $ref: '#/components/parameters/FlatKey'
+      responses:
+        '200':
+          description: CitationSystem record as JSON-LD.
+          content:
+            application/json:
               schema: { $ref: '#/components/schemas/CitationSystem' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /id/ref/{uuid}/:
+    get:
+      tags: [Records]
+      summary: CanonicalReference — HTML
+      operationId: getCanonicalReferenceHtml
+      parameters:
+        - $ref: '#/components/parameters/Uuid'
+      responses:
+        '200':
+          description: CanonicalReference landing page.
+          content:
             text/html:
               schema: { type: string }
         '404': { $ref: '#/components/responses/NotFound' }
-  /id/ref/{uuid}:
+  /id/ref/{uuid}.json:
     get:
-      tags: [Resolver]
-      summary: Resolve a CanonicalReference
-      description: |
-        Returns the reference record (JSON-LD or HTML). With
-        `Accept-Language` and/or an `edition` query parameter, the resolver
-        MAY instead 303-redirect to the matching entry in the reference's
-        embedded `resolver_targets` array.
-      operationId: resolveCanonicalReference
+      tags: [Records]
+      summary: CanonicalReference — JSON-LD
+      operationId: getCanonicalReferenceJson
       parameters:
         - $ref: '#/components/parameters/Uuid'
-        - in: query
-          name: edition
-          required: false
-          schema: { type: string }
-          description: Preferred edition tag for resolver-target negotiation.
       responses:
         '200':
-          description: CanonicalReference record.
+          description: CanonicalReference record as JSON-LD.
           content:
-            application/ld+json:
+            application/json:
               schema: { $ref: '#/components/schemas/CanonicalReference' }
-            text/html:
-              schema: { type: string }
-        '303':
-          description: Redirect to a negotiated resolver-target manifestation.
-          headers:
-            Location:
-              schema: { type: string, format: uri }
-              description: Absolute URL of the chosen manifestation.
         '404': { $ref: '#/components/responses/NotFound' }
-        '406':
-          description: No resolver-target entry matches the requested language/edition.
-  /id/mapping/{uuid}:
+  /id/mapping/{uuid}/:
     get:
-      tags: [Resolver]
-      summary: Resolve a MappingAssertion
-      operationId: resolveMappingAssertion
+      tags: [Records]
+      summary: MappingAssertion — HTML
+      operationId: getMappingAssertionHtml
       parameters:
         - $ref: '#/components/parameters/Uuid'
       responses:
         '200':
-          description: MappingAssertion record.
+          description: MappingAssertion landing page.
           content:
-            application/ld+json:
-              schema: { $ref: '#/components/schemas/MappingAssertion' }
             text/html:
               schema: { type: string }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /id/mapping/{uuid}.json:
+    get:
+      tags: [Records]
+      summary: MappingAssertion — JSON-LD
+      operationId: getMappingAssertionJson
+      parameters:
+        - $ref: '#/components/parameters/Uuid'
+      responses:
+        '200':
+          description: MappingAssertion record as JSON-LD.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MappingAssertion' }
         '404': { $ref: '#/components/responses/NotFound' }
 components:
   parameters:

@@ -52,7 +52,7 @@ const to = Math.min(page * pageSize, total);
 	}}
 >
 	<p class="reg-sub">
-		<a href={`/reg/system/${system.key}/`}>← {system.preferred_label}</a>
+		<a href={`/id/system/${system.key}/`}>← {system.preferred_label}</a>
 	</p>
 
 	<p>
@@ -63,7 +63,7 @@ const to = Math.min(page * pageSize, total);
 		{
 			refs.map((r) => (
 				<li>
-					<a href={`/reg/id/${uuidOf(r.id)}/`}>
+					<a href={`/id/ref/${uuidOf(r.id)}/`}>
 						<code>{r.work_key}</code> · <code>{r.locator}</code>
 					</a>
 				</li>

@@ -16,11 +16,14 @@ const systems = loadSystems().sort((a, b) => a.key.localeCompare(b.key));
 	}}
 >
 	<p>
-		The TextRefs registry holds three kinds of records: <strong>works</strong>
-		(texts that get cited), <strong>citation systems</strong> (rules for how locators
-		inside a work look), and <strong>canonical references</strong>
-		(individual points inside a work, each with a persistent IRI under
-		<code>https://textrefs.org/id/</code>). See the
+		The TextRefs registry holds <strong>works</strong> (texts that get cited),
+		<strong>citation systems</strong> (rules for how locators inside a work look),
+		and <strong>canonical references</strong> (individual points inside a work). Each
+		record lives at its persistent identifier under <code>/id/</code>; this page
+		is the human entry point for finding them. See
+		<a href="/get-started/url-layout/">URL layout</a> for how
+		<code>/id/</code>, <code>/reg/</code>, <code>/cite/</code>, and
+		<code>/api/</code> fit together, or the
 		<a href="/standard/specification/">specification</a> for the data model.
 	</p>
 
@@ -42,7 +45,7 @@ const systems = loadSystems().sort((a, b) => a.key.localeCompare(b.key));
 			<ul id="reg-works" class="reg-list" data-reg-list>
 				{works.map((w) => (
 					<li data-reg-item={`${w.preferred_label} ${w.key}`.toLowerCase()}>
-						<a href={`/reg/work/${w.key}/`}>{w.preferred_label}</a>{' '}
+						<a href={`/id/work/${w.key}/`}>{w.preferred_label}</a>{' '}
 						<span class="reg-tag">{w.status}</span>{' '}
 						<code class="reg-iri">{w.key}</code>
 					</li>
@@ -59,7 +62,7 @@ const systems = loadSystems().sort((a, b) => a.key.localeCompare(b.key));
 			<ul id="reg-systems" class="reg-list" data-reg-list>
 				{systems.map((s) => (
 					<li data-reg-item={`${s.preferred_label} ${s.key}`.toLowerCase()}>
-						<a href={`/reg/system/${s.key}/`}>{s.preferred_label}</a>{' '}
+						<a href={`/id/system/${s.key}/`}>{s.preferred_label}</a>{' '}
 						<span class="reg-tag">{s.status}</span>{' '}
 						<code class="reg-iri">{s.key}</code>
 					</li>

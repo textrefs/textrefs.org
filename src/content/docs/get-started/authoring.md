@@ -232,16 +232,18 @@ Name your capture groups deliberately — every URL template in every work that 
 npm run compile:data    # expand YAML → flat JSON records under data/
 npm run validate:data   # check every record against the canonical Zod schemas
 npm run build:data      # both, in order
-npm run dev             # browse the result at http://localhost:4321/reg/
+npm run dev             # browse at http://localhost:4321/reg/ ; records live under /id/
 ```
 
 The compiler is deterministic: re-running `compile:data` against unchanged source produces zero diff. `MappingAssertion` and `CanonicalReference` UUIDs are derived from content per [Identifier syntax](/standard/identifier-syntax/), so the same YAML always produces the same identifiers.
 
 ## What lives where
 
-- `/reg/work/{key}/` — a Work's landing page (mappings, references, citation systems).
-- `/reg/system/{key}/` — a CitationSystem's landing page (regex, examples, references).
-- `/reg/id/{uuid}/` — a CanonicalReference page with every resolver URL grouped by language.
-- `/a/{work_key}/{locator}/` — alias redirect to the canonical reference page.
+- `/id/work/{key}/` — a Work's canonical landing page (mappings, references, citation systems). A sibling `/id/work/{key}.json` serves the same record as JSON-LD.
+- `/id/system/{key}/` — a CitationSystem's canonical landing page (regex, examples, references). Plus `/id/system/{key}.json`.
+- `/id/ref/{uuid}/` — a CanonicalReference page with every resolver URL grouped by language. Plus `/id/ref/{uuid}.json`.
+- `/id/mapping/{uuid}/` — a MappingAssertion page. Plus `/id/mapping/{uuid}.json`.
+- `/reg/` — the human registry browser (index, search, paginated reference lists).
+- `/cite/{work_key}/{locator}/` — short alias that redirects to the canonical reference page.
 
-A reader who types `https://textrefs.org/a/dhammapada/1.1` lands on the canonical reference page; the alias index is generated alongside the records by the compiler.
+A reader who types `https://textrefs.org/cite/dhammapada/1.1` lands on the canonical reference page; the alias index is generated alongside the records by the compiler. See [URL layout](/get-started/url-layout/) for the full four-prefix model.

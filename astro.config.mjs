@@ -19,7 +19,7 @@ export default defineConfig({
 			plugins: [
 				starlightLinksValidator({
 					errorOnFallbackPages: false,
-					exclude: ['/reg/**', '/a/**', '/api/**'],
+					exclude: ['/id/**', '/reg/**', '/cite/**', '/api/**'],
 				}),
 				starlightOpenAPI([
 					{
@@ -31,7 +31,7 @@ export default defineConfig({
 				starlightLlmsTxt({
 					projectName: 'TextRefs',
 					description:
-						'An open, persistent, machine-readable registry for canonical text references. The normative JSON-LD context is at /contexts/, individual registry records resolve under /reg/{uuid}, and the HTTP API is described by /api/openapi.yaml.',
+						'An open, persistent, machine-readable registry for canonical text references. Records live at /id/ — /id/{type}/{key}/ for HTML, /id/{type}/{key}.json for JSON-LD (advertised via <link rel="alternate">). /reg/ browses the registry; /cite/ redirects short aliases; /api/ documents the contract (OpenAPI at /api/openapi.yaml, JSON-LD context at /contexts/v1.jsonld).',
 				}),
 			],
 			title: 'TextRefs',

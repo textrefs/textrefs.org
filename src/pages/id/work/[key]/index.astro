@@ -1,6 +1,6 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import AliasList from '../../../components/AliasList.astro';
+import AliasList from '../../../../components/AliasList.astro';
 import {
 	loadAliases,
 	loadWorks,
@@ -8,7 +8,7 @@ import {
 	loadReferences,
 	loadMappings,
 	uuidOf,
-} from '../../../lib/registry.ts';
+} from '../../../../lib/registry.ts';
 
 export async function getStaticPaths() {
 	const PAGE_SIZE = 200;
@@ -63,6 +63,7 @@ const {
 	systems,
 	aliases,
 } = Astro.props;
+const jsonHref = `/id/work/${work.key}.json`;
 ---
 
 <StarlightPage
@@ -71,12 +72,23 @@ const {
 		description: `Registry record for the work ${work.preferred_label}.`,
 		template: 'doc',
 		tableOfContents: false,
+		head: [
+			{
+				tag: 'link',
+				attrs: {
+					rel: 'alternate',
+					type: 'application/json',
+					href: jsonHref,
+				},
+			},
+		],
 	}}
 >
 	<p class="reg-sub">
 		<span class="reg-tag">Work</span>
 		<span class="reg-tag">{work.status}</span>
 		<code class="reg-iri">{work.id}</code>
+		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
 
 	<h2>Citation systems</h2>
@@ -87,7 +99,7 @@ const {
 			<ul class="reg-list">
 				{systems.map((s) => (
 					<li>
-						<a href={`/reg/system/${s.key}/`}>{s.preferred_label}</a>{' '}
+						<a href={`/id/system/${s.key}/`}>{s.preferred_label}</a>{' '}
 						<code class="reg-iri">{s.key}</code>
 					</li>
 				))}
@@ -106,7 +118,9 @@ const {
 			<ul class="reg-list">
 				{mappings.map((m) => (
 					<li>
-						<span class="reg-tag">{m.relation}</span>
+						<a href={`/id/mapping/${uuidOf(m.id)}/`}>
+							<span class="reg-tag">{m.relation}</span>
+						</a>
 						{m.target.target_kind && (
 							<span class="reg-tag">{m.target.target_kind}</span>
 						)}
@@ -127,7 +141,7 @@ const {
 					<ul class="reg-list">
 						{preview.map((r) => (
 							<li>
-								<a href={`/reg/id/${uuidOf(r.id)}/`}>
+								<a href={`/id/ref/${uuidOf(r.id)}/`}>
 									<code>{r.locator}</code>
 								</a>{' '}
 								<span class="reg-tag">

@@ -9,7 +9,7 @@ interface Props {
 const { aliases, empty } = Astro.props;
 const site = Astro.site ?? new URL('https://textrefs.org');
 const aliasUrls = aliases.map((alias) =>
-	alias.includes('://') ? alias : new URL(`/a/${alias}/`, site).toString(),
+	alias.includes('://') ? alias : new URL(`/cite/${alias}/`, site).toString(),
 );
 ---
 

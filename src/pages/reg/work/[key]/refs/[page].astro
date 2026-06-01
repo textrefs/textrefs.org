@@ -52,7 +52,7 @@ const to = Math.min(page * pageSize, total);
 	}}
 >
 	<p class="reg-sub">
-		<a href={`/reg/work/${work.key}/`}>← {work.preferred_label}</a>
+		<a href={`/id/work/${work.key}/`}>← {work.preferred_label}</a>
 	</p>
 
 	<p>
@@ -63,7 +63,7 @@ const to = Math.min(page * pageSize, total);
 		{
 			refs.map((r) => (
 				<li>
-					<a href={`/reg/id/${uuidOf(r.id)}/`}>
+					<a href={`/id/ref/${uuidOf(r.id)}/`}>
 						<code>{r.locator}</code>
 					</a>{' '}
 					<span class="reg-tag">{r.resolver_targets.length} target(s)</span>

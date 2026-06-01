@@ -275,6 +275,8 @@ A `MappingAssertion` identifier MUST be generated deterministically from `subjec
 
 An implementation MUST NOT silently change the identity-defining fields of an existing `CanonicalReference`. Because those fields seed the deterministic identifier, any change produces a new `CanonicalReference` with a new identifier. The prior reference MUST be retained as a tombstone (`status` `deprecated` or `withdrawn`, [§12](#12-administrative-metadata)) and SHOULD be linked to its replacement through an `exactMatch` `MappingAssertion` ([§10](#10-mappingassertion)).
 
+A conforming registry SHOULD publish each `/id/{type}/{key}` IRI at two static URLs: the canonical URL itself (HTML for browsers) and a sibling with a `.json` extension carrying the JSON-LD payload. The HTML representation SHOULD advertise the JSON-LD sibling via `<link rel="alternate" type="application/json" href="…json">` in the document head. `Accept`-header content negotiation is not required.
+
 ## 12. Administrative metadata
 
 Every registry object MUST include:

@@ -1,13 +1,13 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import AliasList from '../../../components/AliasList.astro';
+import AliasList from '../../../../components/AliasList.astro';
 import {
 	loadAliases,
 	loadReferences,
 	loadWorks,
 	loadSystems,
 	uuidOf,
-} from '../../../lib/registry.ts';
+} from '../../../../lib/registry.ts';
 
 export async function getStaticPaths() {
 	const refs = loadReferences();
@@ -38,6 +38,7 @@ export async function getStaticPaths() {
 
 const { ref, work, system, aliases, byLang } = Astro.props;
 const pageTitle = `${work?.preferred_label ?? ref.work_key} ${ref.locator}`;
+const jsonHref = `/id/ref/${uuidOf(ref.id)}.json`;
 ---
 
 <StarlightPage
@@ -47,12 +48,23 @@ const pageTitle = `${work?.preferred_label ?? ref.work_key} ${ref.locator}`;
 		template: 'doc',
 		tableOfContents: false,
 		pagefind: false,
+		head: [
+			{
+				tag: 'link',
+				attrs: {
+					rel: 'alternate',
+					type: 'application/json',
+					href: jsonHref,
+				},
+			},
+		],
 	}}
 >
 	<p class="reg-sub">
 		<span class="reg-tag">CanonicalReference</span>
 		<span class="reg-tag">{ref.status}</span>
 		<code class="reg-iri">{ref.id}</code>
+		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
 
 	<h2>In context</h2>
@@ -61,7 +73,7 @@ const pageTitle = `${work?.preferred_label ?? ref.work_key} ${ref.locator}`;
 			Work:
 			{
 				work ? (
-					<a href={`/reg/work/${work.key}/`}>{work.preferred_label}</a>
+					<a href={`/id/work/${work.key}/`}>{work.preferred_label}</a>
 				) : (
 					<code>{ref.work_key}</code>
 				)
@@ -71,7 +83,7 @@ const pageTitle = `${work?.preferred_label ?? ref.work_key} ${ref.locator}`;
 			Citation system:
 			{
 				system ? (
-					<a href={`/reg/system/${system.key}/`}>{system.preferred_label}</a>
+					<a href={`/id/system/${system.key}/`}>{system.preferred_label}</a>
 				) : (
 					<code>{ref.citation_system_key}</code>
 				)

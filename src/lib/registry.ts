@@ -40,13 +40,9 @@ export function workKeyOf(iri: string): string {
 }
 
 export function iriToLocal(iri: string): string {
-	const refMatch = iri.match(
-		/^https:\/\/textrefs\.org\/id\/ref\/([0-9a-f-]+)$/,
+	const m = iri.match(
+		/^https:\/\/textrefs\.org\/id\/(work|system|ref|mapping)\/(.+)$/,
 	);
-	if (refMatch) return `/reg/id/${refMatch[1]}/`;
-	const objMatch = iri.match(
-		/^https:\/\/textrefs\.org\/id\/(work|system)\/(.+)$/,
-	);
-	if (objMatch) return `/reg/${objMatch[1]}/${objMatch[2]}/`;
+	if (m) return `/id/${m[1]}/${m[2]}/`;
 	return iri;
 }

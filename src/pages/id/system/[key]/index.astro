@@ -1,6 +1,10 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import { loadSystems, loadReferences, uuidOf } from '../../../lib/registry.ts';
+import {
+	loadSystems,
+	loadReferences,
+	uuidOf,
+} from '../../../../lib/registry.ts';
 
 export async function getStaticPaths() {
 	const PAGE_SIZE = 200;
@@ -28,6 +32,7 @@ export async function getStaticPaths() {
 }
 
 const { system, preview, refCount, pageCount, pageSize } = Astro.props;
+const jsonHref = `/id/system/${system.key}.json`;
 ---
 
 <StarlightPage
@@ -36,12 +41,23 @@ const { system, preview, refCount, pageCount, pageSize } = Astro.props;
 		description: `Registry record for the citation system ${system.preferred_label}.`,
 		template: 'doc',
 		tableOfContents: false,
+		head: [
+			{
+				tag: 'link',
+				attrs: {
+					rel: 'alternate',
+					type: 'application/json',
+					href: jsonHref,
+				},
+			},
+		],
 	}}
 >
 	<p class="reg-sub">
 		<span class="reg-tag">CitationSystem</span>
 		<span class="reg-tag">{system.status}</span>
 		<code class="reg-iri">{system.id}</code>
+		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
 
 	<h2>Locator format</h2>
@@ -82,7 +98,7 @@ const { system, preview, refCount, pageCount, pageSize } = Astro.props;
 					<ul class="reg-list">
 						{preview.map((r) => (
 							<li>
-								<a href={`/reg/id/${uuidOf(r.id)}/`}>
+								<a href={`/id/ref/${uuidOf(r.id)}/`}>
 									<code>{r.work_key}</code> · <code>{r.locator}</code>
 								</a>
 							</li>

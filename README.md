@@ -33,8 +33,9 @@ TextRefs is a non-profit infrastructure project that builds, maintains, and publ
 ## Quick links
 
 - **Site**: <https://textrefs.org>
+- **URL layout** (what `/id/`, `/reg/`, `/cite/`, `/api/` do): <https://textrefs.org/get-started/url-layout/>
 - **Standard**: <https://textrefs.org/standard/>
-- **API reference**: <https://textrefs.org/api/>
+- **API documentation**: <https://textrefs.org/api/>
 - **Association** (mission, statutes, governance, expenses): <https://textrefs.org/association/>
 - **POSI self-assessment** (Principles of Open Scholarly Infrastructure): <https://textrefs.org/association/posi/>
 - **Zenodo community** (archived data dumps and DOIs): <https://zenodo.org/communities/textrefs/>

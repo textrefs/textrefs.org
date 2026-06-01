@@ -35,7 +35,7 @@ The result is a persistent TextRefs URI for the cited point itself. That URI sta
 
 ## Example: Plato, Republic 514a
 
-The identity is the Stephanus reference, not any one Greek text, translation, or platform page. The compiled registry record for [`plato.respublica` `514a`](/reg/id/c9e0b270-39de-503c-a231-33d8ae4503b4/) is:
+The identity is the Stephanus reference, not any one Greek text, translation, or platform page. The compiled registry record for [`plato.respublica` `514a`](/id/ref/c9e0b270-39de-503c-a231-33d8ae4503b4/) is:
 
 ```json
 {
@@ -52,7 +52,7 @@ The identity is the Stephanus reference, not any one Greek text, translation, or
 }
 ```
 
-When reading locations exist, they are embedded on the reference itself, one entry per provider or translation. For example, the compiled registry record for [`new-testament` `John.3.16`](/reg/id/59a2d83f-6aff-5fbf-b8f7-b243c3ed0594/) contains a resolver target to STEP Bible:
+When reading locations exist, they are embedded on the reference itself, one entry per provider or translation. For example, the compiled registry record for [`new-testament` `John.3.16`](/id/ref/59a2d83f-6aff-5fbf-b8f7-b243c3ed0594/) contains a resolver target to STEP Bible:
 
 ```json
 {
@@ -101,7 +101,7 @@ Adding a resolver target adds one entry to `resolver_targets`; adding a Wikidata
 
 ## Example: John.3.16
 
-For a heavily translated work, many locations can share one reference identity. The current data-backed example is [`new-testament` `John.3.16`](/reg/id/59a2d83f-6aff-5fbf-b8f7-b243c3ed0594/):
+For a heavily translated work, many locations can share one reference identity. The current data-backed example is [`new-testament` `John.3.16`](/id/ref/59a2d83f-6aff-5fbf-b8f7-b243c3ed0594/):
 
 ```json
 {
@@ -115,7 +115,7 @@ For a heavily translated work, many locations can share one reference identity. 
 
 An English translation, a German translation, a Greek edition, and a library scan can all sit in the `resolver_targets` array on the same reference. Adding a new translation adds another entry, not another canonical reference.
 
-For complete worked examples, see the live [Dhammapada work page](/reg/work/dhammapada/) (four providers, two languages, 423 references) or the [Plato _Republic_ work page](/reg/work/plato.respublica/) (Stephanus pagination). The contributor YAML behind them is documented in [Authoring registry data](/get-started/authoring/).
+For complete worked examples, see the live [Dhammapada work page](/id/work/dhammapada/) (four providers, two languages, 423 references) or the [Plato _Republic_ work page](/id/work/plato.respublica/) (Stephanus pagination). The contributor YAML behind them is documented in [Authoring registry data](/get-started/authoring/).
 
 Where traditions number passages differently, create separate references under separate citation systems and connect them with `closeMatch` mappings. Do not collapse divergent versification, pagination, or segmentation into one identity.
 

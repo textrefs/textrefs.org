@@ -1,0 +1,85 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { loadMappings, loadWorks, uuidOf } from '../../../../lib/registry.ts';
+
+export async function getStaticPaths() {
+	const mappings = loadMappings();
+	const works = loadWorks();
+	return mappings.map((m) => {
+		const subjectWork = works.find((w) => w.id === m.subject);
+		return {
+			params: { uuid: uuidOf(m.id) },
+			props: { mapping: m, subjectWork },
+		};
+	});
+}
+
+const { mapping, subjectWork } = Astro.props;
+const subjectLabel = subjectWork?.preferred_label ?? mapping.subject;
+const jsonHref = `/id/mapping/${uuidOf(mapping.id)}.json`;
+---
+
+<StarlightPage
+	frontmatter={{
+		title: `${subjectLabel} ${mapping.relation} ${mapping.target.identifier}`,
+		description: `Mapping assertion: ${subjectLabel} ${mapping.relation} ${mapping.target.identifier}.`,
+		template: 'doc',
+		tableOfContents: false,
+		pagefind: false,
+		head: [
+			{
+				tag: 'link',
+				attrs: {
+					rel: 'alternate',
+					type: 'application/json',
+					href: jsonHref,
+				},
+			},
+		],
+	}}
+>
+	<p class="reg-sub">
+		<span class="reg-tag">MappingAssertion</span>
+		<span class="reg-tag">{mapping.status}</span>
+		<code class="reg-iri">{mapping.id}</code>
+		<a href={jsonHref} class="reg-json">JSON</a>
+	</p>
+
+	<ul class="reg-list">
+		<li>
+			Subject:
+			{
+				subjectWork ? (
+					<a href={`/id/work/${subjectWork.key}/`}>
+						{subjectWork.preferred_label}
+					</a>
+				) : (
+					<code>{mapping.subject}</code>
+				)
+			}
+			<br />
+			<code class="reg-iri">{mapping.subject}</code>
+		</li>
+		<li>
+			Relation: <span class="reg-tag">{mapping.relation}</span>
+		</li>
+		<li>
+			Target:
+			{
+				mapping.target.target_kind && (
+					<span class="reg-tag">{mapping.target.target_kind}</span>
+				)
+			}
+			<a
+				href={mapping.target.identifier}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{mapping.target.identifier}
+			</a>
+		</li>
+		<li>
+			Source: <code>{mapping.source}</code>
+		</li>
+	</ul>
+</StarlightPage>

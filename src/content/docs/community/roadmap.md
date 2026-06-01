@@ -23,14 +23,13 @@ Status legend: done · in progress · planned · blocked.
 - done: Standard draft workspace with Zod schemas and JSON-LD context.
 - done: Seed registry data and static registry browsing pages.
 - in progress: Replace remaining community placeholder pages with contributor-facing guidance.
-- in progress: Prepare the static API MVP shape from the OpenAPI draft and current registry pages.
+- done: Serve canonical record pages under `/id/work/{key}/`, `/id/system/{key}/`, `/id/ref/{uuid}/`, `/id/mapping/{uuid}/`, each with a `.json` JSON-LD sibling advertised via `<link rel="alternate">`.
 
 ## Next
 
 - planned: Publish the Standard draft v0.1.0 as the first citable baseline.
-- planned: Serve JSON-LD representations for works, citation systems, canonical references, and mappings.
 - planned: Serve the generated JSON Schema at a stable `/schemas/` path or update the specification if the publication path changes.
-- planned: Add resolver behavior for persistent TextRefs IDs under `/id/`.
+- planned: Add `Accept-Language` / `edition`-based 303 redirect on `/id/ref/{uuid}` to a matching `resolver_targets` entry.
 - planned: Publish regular registry exports from the compiled data bundle.
 - planned: Grow the registry with more canonical examples across theology, classics, philosophy, law, and other citation traditions.
 
