@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { v5 as uuidv5 } from 'uuid';
 import { compileRegistry } from './compile.js';
 import {
@@ -6,6 +9,8 @@ import {
 	CanonicalReference,
 	MappingAssertion,
 } from '../standard/schema/index.js';
+
+const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const REFERENCE_NS = 'b1a3670e-2ac7-544c-a1b9-396e0dc193f7';
 const MAPPING_NS = 'f16bb214-4241-549d-ad41-7b011f02befb';
@@ -75,6 +80,41 @@ for (const m of registry.mappings) {
 		);
 		failed++;
 	}
+}
+
+// JSON-LD context completeness — every emitted record key MUST resolve to a
+// mapped term in public/contexts/v1.jsonld. Unmapped keys are silently dropped
+// on RDF expansion, so a missing term is a wire-format bug.
+const contextPath = join(projectRoot, 'public', 'contexts', 'v1.jsonld');
+const contextDoc = JSON.parse(readFileSync(contextPath, 'utf8')) as {
+	'@context': Record<string, unknown>;
+};
+const mappedKeys = new Set(Object.keys(contextDoc['@context']));
+
+const unmapped = new Set<string>();
+function walk(node: unknown): void {
+	if (Array.isArray(node)) {
+		for (const item of node) walk(item);
+		return;
+	}
+	if (node === null || typeof node !== 'object') return;
+	for (const [k, v] of Object.entries(node)) {
+		if (!mappedKeys.has(k)) unmapped.add(k);
+		walk(v);
+	}
+}
+
+for (const r of registry.works) walk(r);
+for (const r of registry.systems) walk(r);
+for (const r of registry.references) walk(r);
+for (const r of registry.mappings) walk(r);
+
+if (unmapped.size > 0) {
+	console.error(
+		`\n✗ JSON-LD context is missing terms for emitted keys: ${[...unmapped].sort().join(', ')}`,
+	);
+	console.error(`  Add them to ${contextPath} or stop emitting the field.`);
+	failed += unmapped.size;
 }
 
 console.log(

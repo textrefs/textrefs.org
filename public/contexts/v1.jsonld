@@ -40,12 +40,17 @@
       "@id": "skos:closeMatch",
       "@type": "@id"
     },
+    "subject": {
+      "@id": "tr:subject",
+      "@type": "@id"
+    },
     "target": "tr:target",
     "target_kind": "tr:targetKind",
     "identifier": {
       "@id": "tr:identifier",
       "@type": "@id"
     },
+    "resolver_targets": "tr:resolverTargets",
     "provider": "schema:provider",
     "url": {
       "@id": "schema:url",
@@ -58,6 +63,14 @@
     "license_url": {
       "@id": "dcterms:license",
       "@type": "@id"
-    }
+    },
+    "last_checked": {
+      "@id": "tr:lastChecked",
+      "@type": "xsd:date"
+    },
+    "locator_regex": "tr:locatorRegex",
+    "examples": "tr:examples",
+    "valid": "tr:validExample",
+    "invalid": "tr:invalidExample"
   }
 }
