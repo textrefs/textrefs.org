@@ -11,6 +11,7 @@ Astro + Starlight site for textrefs.org. See [`README.md`](./README.md) for the 
 - `npm run check` — `astro check`
 - `npm run verify:fast` — fast local verification: format:check + fixture-backed check + fixture-backed build
 - `npm run verify` — format:check + check + build (the CI gate)
+- `npm run validate:data` / `compile:data` / `build:data` — registry-data gates; see [`data/AGENTS.md`](./data/AGENTS.md)
 
 Use `npm run verify:fast` by default for local validation and agent work. Only use the full `npm run verify` and/or `npm run validate:data` when changes affect registry data, release artifacts, production build behavior, or CI parity.
 
@@ -25,7 +26,7 @@ Husky installs on `npm install`: Prettier runs on staged files, `commitlint` enf
 - `src/pages/cite/` — short-alias redirects (`/cite/{work}/{locator}` → canonical `/id/` URL)
 - `src/styles/brand.css` — brand tokens
 - `public/{logo.svg,favicon.svg,fonts/}` — brand assets
-- `data/` — git submodule pointing at [`textrefs/registry`](https://github.com/textrefs/registry); hand-authored YAML lives there. See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the submodule workflow.
+- `data/` — git submodule pointing at [`textrefs/registry`](https://github.com/textrefs/registry); hand-authored YAML lives there. See [`data/AGENTS.md`](./data/AGENTS.md) for authoring rules and [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the submodule workflow.
 - `standard/`, `api/` — scaffolds reserved for future repo splits
 
 ## Conventions
