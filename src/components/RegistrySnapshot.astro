@@ -1,0 +1,101 @@
+---
+import { loadWorks, loadSystems, loadReferences } from '../lib/registry.ts';
+
+const works = loadWorks();
+const systems = loadSystems();
+const references = loadReferences();
+
+const featuredSpec: Array<{ key: string; locator: string }> = [
+	{ key: 'homer.iliad', locator: '1.1' },
+	{ key: 'plato.respublica', locator: '327a' },
+	{ key: 'confucius.analects', locator: '1.1' },
+];
+const byKey = new Map(works.map((w) => [w.key, w]));
+const picked = featuredSpec
+	.map((f) => {
+		const w = byKey.get(f.key);
+		return w ? { work: w, locator: f.locator } : null;
+	})
+	.filter((x): x is { work: (typeof works)[number]; locator: string } =>
+		Boolean(x),
+	);
+const featured =
+	picked.length === featuredSpec.length
+		? picked
+		: [...works]
+				.sort((a, b) => a.key.localeCompare(b.key))
+				.slice(0, 3)
+				.map((work) => ({ work, locator: '' }));
+
+const nf = new Intl.NumberFormat('en');
+---
+
+<section class="registry-snapshot" aria-labelledby="registry-snapshot-heading">
+	<h2 id="registry-snapshot-heading">Registry at a glance</h2>
+	<p class="counts">
+		<strong>{nf.format(works.length)}</strong> works ·{' '}
+		<strong>{nf.format(systems.length)}</strong> citation systems ·{' '}
+		<strong>{nf.format(references.length)}</strong> canonical references
+	</p>
+	{
+		featured.length > 0 && (
+			<ul class="featured">
+				{featured.map(({ work }) => (
+					<li>
+						<a href={`/id/work/${work.key}/`}>{work.preferred_label}</a>{' '}
+						<code>{work.key}</code>
+					</li>
+				))}
+			</ul>
+		)
+	}
+	<p class="more">
+		<a href="/reg/">Browse the registry →</a>
+	</p>
+</section>
+
+<style>
+	.registry-snapshot {
+		margin: 2rem auto 2.5rem;
+		padding: 1.25rem 1.5rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.5rem;
+		background: var(--sl-color-bg-nav);
+	}
+	.registry-snapshot h2 {
+		margin: 0 0 0.5rem;
+		font-size: 1.1rem;
+		border: 0;
+		padding: 0;
+	}
+	.counts {
+		margin: 0 0 0.75rem;
+		color: var(--sl-color-text);
+	}
+	.counts strong {
+		color: var(--sl-color-text-accent);
+	}
+	.featured {
+		list-style: none;
+		padding: 0;
+		margin: 0 0 0.75rem;
+		display: grid;
+		gap: 0.25rem;
+	}
+	.featured code {
+		color: var(--sl-color-gray-3);
+		font-size: 0.85em;
+	}
+	.featured .try {
+		font-size: 0.85em;
+		margin-left: 0.25rem;
+		color: var(--sl-color-text-accent);
+	}
+	.featured .try code {
+		color: inherit;
+	}
+	.more {
+		margin: 0;
+		font-size: 0.95em;
+	}
+</style>

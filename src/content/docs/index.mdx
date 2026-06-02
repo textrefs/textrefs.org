@@ -8,17 +8,17 @@ hero:
     - text: Get started
       link: /get-started/
       icon: right-arrow
+    - text: Browse registry
+      link: /reg/
+      icon: right-arrow
     - text: Read the standard
       link: /standard/
       icon: right-arrow
       variant: minimal
-    - text: GitHub
-      link: https://github.com/textrefs/textrefs.org
-      icon: external
-      variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import RegistrySnapshot from '../../components/RegistrySnapshot.astro';
 
 <CardGrid>
   <Card title="Get started" icon="rocket">
@@ -47,3 +47,5 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
     [Learn more](/association/)
   </Card>
 </CardGrid>
+
+<RegistrySnapshot />

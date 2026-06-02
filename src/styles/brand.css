@@ -205,3 +205,26 @@ ul.reg-list > li:last-child {
 	color: var(--sl-color-text);
 	font: inherit;
 }
+
+/* Splash hero: Starlight defaults are sized for a hero with an image. Our
+ * landing page has none, so the desktop 7fr/4fr grid leaves the right column
+ * blank and the 10vmin block padding adds a lot of empty space. Collapse to a
+ * single centred column and tighten vertical padding when no image is set. */
+.hero:not(:has(> img)):not(:has(> .hero-html)) {
+	grid-template-columns: 100%;
+}
+@media (min-width: 50rem) {
+	.hero:not(:has(> img)):not(:has(> .hero-html)) {
+		padding-block: clamp(1rem, calc(0.5rem + 2vmin), 2.5rem);
+	}
+	.hero:not(:has(> img)):not(:has(> .hero-html)) .stack {
+		text-align: center;
+		align-items: center;
+	}
+	.hero:not(:has(> img)):not(:has(> .hero-html)) .copy {
+		align-items: center;
+	}
+	.hero:not(:has(> img)):not(:has(> .hero-html)) .actions {
+		justify-content: center;
+	}
+}
