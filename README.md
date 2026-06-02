@@ -16,7 +16,7 @@ Site: <https://textrefs.org> · Built with [Astro](https://astro.build) + [Starl
 
 ## About
 
-TextRefs is a non-profit infrastructure project that builds, maintains, and publishes an open registry for canonical text references — the kind of identifiers used to cite a passage in Plato, a Bekker line in Aristotle, a Stephanus page, or any other established reference system in the humanities. It is run by a Zürich-based association (_Verein_) and aims for tax-exempt non-profit status.
+TextRefs is a non-profit infrastructure project that builds, maintains, and publishes an open registry for canonical text references — the kind of identifiers used to cite a passage in Plato, a Bekker line in Aristotle, a Stephanus page, or any other established reference system in the humanities. It is being set up as a Zürich-based association (_Verein_) in formation, which will seek tax-exempt non-profit status.
 
 **TextRefs is:**
 

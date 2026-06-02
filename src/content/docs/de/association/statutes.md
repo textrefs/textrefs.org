@@ -6,7 +6,7 @@ sidebar:
 ---
 
 :::note[Arbeitsentwurf]
-Dies ist eine Arbeitsfassung vom 31. Mai 2026. Sie steht unter rechtlichem Vorbehalt bis zur Annahme durch die Gründungsversammlung.
+Dies ist eine Arbeitsfassung vom 2. Juni 2026. Sie steht unter rechtlichem Vorbehalt bis zur Annahme durch die Gründungsversammlung.
 :::
 
 ## Art. 1 Name und Sitz
@@ -143,11 +143,9 @@ Beschlüsse werden protokolliert.
 
 ## Art. 15 Ehrenamtlichkeit, Spesen und Entschädigungen
 
-Die Mitglieder des Vorstandes sind grundsätzlich ehrenamtlich tätig.
+Die Mitglieder des Vorstandes sind ehrenamtlich tätig und haben grundsätzlich nur Anspruch auf Entschädigung ihrer effektiven Spesen und Barauslagen. Für besondere Leistungen einzelner Vorstandsmitglieder kann eine angemessene Entschädigung ausgerichtet werden.
 
-Sie haben Anspruch auf Ersatz ihrer effektiven, notwendigen und belegten Spesen und Barauslagen.
-
-Für besondere Leistungen können angemessene Entschädigungen ausgerichtet werden, sofern sie dem Vereinszweck dienen, marktüblich und verhältnismässig sind, budgetiert oder vom Vorstand ausdrücklich beschlossen werden, transparent dokumentiert werden und nicht zu einer verdeckten Gewinnausschüttung oder Selbstbegünstigung führen.
+Entschädigungen für besondere Leistungen werden nur ausgerichtet, sofern sie dem Vereinszweck dienen, marktüblich und verhältnismässig sind, budgetiert oder vom Vorstand ausdrücklich beschlossen werden, transparent dokumentiert werden und nicht zu einer verdeckten Gewinnausschüttung oder Selbstbegünstigung führen.
 
 Betroffene Personen treten bei Beschlüssen über eigene Entschädigungen oder über Entschädigungen nahestehender Personen in den Ausstand.
 
@@ -195,9 +193,7 @@ Reglemente dürfen den Statuten nicht widersprechen.
 
 Die Auflösung des Vereins kann durch Beschluss der Mitgliederversammlung mit Zweidrittelmehrheit der abgegebenen Stimmen beschlossen werden.
 
-Bei Auflösung des Vereins sind Gewinn und Kapital einer wegen gemeinnütziger oder öffentlicher Zwecksetzung steuerbefreiten juristischen Person mit Sitz in der Schweiz und gleicher oder ähnlicher Zwecksetzung zuzuwenden.
-
-Eine Verteilung unter die Mitglieder ist ausgeschlossen.
+Die nach Auflösung des Vereins verbleibenden Mittel sind einer steuerbefreiten Institution, mit Sitz in der Schweiz, mit gleicher oder ähnlicher Zwecksetzung zuzuwenden. Eine Verteilung unter die Mitglieder ist ausgeschlossen.
 
 ## Art. 22 Inkrafttreten
 

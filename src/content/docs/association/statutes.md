@@ -143,11 +143,9 @@ Resolutions are recorded in minutes.
 
 ## Art. 15 Volunteer service, expenses, and compensation
 
-Members of the Board serve on a volunteer basis as a matter of principle.
+Members of the Board serve on a volunteer basis and are, as a matter of principle, only entitled to reimbursement of their effective expenses and out-of-pocket costs. Reasonable compensation may be granted to individual Board members for special services.
 
-They are entitled to reimbursement of their effective, necessary, and documented expenses and out-of-pocket costs.
-
-Reasonable compensation may be granted for special services, provided that it serves the association's purpose, is at market rate and proportionate, is budgeted or expressly resolved by the Board, is documented transparently, and does not result in hidden profit distribution or self-dealing.
+Compensation for special services is granted only where it serves the association's purpose, is at market rate and proportionate, is budgeted or expressly resolved by the Board, is documented transparently, and does not result in hidden profit distribution or self-dealing.
 
 Affected persons recuse themselves from decisions concerning their own compensation or the compensation of persons close to them.
 
@@ -195,9 +193,7 @@ Regulations must not contradict the statutes.
 
 The dissolution of the association may be resolved by the General Assembly with a two-thirds majority of the votes cast.
 
-Upon dissolution, profits and capital shall be transferred to a legal person tax-exempt on grounds of public benefit, with its registered office in Switzerland and with the same or a similar purpose.
-
-Distribution among members is excluded.
+The assets remaining after dissolution of the association shall be transferred to a tax-exempt institution with its registered office in Switzerland and with the same or a similar purpose. Distribution among members is excluded.
 
 ## Art. 22 Entry into force
 

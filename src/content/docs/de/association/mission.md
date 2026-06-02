@@ -11,7 +11,7 @@ Dies ist eine Arbeitsfassung vom 27. Mai 2026. Sie steht unter rechtlichem Vorbe
 
 ## 1. Grundpositionierung
 
-**TextRefs** ist ein gemeinnütziger, offener und nicht-kommerzieller Verein mit Sitz in Zürich. Der Verein betreibt kein Verlagsgeschäft, keine kommerzielle Plattform, keine Mitglieder-Selbsthilfeorganisation und keinen Berufs- oder Branchenverband.
+**TextRefs** ist ein gemeinnütziger, offener und nicht-kommerzieller, in Gründung befindlicher Verein mit Sitz in Zürich. Der Verein betreibt kein Verlagsgeschäft, keine kommerzielle Plattform, keine Mitglieder-Selbsthilfeorganisation und keinen Berufs- oder Branchenverband.
 
 TextRefs fördert Wissenschaft, Bildung, Kultur und digitale Forschungsinfrastruktur durch den Aufbau, die Pflege und die Veröffentlichung eines offenen, persistenten und maschinenlesbaren Registers für kanonische Textreferenzen.
 
