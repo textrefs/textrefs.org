@@ -5,6 +5,7 @@ import {
 	loadReferences,
 	uuidOf,
 } from '../../../../../lib/registry.ts';
+import { UNSTABLE_BANNER } from '../../../../../lib/banner.ts';
 
 export async function getStaticPaths() {
 	const PAGE_SIZE = 200;
@@ -55,6 +56,7 @@ const to = Math.min(page * pageSize, total);
 		template: 'doc',
 		tableOfContents: false,
 		pagefind: false,
+		banner: UNSTABLE_BANNER,
 	}}
 >
 	<p class="reg-sub">

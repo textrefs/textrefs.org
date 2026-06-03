@@ -6,6 +6,7 @@ import {
 	loadReferences,
 	uuidOf,
 } from '../../../../lib/registry.ts';
+import { UNSTABLE_BANNER } from '../../../../lib/banner.ts';
 
 function intersperse<T>(items: T[], separator: T): T[] {
 	return items.flatMap((item, i) => (i === 0 ? [item] : [separator, item]));
@@ -52,6 +53,7 @@ const jsonHref = `/id/system/${system.key}.json`;
 		description: `Registry record for the citation system ${system.preferred_label}.`,
 		template: 'doc',
 		tableOfContents: false,
+		banner: UNSTABLE_BANNER,
 		head: [
 			{
 				tag: 'link',

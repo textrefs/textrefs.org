@@ -33,6 +33,7 @@
     "astro-mermaid": "^2.0.1",
     "mermaid": "^11.15.0",
     "sharp": "^0.34.5",
+    "starlight-blog": "^0.26.1",
     "uuid": "^14.0.0",
     "yaml": "^2.9.0",
     "zod": "^3.23.8"

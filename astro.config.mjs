@@ -5,6 +5,7 @@ import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
+import starlightBlog from 'starlight-blog';
 
 const siteDomain = process.env.SITE_DOMAIN ?? 'textrefs.org';
 const site = siteDomain.startsWith('http')
@@ -17,6 +18,18 @@ export default defineConfig({
 		mermaid({ autoTheme: true }),
 		starlight({
 			plugins: [
+				starlightBlog({
+					title: 'Announcements',
+					authors: {
+						moritz: {
+							name: 'Moritz Mähr',
+							url: 'https://moritzmaehr.ch',
+						},
+						luz: {
+							name: 'Luz Christopher Seiberth',
+						},
+					},
+				}),
 				starlightLinksValidator({
 					errorOnFallbackPages: false,
 					exclude: ['/id/**', '/reg/**', '/cite/**', '/api/**'],

@@ -2,6 +2,7 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import Tombstone from '../../../../components/Tombstone.astro';
 import { loadMappings, loadWorks, uuidOf } from '../../../../lib/registry.ts';
+import { UNSTABLE_BANNER } from '../../../../lib/banner.ts';
 
 export async function getStaticPaths() {
 	const mappings = loadMappings();
@@ -28,6 +29,7 @@ const jsonHref = `/id/mapping/${uuidOf(mapping.id)}.json`;
 		template: 'doc',
 		tableOfContents: false,
 		pagefind: false,
+		banner: UNSTABLE_BANNER,
 		head: [
 			{
 				tag: 'link',

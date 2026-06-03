@@ -1,6 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import { loadWorks, loadSystems } from '../../lib/registry.ts';
+import { UNSTABLE_BANNER } from '../../lib/banner.ts';
 
 const works = [...loadWorks()].sort((a, b) => a.key.localeCompare(b.key));
 const systems = [...loadSystems()].sort((a, b) => a.key.localeCompare(b.key));
@@ -13,6 +14,7 @@ const systems = [...loadSystems()].sort((a, b) => a.key.localeCompare(b.key));
 			'Browse the works, citation systems, and canonical references registered in TextRefs.',
 		template: 'doc',
 		tableOfContents: false,
+		banner: UNSTABLE_BANNER,
 	}}
 >
 	<p>

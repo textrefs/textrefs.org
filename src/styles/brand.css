@@ -228,3 +228,20 @@ ul.reg-list > li:last-child {
 		justify-content: center;
 	}
 }
+
+/* Pre-1.0 unstable banner — amber/warning instead of accent blue */
+.sl-banner {
+	background-color: #fde68a;
+	color: #1a1a1a;
+}
+.sl-banner a {
+	color: #1a1a1a;
+	text-decoration: underline;
+}
+:root[data-theme='dark'] .sl-banner {
+	background-color: #78350f;
+	color: #fef3c7;
+}
+:root[data-theme='dark'] .sl-banner a {
+	color: #fef3c7;
+}
