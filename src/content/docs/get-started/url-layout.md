@@ -7,12 +7,12 @@ sidebar:
 
 TextRefs uses four URL prefixes, each with one job. Together they make every registry record citeable, browsable, machine-readable, and short-linkable.
 
-| Prefix   | Role           | What lives there                                                                                                                         |
-| -------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `/id/`   | **Identifier** | The canonical, persistent URL of every record. Each record is published twice: `/id/.../` (HTML) and a sibling `/id/....json` (JSON-LD). |
-| `/reg/`  | **Browse**     | The human registry browser: index, search, paginated reference lists. Links into `/id/`.                                                 |
-| `/cite/` | **Cite**       | Short, memorable URLs (`/cite/{work}/{locator}`) that redirect to the canonical `/id/` URL.                                              |
-| `/api/`  | **API docs**   | The OpenAPI document describing the `/id/` URL contract, plus the JSON-LD `@context` at `/contexts/`.                                    |
+| Prefix   | Role           | What lives there                                                                                                                                 |
+| -------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/id/`   | **Identifier** | The canonical, persistent URL of every record. Each record is published twice: `/id/.../` (HTML) and a sibling `/id/....json` (JSON-LD).         |
+| `/reg/`  | **Browse**     | The human registry browser: filter works and citation systems, then browse paginated reference lists from those record pages. Links into `/id/`. |
+| `/cite/` | **Cite**       | Short, memorable URLs (`/cite/{work}/{locator}`) that redirect to the canonical `/id/` URL.                                                      |
+| `/api/`  | **API docs**   | The OpenAPI document describing the `/id/` URL contract, plus the JSON-LD `@context` at `/contexts/`.                                            |
 
 In one line:
 
@@ -37,7 +37,7 @@ Plato's _Republic_ 514a — the Stephanus passage where Socrates begins the Alle
 There is no `Accept`-header content negotiation. Every HTML record page advertises its JSON-LD sibling in the document head:
 
 ```html
-<link rel="alternate" type="application/json" href="/id/ref/c9e0b270-….json" />
+<link rel="alternate" type="application/json" href="/id/ref/884e8b51-….json" />
 ```
 
 A client either reads that `<link>` tag, or simply appends `.json` to the canonical URL. The JSON payload carries the JSON-LD `@context` at [`/contexts/v1.jsonld`](/contexts/v1.jsonld) and is valid JSON-LD by content.

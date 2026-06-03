@@ -2,7 +2,7 @@
 
 An open, persistent, machine-readable registry for canonical text references.
 
-[![Status: pre-implementation](https://img.shields.io/badge/status-pre--implementation-orange)](https://textrefs.org)
+[![Status: pre-1.0](https://img.shields.io/badge/status-pre--1.0-orange)](https://textrefs.org)
 [![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
 [![Code: AGPL-3.0-or-later](https://img.shields.io/badge/code-AGPL--3.0--or--later-blue)](./LICENSE-AGPL.md)
 [![Docs: CC BY-SA 4.0](https://img.shields.io/badge/docs-CC%20BY--SA%204.0-blue)](./LICENSE-CC-BY-SA.md)
@@ -117,7 +117,7 @@ Both deposits live in the [TextRefs Zenodo community](https://zenodo.org/communi
 
 ## Roadmap
 
-TextRefs is **pre-implementation**: the association is being founded, the standard is being drafted, and no live data is published yet. Public milestones will appear on the [GitHub project board](https://github.com/textrefs/textrefs.org/projects) once it is set up. The statutes ([English](https://textrefs.org/association/statutes/), [Deutsch](https://textrefs.org/de/association/statutes/)) and governance regulation describe the long-term scope.
+TextRefs is **pre-1.0**: the association is being founded, the standard is being drafted, and the current registry examples are candidate data. Public milestones will appear on the [GitHub project board](https://github.com/textrefs/textrefs.org/projects) once it is set up. The statutes ([English](https://textrefs.org/association/statutes/), [Deutsch](https://textrefs.org/de/association/statutes/)) and governance regulation describe the long-term scope.
 
 ## Contributing
 

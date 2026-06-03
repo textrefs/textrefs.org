@@ -22,7 +22,7 @@ flowchart LR
     subgraph equivalence ["Equivalence — same as"]
         MA["MappingAssertion<br/>CTS URN"]
     end
-    CR --> MA
+    W --> MA
 ```
 
 ## Read the standard

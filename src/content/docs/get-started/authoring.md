@@ -295,7 +295,7 @@ The compiler is deterministic: re-running `compile:data` against unchanged sourc
 - `/id/system/{key}/` — a CitationSystem's canonical landing page (regex, examples, references). Plus `/id/system/{key}.json`.
 - `/id/ref/{uuid}/` — a CanonicalReference page with every resolver URL grouped by language. Plus `/id/ref/{uuid}.json`.
 - `/id/mapping/{uuid}/` — a MappingAssertion page. Plus `/id/mapping/{uuid}.json`.
-- `/reg/` — the human registry browser (index, search, paginated reference lists).
+- `/reg/` — the human registry browser (filter works and citation systems, then browse paginated reference lists from work/system pages).
 - `/cite/{work_key}/{locator}/` — short alias that redirects to the canonical reference page.
 
 A reader who types `https://textrefs.org/cite/dhammapada/1.1` lands on the canonical reference page; the alias index is generated alongside the records by the compiler. See [URL layout](/get-started/url-layout/) for the full four-prefix model.

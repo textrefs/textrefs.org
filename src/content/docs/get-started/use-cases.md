@@ -11,13 +11,13 @@ These scenarios are illustrative, not exhaustive. Each pairs "what happens today
 
 **Today.** You write "Plato, _Rep._ 514a" in your manuscript. Your reader either knows the Stephanus convention and resolves the citation themselves, or they don't. If they want to follow up, they pick whichever edition is at hand; there is no shared link.
 
-**With TextRefs.** You drop in `https://textrefs.org/id/ref/...` (or paste the human-readable alias `Plato/Republic/514a`). The reader resolves it to a landing page listing every curated mapping — Perseus, Scaife, Loeb (where licensed), a Wikisource transcript — plus a JSON-LD record they can pipe into Zotero or Hypothes.is. Switching editions is a click, not a search.
+**With TextRefs.** You drop in `https://textrefs.org/id/ref/...` (or share the short alias `/cite/plato.republic/514a`). The reader resolves it to a landing page listing every curated resolver target — Perseus, Scaife, Loeb (where licensed), a Wikisource transcript — plus a JSON-LD record and downloadable CSL JSON for citation tools. Switching editions is a click, not a search.
 
 ## Digital edition project linking to and from canonical references
 
 **Today.** You publish a critical edition with project-local IDs. Other projects link to your URLs; six months later you reorganise the site and every inbound link breaks. You email three colleagues and apologise.
 
-**With TextRefs.** You mint a TextRefs ID for each canonical reference your edition surfaces and alias your project-local IDs to it. Inbound links target the TextRefs URI; you control your internal URL scheme without breaking the citation graph.
+**With TextRefs.** You mint a TextRefs ID for each canonical reference your edition surfaces and link your project-local IDs to it. Inbound scholarly links can target the TextRefs URI; you control your internal URL scheme without breaking the citation graph.
 
 ## Library or institutional repository indexing scholarly works
 

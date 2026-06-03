@@ -23,7 +23,7 @@ The Board adopts the following operating commitments under [statutes Art. 20](/a
 
 ## Self-assessment
 
-Status values: **Met** — already secured by an existing document. **Adopted (rollout pending)** — committed in policy above, but full execution depends on the project moving out of its [pre-implementation phase](/community/roadmap/).
+Status values: **Met** — already secured by an existing document. **Adopted (rollout pending)** — committed in policy above, but full execution depends on the project moving out of its [pre-1.0 phase](/community/roadmap/).
 
 ### Governance
 

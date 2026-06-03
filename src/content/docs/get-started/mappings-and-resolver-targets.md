@@ -97,13 +97,13 @@ The best TextRefs candidates are works with established, edition-independent cit
 | Area       | Citation example                         | Citation system      | Notes                                                         |
 | ---------- | ---------------------------------------- | -------------------- | ------------------------------------------------------------- |
 | Philosophy | Plato, _Republic_ `514a`                 | Stephanus pagination | Present as `plato.republic` with `stephanus`.                 |
-| Philosophy | Aristotle, _Nicomachean Ethics_ `1094a1` | Bekker numbering     | Present as `aristotle.eth-nic` with `bekker`.                 |
+| Philosophy | Aristotle, _Nicomachean Ethics_ `1094a1` | Bekker numbering     | Present as `aristotle.nicomachean-ethics` with `bekker`.      |
 | Buddhist   | _Dhammapada_ `1.1`                       | chapter and verse    | Present as `dhammapada` with `dhammapada-chapter-verse`.      |
 | Tanakh     | Genesis `Genesis.1.1`                    | book, chapter, verse | Present as `tanakh` with `bible-book-chapter-verse`.          |
 | Bible      | John `John.3.16`                         | book, chapter, verse | Present as `new-testament` with `bible-book-chapter-verse`.   |
 | Chinese    | _Analects_ `2.1`                         | book and chapter     | Present as `confucius.analects` with `analects-book-chapter`. |
 | Chinese    | _Daodejing_ `1`                          | chapter              | Present as `laozi.daodejing` with `daodejing-chapter`.        |
-| Japanese   | _The Tale of Genji_ `2`                  | chapter              | Present as `murasaki.genji` with `genji-chapter`.             |
+| Japanese   | _The Tale of Genji_ `2`                  | chapter              | Present as `murasaki-shikibu.genji` with `genji-chapter`.     |
 | Classics   | Homer, _Iliad_ `1.1`                     | book and line        | Present as `homer.iliad` with `homer-book-line`.              |
 | Classics   | Homer, _Odyssey_ `1.426`                 | book and line        | Present as `homer.odyssey` with `homer-book-line`.            |
 

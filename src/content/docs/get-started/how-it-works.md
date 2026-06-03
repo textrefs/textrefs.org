@@ -45,10 +45,21 @@ The identity is the Stephanus reference, not any one Greek text, translation, or
   "citation_system_key": "stephanus",
   "locator": "514a",
   "normalization_version": "1.0.0",
-  "resolver_targets": [],
+  "resolver_targets": [
+    {
+      "url": "https://www.perseus.tufts.edu/hopper/text?doc=Plat.+Rep.+514a",
+      "language": "grc",
+      "edition": "Plato, Republic (Burnet, OCT)",
+      "provider": "Perseus Digital Library",
+      "access": "open",
+      "license": "CC-BY-SA-3.0",
+      "license_url": "https://www.perseus.tufts.edu/hopper/about/copyright",
+      "last_checked": "2026-06-03"
+    }
+  ],
   "status": "candidate",
   "created": "2026-05-31",
-  "modified": "2026-05-31"
+  "modified": "2026-06-03"
 }
 ```
 
@@ -88,16 +99,16 @@ Work-level equivalences live in a `MappingAssertion`:
   "relation": "exactMatch",
   "target": {
     "target_kind": "wikidata",
-    "identifier": "https://www.wikidata.org/entity/Q165492"
+    "identifier": "https://www.wikidata.org/entity/Q123397"
   },
   "source": "manual-curation",
   "status": "candidate",
   "created": "2026-05-31",
-  "modified": "2026-05-31"
+  "modified": "2026-06-02"
 }
 ```
 
-Adding a resolver target adds one entry to `resolver_targets`; adding a Wikidata QID adds one `MappingAssertion`. No new records are minted per passage. A reference with no curated reading URL yet, such as the Plato example above, is still a valid identity record.
+Adding a resolver target adds one entry to `resolver_targets`; adding a Wikidata QID adds one `MappingAssertion`. No new records are minted per passage. A reference with no curated reading URL yet is still a valid identity record.
 
 ## Example: John.3.16
 
