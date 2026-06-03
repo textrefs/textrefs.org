@@ -79,7 +79,7 @@ Works MAY carry an optional `creators` array under `work:` for citation renderin
 
 ```yaml
 work:
-  key: plato.respublica
+  key: plato.republic
   preferred_label: Republic
   creators:
     - kind: person
@@ -94,6 +94,36 @@ work:
 ```
 
 Omit `creators` entirely for anonymous, disputed, or non-authored works (e.g. the Dhammapada, the Bible). The field is purely optional; nothing in the registry depends on it.
+
+## Naming and identity
+
+Get `work.key`, `work.preferred_label`, and `work.creators` right on the first commit — renaming a key after publication is a tombstone event that mints new reference IRIs.
+
+### `key`
+
+Shape: `{author-slug}.{work-slug}` for attributed works; bare `{work-slug}` for anonymous, collective, or canonical corpora.
+
+- `author-slug` — lowercased family name (or single mononym for antiquity); ASCII-folded; `-` for spaces; no initials. E.g. `homer`, `plato`, `aristotle`, `wittgenstein`, `confucius`, `laozi`, `murasaki-shikibu`.
+- `work-slug` — the short form readers actually use: `iliad`, `republic`, `tractatus`, `analects`, `daodejing`. Avoid cryptic initialisms (`eth-nic`) and avoid full Latin titles unless that _is_ the short form.
+- Bare slug for unattributed corpora: `tanakh`, `dhammapada`, `new-testament`, `quran`.
+- Multiple works per author with the same short title: disambiguate inside the work-slug, not by promoting the author. E.g. `aristotle.nicomachean-ethics`, `aristotle.eudemian-ethics`.
+
+### `preferred_label`
+
+The display title. No parenthetical disambiguator — author goes in `creators`, edition (SBLGNT, OCT, …) goes on the resolver target, alt-names belong in a future `alt_labels` field.
+
+- Attributed: just the title — `Iliad`, `Republic`, `Tractatus Logico-Philosophicus`.
+- Anonymous / collective: the conventional English name — `Tanakh`, `Dhammapada`, `New Testament`.
+
+### `creators`
+
+Follow CSL-JSON conventions so citeproc-js / Zotero render correctly.
+
+- Standard names: `kind: person` with `family` and `given`. E.g. `{ kind: person, family: Wittgenstein, given: Ludwig }`.
+- Mononyms (Homer, Plato, Confucius, Laozi, Murasaki Shikibu, …): `kind: person` with `family` only and no `given`. CSL convention for single-name authors; matches Chicago's "Homer, _Iliad_ 1.1." output.
+- Anonymous / collective: **omit `creators` entirely**. Don't write a literal "Anonymous" — absence is the correct CSL signal.
+- Reserve `kind: literal` for names that genuinely should not decompose: corporate/institutional authors ("World Health Organization") or pseudonymous attribution strings ("[Pseudo-]Aristotle").
+- Attributed-but-disputed (e.g. Laozi for _Daodejing_): record the traditional attribution as `kind: person, family: Laozi`; encode uncertainty via a `closeMatch` mapping, not in the name string.
 
 ## How URL templates work
 
