@@ -2,8 +2,8 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import { loadWorks, loadSystems } from '../../lib/registry.ts';
 
-const works = loadWorks().sort((a, b) => a.key.localeCompare(b.key));
-const systems = loadSystems().sort((a, b) => a.key.localeCompare(b.key));
+const works = [...loadWorks()].sort((a, b) => a.key.localeCompare(b.key));
+const systems = [...loadSystems()].sort((a, b) => a.key.localeCompare(b.key));
 ---
 
 <StarlightPage

@@ -1,7 +1,6 @@
 import {
 	readFileSync,
 	readdirSync,
-	statSync,
 	writeFileSync,
 	mkdirSync,
 	existsSync,
@@ -246,6 +245,14 @@ function deriveLocatorVars(
 	return vars;
 }
 
+function assertValidLocator(locator: string, system: SystemSource): void {
+	if (!new RegExp(system.locator_regex).test(locator)) {
+		throw new Error(
+			`${system.key}: locator "${locator}" does not match locator_regex`,
+		);
+	}
+}
+
 function expandTemplate(
 	tpl: string,
 	vars: Record<string, string>,
@@ -310,6 +317,20 @@ function mappingUuid(
 ): string {
 	const seed = [subject, relation, identifier].join('\n');
 	return uuidv5(seed, MAPPING_NS);
+}
+
+function setAlias(
+	aliases: Record<string, string>,
+	alias: string,
+	target: string,
+): void {
+	const existing = aliases[alias];
+	if (existing !== undefined && existing !== target) {
+		throw new Error(
+			`alias "${alias}" points to both ${existing} and ${target}`,
+		);
+	}
+	aliases[alias] = target;
 }
 
 export interface CompiledRegistry {
@@ -427,7 +448,7 @@ export function compileRegistry(): CompiledRegistry {
 				throw new Error(`invalid mapping: ${uuid}`);
 			}
 			outMappings.push(parsed.data);
-			aliases[mapping.identifier] = workIri;
+			setAlias(aliases, mapping.identifier, workIri);
 		}
 
 		const explicitRefs: ReferenceSource[] = src.references ?? [];
@@ -445,6 +466,7 @@ export function compileRegistry(): CompiledRegistry {
 
 		for (const refSrc of allRefs) {
 			const locator = typeof refSrc === 'string' ? refSrc : refSrc.locator;
+			assertValidLocator(locator, system);
 			const extraResolvers =
 				typeof refSrc === 'string' ? [] : (refSrc.extra_resolvers ?? []);
 			const vars = deriveLocatorVars(locator, system);
@@ -487,7 +509,7 @@ export function compileRegistry(): CompiledRegistry {
 				throw new Error(`invalid reference: ${workKey}/${locator}`);
 			}
 			outReferences.push(parsed.data);
-			aliases[`${workKey}/${locator}`] = record.id;
+			setAlias(aliases, `${workKey}/${locator}`, record.id);
 		}
 	}
 

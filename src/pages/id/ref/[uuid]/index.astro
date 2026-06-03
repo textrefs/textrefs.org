@@ -15,13 +15,19 @@ export async function getStaticPaths() {
 	const works = loadWorks();
 	const systems = loadSystems();
 	const aliases = loadAliases();
+	const worksByKey = new Map(works.map((w) => [w.key, w]));
+	const systemsByKey = new Map(systems.map((s) => [s.key, s]));
+	const aliasesByTarget = new Map<string, string[]>();
+	for (const [key, target] of Object.entries(aliases)) {
+		if (key.includes('://')) continue;
+		const targetAliases = aliasesByTarget.get(target);
+		if (targetAliases) targetAliases.push(key);
+		else aliasesByTarget.set(target, [key]);
+	}
 	return refs.map((ref) => {
-		const work = works.find((w) => w.key === ref.work_key);
-		const system = systems.find((s) => s.key === ref.citation_system_key);
-		const refAliases = Object.entries(aliases)
-			.filter(([key, target]) => target === ref.id && !key.includes('://'))
-			.map(([key]) => key)
-			.sort();
+		const work = worksByKey.get(ref.work_key);
+		const system = systemsByKey.get(ref.citation_system_key);
+		const refAliases = (aliasesByTarget.get(ref.id) ?? []).slice().sort();
 		const targets = ref.resolver_targets ?? [];
 		const langs = Array.from(
 			new Set(targets.map((t) => t.language ?? '—')),

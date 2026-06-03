@@ -6,8 +6,9 @@ import { loadMappings, loadWorks, uuidOf } from '../../../../lib/registry.ts';
 export async function getStaticPaths() {
 	const mappings = loadMappings();
 	const works = loadWorks();
+	const worksById = new Map(works.map((w) => [w.id, w]));
 	return mappings.map((m) => {
-		const subjectWork = works.find((w) => w.id === m.subject);
+		const subjectWork = worksById.get(m.subject);
 		return {
 			params: { uuid: uuidOf(m.id) },
 			props: { mapping: m, subjectWork },
