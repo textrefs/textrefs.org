@@ -73,6 +73,28 @@ references:
 
 Each reference gets one entry per resolver. The compiler expands `{chapter04}` and `{verse}` from the named capture groups in the citation system's `locator_regex`, and looks up `url_by.chapter[N]` for providers whose URL structure isn't templatable.
 
+### Optional: `creators`
+
+Works MAY carry an optional `creators` array under `work:` for citation rendering. Two entry shapes:
+
+```yaml
+work:
+  key: plato.respublica
+  preferred_label: Republic
+  creators:
+    - kind: person
+      family: Plato # mononyms use `family` alone (CSL convention)
+
+work:
+  key: aristotle.de-mundo
+  preferred_label: De mundo
+  creators:
+    - kind: literal
+      name: '[Pseudo-]Aristotle' # institutions, collective, or pseudonymous attribution
+```
+
+Omit `creators` entirely for anonymous, disputed, or non-authored works (e.g. the Dhammapada, the Bible). The field is purely optional; nothing in the registry depends on it.
+
 ## How URL templates work
 
 The compiler treats every resolver `url` as an [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570) Level 1 template. Variables are drawn from two sources:

@@ -135,6 +135,10 @@ type MappingSource = {
 	modified: string;
 };
 
+type CreatorSource =
+	| { kind: 'person'; family: string; given?: string }
+	| { kind: 'literal'; name: string };
+
 type WorkSource = {
 	work: {
 		key: string;
@@ -142,6 +146,7 @@ type WorkSource = {
 		status: string;
 		created: string;
 		modified: string;
+		creators?: CreatorSource[];
 	};
 	citation_system: string;
 	mappings?: MappingSource[];
@@ -406,6 +411,7 @@ export function compileRegistry(): CompiledRegistry {
 			status: src.work.status,
 			created: src.work.created,
 			modified: src.work.modified,
+			...(src.work.creators ? { creators: src.work.creators } : {}),
 		};
 		const workParsed = Work.safeParse(workRecord);
 		if (!workParsed.success) {

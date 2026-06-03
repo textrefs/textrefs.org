@@ -1,6 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import AliasList from '../../../../components/AliasList.astro';
+import CitationBox from '../../../../components/CitationBox.astro';
 import Tombstone from '../../../../components/Tombstone.astro';
 import {
 	loadAliases,
@@ -105,6 +106,8 @@ const jsonHref = `/id/ref/${uuidOf(ref.id)}.json`;
 			(normalization <code>{ref.normalization_version}</code>)
 		</li>
 	</ul>
+
+	<CitationBox work={work} ref={ref} system={system} />
 
 	<h2>Aliases ({aliases.length})</h2>
 	<AliasList

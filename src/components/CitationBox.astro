@@ -1,0 +1,134 @@
+---
+import type {
+	Work,
+	CanonicalReference,
+	CitationSystem,
+} from '../../standard/schema/index.js';
+import { toCSL, formatChicago, toCOinS } from '../lib/citation.ts';
+
+interface Props {
+	work: Work | undefined;
+	ref: CanonicalReference;
+	system: CitationSystem | undefined;
+}
+
+const { work, ref, system } = Astro.props;
+const csl = toCSL(work, ref, system);
+const chicago = formatChicago(csl);
+const coins = toCOinS(csl);
+const cslJson = JSON.stringify(csl, null, 2);
+
+const escapeHtml = (s: string) =>
+	s
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
+
+const chicagoHtml = escapeHtml(chicago).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+---
+
+<section class="cite-box" aria-labelledby="cite-box-heading">
+	<h2 id="cite-box-heading">Cite this reference</h2>
+	<p class="cite-style-label">Chicago (notes-bibliography)</p>
+	<blockquote class="cite-text" data-cite-text set:html={chicagoHtml} />
+	<p class="cite-plain" data-cite-plain hidden>{chicago}</p>
+	<div class="cite-actions">
+		<button type="button" data-cite-copy>Copy citation</button>
+		<button type="button" data-cite-download>Download CSL JSON</button>
+	</div>
+	<script is:inline type="application/json" data-csl set:html={cslJson} />
+	<span class="Z3988" hidden title={coins}></span>
+</section>
+
+<script is:inline>
+	(() => {
+		const boxes = document.querySelectorAll('.cite-box');
+		boxes.forEach((box) => {
+			const plain = box.querySelector('[data-cite-plain]');
+			const copyBtn = box.querySelector('[data-cite-copy]');
+			const dlBtn = box.querySelector('[data-cite-download]');
+			const cslEl = box.querySelector('script[data-csl]');
+			if (copyBtn && plain) {
+				copyBtn.addEventListener('click', async () => {
+					try {
+						await navigator.clipboard.writeText(plain.textContent || '');
+						const prev = copyBtn.textContent;
+						copyBtn.textContent = 'Copied';
+						setTimeout(() => {
+							copyBtn.textContent = prev;
+						}, 1500);
+					} catch {
+						/* noop */
+					}
+				});
+			}
+			if (dlBtn && cslEl) {
+				dlBtn.addEventListener('click', () => {
+					const text = cslEl.textContent || '{}';
+					const blob = new Blob([text], {
+						type: 'application/vnd.citationstyles.csl+json',
+					});
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = url;
+					let slug = 'citation';
+					try {
+						const parsed = JSON.parse(text);
+						if (parsed.id) slug = String(parsed.id).split('/').pop() || slug;
+					} catch {
+						/* noop */
+					}
+					a.download = `${slug}.csl.json`;
+					document.body.appendChild(a);
+					a.click();
+					a.remove();
+					URL.revokeObjectURL(url);
+				});
+			}
+		});
+	})();
+</script>
+
+<style>
+	.cite-box {
+		border: 1px solid var(--sl-color-gray-5, #ccc);
+		border-radius: 6px;
+		padding: 1rem 1.25rem;
+		margin: 1.5rem 0;
+		background: var(--sl-color-gray-7, #f6f6f6);
+	}
+	.cite-box h2 {
+		margin: 0 0 0.5rem;
+		font-size: 1rem;
+	}
+	.cite-style-label {
+		margin: 0 0 0.5rem;
+		font-size: 0.85rem;
+		color: var(--sl-color-gray-3, #666);
+	}
+	.cite-text {
+		margin: 0 0 0.75rem;
+		padding: 0.75rem 1rem;
+		background: var(--sl-color-bg, #fff);
+		border-left: 3px solid var(--sl-color-accent, #888);
+		font-family: var(--sl-font-system, serif);
+		user-select: text;
+	}
+	.cite-actions {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+	.cite-actions button {
+		padding: 0.4rem 0.8rem;
+		border: 1px solid var(--sl-color-gray-4, #999);
+		background: var(--sl-color-bg, #fff);
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.9rem;
+	}
+	.cite-actions button:hover {
+		background: var(--sl-color-gray-6, #eee);
+	}
+</style>

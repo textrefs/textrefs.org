@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Work, WorkBase } from './work.js';
+import { Work, WorkBase, Creator } from './work.js';
 import { CitationSystem, CitationSystemBase } from './citation-system.js';
 import {
 	CanonicalReference,
@@ -11,6 +11,7 @@ import { MappingAssertion, MappingAssertionBase } from './mapping-assertion.js';
 export * from './common.js';
 export {
 	Work,
+	Creator,
 	CitationSystem,
 	CanonicalReference,
 	ResolverTargetEntry,

@@ -13,6 +13,11 @@
     "MappingAssertion": "tr:MappingAssertion",
     "key": "tr:key",
     "preferred_label": "skos:prefLabel",
+    "creators": "schema:creator",
+    "kind": "tr:creatorKind",
+    "family": "schema:familyName",
+    "given": "schema:givenName",
+    "name": "schema:name",
     "inScheme": {
       "@id": "skos:inScheme",
       "@type": "@id"
