@@ -23,12 +23,12 @@ In one line:
 Plato's _Republic_ 514a — the Stephanus passage where Socrates begins the Allegory of the Cave — is one canonical reference. Here is what each prefix gives you for it:
 
 - **Canonical identifier** — the URL you cite, link from a paper, or paste into a tool:
-  - `https://textrefs.org/id/ref/c9e0b270-39de-503c-a231-33d8ae4503b4/` (HTML for browsers)
-  - `https://textrefs.org/id/ref/c9e0b270-39de-503c-a231-33d8ae4503b4.json` (JSON-LD for machines)
+  - `https://textrefs.org/id/ref/884e8b51-b9cc-5f4b-9e49-60c636c0cd1a/` (HTML for browsers)
+  - `https://textrefs.org/id/ref/884e8b51-b9cc-5f4b-9e49-60c636c0cd1a.json` (JSON-LD for machines)
 - **Browseable index** — the registry's human entry point, where readers find works, citation systems, and (via the work page) every reference:
   - `https://textrefs.org/reg/`
 - **Short alias** — a memorable, hand-typeable shortcut that redirects to the canonical URL:
-  - `https://textrefs.org/cite/plato.respublica/514a`
+  - `https://textrefs.org/cite/plato.republic/514a`
 - **Machine contract** — the OpenAPI describing how `/id/` behaves, so a client knows it can append `.json` to any canonical URL:
   - `https://textrefs.org/api/`
 

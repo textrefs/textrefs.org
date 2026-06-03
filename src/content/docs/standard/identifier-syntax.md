@@ -70,7 +70,7 @@ The seed bytes used for UUID v5 generation are ASCII-restricted (keys) and NFC-n
 Input tuple:
 
 ```text
-work_key = plato.respublica
+work_key = plato.republic
 citation_system_key = stephanus
 locator = 514a
 normalization_version = 1.0.0
@@ -79,7 +79,7 @@ normalization_version = 1.0.0
 Seed string:
 
 ```text
-plato.respublica
+plato.republic
 stephanus
 514a
 1.0.0
@@ -88,13 +88,13 @@ stephanus
 Result:
 
 ```text
-c9e0b270-39de-503c-a231-33d8ae4503b4
+884e8b51-b9cc-5f4b-9e49-60c636c0cd1a
 ```
 
 Canonical URI:
 
 ```text
-https://textrefs.org/id/ref/c9e0b270-39de-503c-a231-33d8ae4503b4
+https://textrefs.org/id/ref/884e8b51-b9cc-5f4b-9e49-60c636c0cd1a
 ```
 
 ## MappingAssertion seed

@@ -5,7 +5,7 @@ sidebar:
   order: 6
 ---
 
-Hand-authored YAML lives in the separate [`textrefs/registry`](https://github.com/textrefs/registry) repository, mounted in this repo as a git submodule at `data/` (run `git submodule update --init --recursive` after cloning; see [`CONTRIBUTING.md`](https://github.com/textrefs/textrefs.org/blob/main/CONTRIBUTING.md) for the full workflow). Contributors edit `data/works/{work_key}.yaml` and `data/systems/{system_key}.yaml` there. The compiled registry — Works, CitationSystems, CanonicalReferences, MappingAssertions — is produced in memory by `npm run build:data` and published as a single NDJSON.gz bundle attached to each GitHub Release. Published dumps are long-term archived in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) and receive citable DOIs.
+Hand-authored YAML lives in the separate [`textrefs/registry`](https://github.com/textrefs/registry) repository, mounted in this repo as a git submodule at `data/` (run `git submodule update --init --recursive` after cloning; see [`CONTRIBUTING.md`](https://github.com/textrefs/textrefs.org/blob/main/CONTRIBUTING.md) for the full workflow). Contributors edit `data/works/{work_key}.yaml` and `data/systems/{system_key}.yaml` there. The compiled registry — Works, CitationSystems, CanonicalReferences, MappingAssertions — is produced by `npm run build:data` from the pinned submodule pointer and written as JSONL resources plus `datapackage.json` under `dist/dump/`. Published dumps are attached to TextRefs Standard/site releases and long-term archived in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) with citable DOIs.
 
 This page documents the YAML format.
 
@@ -93,7 +93,7 @@ work:
       name: '[Pseudo-]Aristotle' # institutions, collective, or pseudonymous attribution
 ```
 
-Omit `creators` entirely for anonymous, disputed, or non-authored works (e.g. the Dhammapada, the Bible). The field is purely optional; nothing in the registry depends on it.
+Omit `creators` entirely for anonymous or non-authored works (e.g. the Dhammapada, the Bible). For attributed-but-disputed works, record the traditional attribution for citation rendering and document uncertainty through mappings or review notes. The field is purely optional; nothing in the registry depends on it.
 
 ## Naming and identity
 

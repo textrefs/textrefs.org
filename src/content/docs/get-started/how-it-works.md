@@ -26,7 +26,7 @@ TextRefs uses three records for identity and one record for work-level equivalen
 
 For a citation such as "Plato, _Republic_ 514a", a registry contributor or parser does four things.
 
-1. Identify the work: `plato.respublica`.
+1. Identify the work: `plato.republic`.
 2. Identify the citation system: `stephanus`.
 3. Normalize the locator according to that citation system: `514a`.
 4. Mint the `CanonicalReference` ID from the tuple `work_key`, `citation_system_key`, `locator`, and `normalization_version`.
@@ -35,13 +35,13 @@ The result is a persistent TextRefs URI for the cited point itself. That URI sta
 
 ## Example: Plato, Republic 514a
 
-The identity is the Stephanus reference, not any one Greek text, translation, or platform page. The compiled registry record for [`plato.respublica` `514a`](/id/ref/c9e0b270-39de-503c-a231-33d8ae4503b4/) is:
+The identity is the Stephanus reference, not any one Greek text, translation, or platform page. The compiled registry record for [`plato.republic` `514a`](/id/ref/884e8b51-b9cc-5f4b-9e49-60c636c0cd1a/) is:
 
 ```json
 {
-  "id": "https://textrefs.org/id/ref/c9e0b270-39de-503c-a231-33d8ae4503b4",
+  "id": "https://textrefs.org/id/ref/884e8b51-b9cc-5f4b-9e49-60c636c0cd1a",
   "type": "CanonicalReference",
-  "work_key": "plato.respublica",
+  "work_key": "plato.republic",
   "citation_system_key": "stephanus",
   "locator": "514a",
   "normalization_version": "1.0.0",
@@ -84,7 +84,7 @@ Work-level equivalences live in a `MappingAssertion`:
 ```json
 {
   "type": "MappingAssertion",
-  "subject": "https://textrefs.org/id/work/plato.respublica",
+  "subject": "https://textrefs.org/id/work/plato.republic",
   "relation": "exactMatch",
   "target": {
     "target_kind": "wikidata",
@@ -115,7 +115,7 @@ For a heavily translated work, many locations can share one reference identity. 
 
 An English translation, a German translation, a Greek edition, and a library scan can all sit in the `resolver_targets` array on the same reference. Adding a new translation adds another entry, not another canonical reference.
 
-For complete worked examples, see the live [Dhammapada work page](/id/work/dhammapada/) (four providers, two languages, 423 references) or the [Plato _Republic_ work page](/id/work/plato.respublica/) (Stephanus pagination). The contributor YAML behind them is documented in [Authoring registry data](/get-started/authoring/).
+For complete worked examples, see the live [Dhammapada work page](/id/work/dhammapada/) (four providers, two languages, 423 references) or the [Plato _Republic_ work page](/id/work/plato.republic/) (Stephanus pagination). The contributor YAML behind them is documented in [Authoring registry data](/get-started/authoring/).
 
 Where traditions number passages differently, create separate references under separate citation systems and connect them with `closeMatch` mappings. Do not collapse divergent versification, pagination, or segmentation into one identity.
 

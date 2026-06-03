@@ -22,7 +22,7 @@ https://textrefs.org/contexts/v1.jsonld
 | `skos`    | `http://www.w3.org/2004/02/skos/core#` | Labels, schemes (`inScheme`), and mapping relations                        |
 | `dcterms` | `http://purl.org/dc/terms/`            | `created`, `modified`, `source`, `language`, `license`                     |
 | `schema`  | `https://schema.org/`                  | `url`, `provider`, `edition`, `creator`, `familyName`, `givenName`, `name` |
-| `xsd`     | `http://www.w3.org/2001/XMLSchema#`    | `xsd:date` typing for `created` / `modified`                               |
+| `xsd`     | `http://www.w3.org/2001/XMLSchema#`    | `xsd:date` typing for `created` / `modified` / `last_checked`              |
 
 ## Mapping relations
 
@@ -68,16 +68,23 @@ Use `exactMatch` only when the mapped object identifies the same reference with 
     "relation": "tr:relation",
     "exactMatch": { "@id": "skos:exactMatch", "@type": "@id" },
     "closeMatch": { "@id": "skos:closeMatch", "@type": "@id" },
+    "subject": { "@id": "tr:subject", "@type": "@id" },
     "target": "tr:target",
     "target_kind": "tr:targetKind",
     "identifier": { "@id": "tr:identifier", "@type": "@id" },
+    "resolver_targets": "tr:resolverTargets",
     "provider": "schema:provider",
     "url": { "@id": "schema:url", "@type": "@id" },
     "language": "dcterms:language",
     "edition": "schema:bookEdition",
     "access": "tr:access",
     "license": "dcterms:license",
-    "license_url": { "@id": "dcterms:license", "@type": "@id" }
+    "license_url": { "@id": "dcterms:license", "@type": "@id" },
+    "last_checked": { "@id": "tr:lastChecked", "@type": "xsd:date" },
+    "locator_regex": "tr:locatorRegex",
+    "examples": "tr:examples",
+    "valid": "tr:validExample",
+    "invalid": "tr:invalidExample"
   }
 }
 ```

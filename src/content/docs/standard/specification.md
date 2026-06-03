@@ -113,14 +113,14 @@ A `Work` represents an abstract textual work, independent of editions, translati
 
 Only canonical texts with an established reference system SHOULD be accepted as `Work` records. The existence of an author, title, edition, file, or web page is not by itself sufficient.
 
-A `Work.key` is a single flat registry key used to identify the abstract work in references and deterministic UUID seeds. Choose a stable, human-readable key such as `plato.respublica` or `new-testament`, and treat the whole string as the identifier. Rich bibliographic and authority data — catalogue records, edition histories, subject classifications — belongs in external systems and is connected to TextRefs records through `MappingAssertion`s. The one exception is minimal authorship: an optional `creators` array on `Work` carries enough structured data to render a usable citation without dereferencing an external authority.
+A `Work.key` is a single flat registry key used to identify the abstract work in references and deterministic UUID seeds. Choose a stable, human-readable key such as `plato.republic` or `new-testament`, and treat the whole string as the identifier. Rich bibliographic and authority data — catalogue records, edition histories, subject classifications — belongs in external systems and is connected to TextRefs records through `MappingAssertion`s. The one exception is minimal authorship: an optional `creators` array on `Work` carries enough structured data to render a usable citation without dereferencing an external authority.
 
 ```json
 {
-  "id": "https://textrefs.org/id/work/plato.respublica",
-  "key": "plato.respublica",
+  "id": "https://textrefs.org/id/work/plato.republic",
+  "key": "plato.republic",
   "type": "Work",
-  "preferred_label": "Republic (Plato)",
+  "preferred_label": "Republic",
   "creators": [{ "kind": "person", "family": "Plato" }],
   "status": "candidate",
   "created": "2026-05-31",
@@ -130,7 +130,7 @@ A `Work.key` is a single flat registry key used to identify the abstract work in
 
 Required: `id`, `key`, `type` (`Work`), `preferred_label`, `status`, plus administrative metadata ([§12](#12-administrative-metadata)). Optional: `creators`. The `id` MUST be a persistent TextRefs HTTP URI of the form `https://textrefs.org/id/work/{key}`, where `{key}` is one flat key and occupies exactly one URI path segment. The `key` MUST be stable and suitable for deterministic identity generation.
 
-`creators`, when present, is an array of entries discriminated by `kind`. A `person` entry has `family` (required) and `given` (optional); mononyms such as Plato or Homer use `family` alone, following CSL convention. A `literal` entry has `name` and is the escape hatch for pseudonymous, collective, or institutional authorship (e.g. `[Pseudo-]Aristotle`, an editorial committee). Anonymous works, the Bible, and works of disputed authorship simply omit `creators`. Implementations MUST treat the field as optional and MUST NOT infer authorship from `preferred_label` or `key`.
+`creators`, when present, is an array of entries discriminated by `kind`. A `person` entry has `family` (required) and `given` (optional); mononyms such as Plato or Homer use `family` alone, following CSL convention. A `literal` entry has `name` and is the escape hatch for pseudonymous, collective, or institutional authorship (e.g. `[Pseudo-]Aristotle`, an editorial committee). Anonymous works and canonical corpora such as the Bible simply omit `creators`. For attributed-but-disputed works, record the traditional attribution in `creators` and express uncertainty through mappings or editorial review notes, not in the name string. Implementations MUST treat the field as optional and MUST NOT infer authorship from `preferred_label` or `key`.
 
 External identifiers for a `Work` (e.g. Wikidata Q-ID, DOI, VIAF) are recorded as `MappingAssertion`s whose `subject` is the `Work`. They are not fields on the `Work` itself.
 
@@ -268,7 +268,7 @@ Required: `id`, `type` (`MappingAssertion`), `subject`, `relation`, `target`, `s
 
 TextRefs identifiers MUST be persistent HTTP URIs ([RFC 3986](https://www.rfc-editor.org/rfc/rfc3986)) or IRIs ([RFC 3987](https://www.rfc-editor.org/rfc/rfc3987)), independent of external URLs, resolver targets, edition identifiers, provider-specific identifiers, and website structures. The deterministic UUID seed remains ASCII-only; see [Identifier syntax](/standard/identifier-syntax/).
 
-`Work` identifiers MUST use `https://textrefs.org/id/work/{key}` and `CitationSystem` identifiers MUST use `https://textrefs.org/id/system/{key}`. In both cases `{key}` is the complete flat key and MUST NOT contain additional path segments. For example, `https://textrefs.org/id/work/plato.respublica` is valid; `https://textrefs.org/id/work/plato/respublica` is not.
+`Work` identifiers MUST use `https://textrefs.org/id/work/{key}` and `CitationSystem` identifiers MUST use `https://textrefs.org/id/system/{key}`. In both cases `{key}` is the complete flat key and MUST NOT contain additional path segments. For example, `https://textrefs.org/id/work/plato.republic` is valid; `https://textrefs.org/id/work/plato/republic` is not.
 
 A `CanonicalReference` identifier MUST be generated deterministically. The identity seed MUST include `work_key`, `citation_system_key`, `locator`, and `normalization_version`, in that order (see [Identifier syntax](/standard/identifier-syntax/)).
 
@@ -311,7 +311,7 @@ This is the case that motivates separating identity from location. The New Testa
   "work": {
     "key": "new-testament",
     "type": "Work",
-    "preferred_label": "New Testament (SBLGNT)"
+    "preferred_label": "New Testament"
   },
   "citation_system": {
     "key": "bible-book-chapter-verse",

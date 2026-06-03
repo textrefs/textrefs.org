@@ -88,7 +88,7 @@ Each entry records what a reader needs to understand the link: `language` (BCP 4
 }
 ```
 
-Contributors author resolver targets as URL templates, not raw URLs — see [Authoring registry data](/get-started/authoring/). The compiler expands them per reference. Browse the live output at [`/id/work/dhammapada/`](/id/work/dhammapada/) or [`/id/work/plato.respublica/`](/id/work/plato.respublica/).
+Contributors author resolver targets as URL templates, not raw URLs — see [Authoring registry data](/get-started/authoring/). The compiler expands them per reference. Browse the live output at [`/id/work/dhammapada/`](/id/work/dhammapada/) or [`/id/work/plato.republic/`](/id/work/plato.republic/).
 
 ## Good first candidates
 
@@ -96,7 +96,7 @@ The best TextRefs candidates are works with established, edition-independent cit
 
 | Area       | Citation example                         | Citation system      | Notes                                                         |
 | ---------- | ---------------------------------------- | -------------------- | ------------------------------------------------------------- |
-| Philosophy | Plato, _Republic_ `514a`                 | Stephanus pagination | Present as `plato.respublica` with `stephanus`.               |
+| Philosophy | Plato, _Republic_ `514a`                 | Stephanus pagination | Present as `plato.republic` with `stephanus`.                 |
 | Philosophy | Aristotle, _Nicomachean Ethics_ `1094a1` | Bekker numbering     | Present as `aristotle.eth-nic` with `bekker`.                 |
 | Buddhist   | _Dhammapada_ `1.1`                       | chapter and verse    | Present as `dhammapada` with `dhammapada-chapter-verse`.      |
 | Tanakh     | Genesis `Genesis.1.1`                    | book, chapter, verse | Present as `tanakh` with `bible-book-chapter-verse`.          |

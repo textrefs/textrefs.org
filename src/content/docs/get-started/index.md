@@ -36,7 +36,7 @@ This division is deliberate. TextRefs stays small, persistent, and legally reusa
 ## Live examples
 
 - [`/id/work/dhammapada/`](/id/work/dhammapada/) — Dhammapada with four real providers (Gutenberg, Wikisource, ancient-buddhist-texts.net, palikanon.com) across English and German.
-- [`/id/work/plato.respublica/`](/id/work/plato.respublica/) — Plato's _Republic_ with Stephanus pagination.
-- [`/cite/plato.respublica/514a`](/cite/plato.respublica/514a) — a short alias that redirects to the canonical reference URL.
+- [`/id/work/plato.republic/`](/id/work/plato.republic/) — Plato's _Republic_ with Stephanus pagination.
+- [`/cite/plato.republic/514a`](/cite/plato.republic/514a) — a short alias that redirects to the canonical reference URL.
 - [`/reg/`](/reg/) — the registry browser.
 - [URL layout](/get-started/url-layout/) — how `/id/`, `/reg/`, `/cite/`, and `/api/` fit together.
