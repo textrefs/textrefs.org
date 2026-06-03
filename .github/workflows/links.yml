@@ -19,22 +19,25 @@ jobs:
         with:
           submodules: recursive
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-
-      - run: npm ci
-
-      - run: npm run build
+      # Extract external URLs directly from sources instead of crawling the
+      # built site. The rendered site expands each citation system into one
+      # resolver URL per reference (~200k URLs for ~10 works), but every
+      # distinct target already appears in the YAML source. Internal links,
+      # anchors, and i18n are validated at build time by
+      # starlight-links-validator, so this workflow only checks externals.
+      - name: Collect external URLs from sources
+        run: |
+          mkdir -p lychee
+          grep -rhoE 'https?://[^"'\''<>) ]+' data/ src/content/docs/ \
+            | sed -E 's/[.,;:]+$//' \
+            | sort -u > lychee/urls.txt
+          echo "Collected $(wc -l < lychee/urls.txt) unique URLs"
 
       - name: Check links with lychee
         id: lychee
         uses: lycheeverse/lychee-action@v2
         with:
-          args: >-
-            --root-dir ${{ github.workspace }}/dist
-            --config lychee.toml dist
+          args: --config lychee.toml lychee/urls.txt
           output: ./lychee/out.md
           fail: false
 
