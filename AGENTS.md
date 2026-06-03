@@ -15,6 +15,8 @@ Astro + Starlight site for textrefs.org. See [`README.md`](./README.md) for the 
 
 Use `npm run verify:fast` by default for local validation and agent work. Only use the full `npm run verify` and/or `npm run validate:data` when changes affect registry data, release artifacts, production build behavior, or CI parity.
 
+Use Node 24, matching CI.
+
 Husky installs on `npm install`: Prettier runs on staged files, `commitlint` enforces Conventional Commits.
 
 ## Layout

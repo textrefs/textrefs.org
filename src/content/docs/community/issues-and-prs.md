@@ -56,7 +56,7 @@ A PR should include:
 - a short summary of the change;
 - links to related issues;
 - notes on review track if expert review may be needed;
-- verification results, especially `npm run verify`;
+- verification results: `npm run verify:fast` for routine work, or `npm run verify` plus `npm run validate:data` for registry-data, standard, release, production-build, or CI changes;
 - sources for registry-data or standard changes.
 
 ## Review expectations

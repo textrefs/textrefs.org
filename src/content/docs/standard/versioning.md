@@ -16,7 +16,7 @@ TextRefs versions three things that move at different speeds, and archives each 
 
 The site repository couples the spec, JSON-LD context, Zod schemas, and Astro site under a single tag because pre-1.0 the site is the spec's reference rendering; splitting them now would create empty changelogs and confuse Zenodo metadata. Registry data is decoupled — record changes flow on their own cadence — and lives in a separate repository because the [Zenodo–GitHub integration](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content) mints one concept DOI per repository. The two repositories are cross-linked via `.zenodo.json` `related_identifiers`.
 
-The site repository includes `textrefs/registry` as a git submodule at `data/`. Until the registry cuts its first tagged release, the submodule tracks the registry's `dev` branch; afterward, the site pins to specific registry tags for reproducible builds.
+The site repository includes `textrefs/registry` as a git submodule at `data/`. The registry uses `main` as its working branch. The site pins a specific registry `main` commit through the submodule pointer, and its compiler builds registry dumps from that pinned content for reproducible site releases.
 
 ## Maturity ladder
 
@@ -43,23 +43,21 @@ Transitions:
 
 ## Export layout
 
-Monthly exports use this directory layout:
+Generated dumps use this directory layout:
 
 ```text
-registry/exports/YYYY-MM/datapackage.json
-registry/exports/YYYY-MM/works.jsonl
-registry/exports/YYYY-MM/citation-systems.jsonl
-registry/exports/YYYY-MM/references.jsonl
-registry/exports/YYYY-MM/mappings.jsonl
-registry/exports/YYYY-MM/resolver-targets.jsonl
-registry/exports/YYYY-MM/CHANGES.md
+dist/dump/datapackage.json
+dist/dump/works.jsonl
+dist/dump/citation-systems.jsonl
+dist/dump/references.jsonl
+dist/dump/mappings.jsonl
 ```
 
-Registry exports are organized by object type. This gives consumers stable file names, simple streaming imports, and one predictable place to find each record type. Relationships are represented inside records through standard fields such as `key`, `work_key`, `citation_system_key`, `subject`, and `target`. `CHANGES.md` is a record-level diff against the previous tagged export.
+Registry exports are organized by object type. This gives consumers stable file names, simple streaming imports, and one predictable place to find each record type. Resolver targets are embedded in reference records. Relationships are represented inside records through standard fields such as `key`, `work_key`, `citation_system_key`, `subject`, and `target`.
 
 ## Archival copies and DOIs
 
-GitHub Releases are the primary distribution point for generated registry dumps. Each released tag in either repository is also deposited in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) for long-term archival preservation and DOI minting. Cite the version DOI when referring to a specific archived dump.
+TextRefs Standard/site GitHub Releases are the primary distribution point for generated registry dumps. The dump is built from the `data/` submodule pointer committed in that release. Each released tag in either repository is also deposited in the [TextRefs Zenodo community](https://zenodo.org/communities/textrefs/) for long-term archival preservation and DOI minting. Cite the version DOI when referring to a specific archived dump.
 
 ## Frictionless requirements
 

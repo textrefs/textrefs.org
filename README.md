@@ -64,25 +64,25 @@ TextRefs is a non-profit infrastructure project that builds, maintains, and publ
 
 ## Local development
 
-Prerequisites: Node 20+ and npm.
+Prerequisites: Node 24 and npm.
 
 Configuration lives in `.env`; use [`.env.example`](./.env.example) as the starting point. `SITE_DOMAIN` controls Astro's canonical `site` URL and defaults to `textrefs.org` when unset.
 
-| Command                 | Action                                                                                                                                         |
-| :---------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm install`           | Install dependencies; wires git hooks (husky + lint-staged)                                                                                    |
-| `npm run dev`           | Start local dev server at `localhost:4321`                                                                                                     |
-| `npm run build`         | Build the production site to `./dist/`                                                                                                         |
-| `npm run build:fast`    | Build the site against a tiny fixture registry, without compiling full data                                                                    |
-| `npm run preview`       | Preview the build locally                                                                                                                      |
-| `npm run compile:data`  | Read hand-authored YAML under `data/works/` and `data/systems/`, expand the in-memory registry, and emit the NDJSON.gz dump under `dist/dump/` |
-| `npm run validate:data` | Validate every compiled record against the canonical Zod schemas                                                                               |
-| `npm run build:data`    | `compile:data` then `validate:data` — the contributor data pipeline                                                                            |
-| `npm run verify:fast`   | Fast local check using fixture registry data                                                                                                   |
-| `npm run verify`        | Prettier + `astro check` + production build — the CI gate                                                                                      |
-| `npm run changelog`     | Regenerate `CHANGELOG.md` from git history (git-cliff)                                                                                         |
+| Command                 | Action                                                                                                                                                              |
+| :---------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm install`           | Install dependencies; wires git hooks (husky + lint-staged)                                                                                                         |
+| `npm run dev`           | Start local dev server at `localhost:4321`                                                                                                                          |
+| `npm run build`         | Build the production site to `./dist/`                                                                                                                              |
+| `npm run build:fast`    | Build the site against a tiny fixture registry, without compiling full data                                                                                         |
+| `npm run preview`       | Preview the build locally                                                                                                                                           |
+| `npm run compile:data`  | Read hand-authored YAML under `data/works/` and `data/systems/`, expand the in-memory registry, and emit JSONL resources plus `datapackage.json` under `dist/dump/` |
+| `npm run validate:data` | Validate every compiled record against the canonical Zod schemas                                                                                                    |
+| `npm run build:data`    | `compile:data` then `validate:data` — the contributor data pipeline                                                                                                 |
+| `npm run verify:fast`   | Fast local check using fixture registry data                                                                                                                        |
+| `npm run verify`        | Prettier + `astro check` + production build — the CI gate                                                                                                           |
+| `npm run changelog`     | Regenerate `CHANGELOG.md` from git history (git-cliff)                                                                                                              |
 
-Contributors edit the YAML under [`data/works/`](https://github.com/textrefs/registry/tree/main/works) and [`data/systems/`](https://github.com/textrefs/registry/tree/main/systems); the directory is a git submodule pointing at [`textrefs/registry`](https://github.com/textrefs/registry). Run `git submodule update --init --recursive` after cloning. The compiler expands these into the flat in-memory registry records (works, systems, refs, mappings). See [`docs/get-started/authoring`](https://textrefs.org/get-started/authoring/) for the format. For documentation, styling, and route work, use `npm run verify:fast` locally; run the full `npm run verify` before PRs that touch registry data, release output, or CI behavior.
+Contributors edit the YAML under [`data/works/`](https://github.com/textrefs/registry/tree/main/works) and [`data/systems/`](https://github.com/textrefs/registry/tree/main/systems); the directory is a git submodule pointing at [`textrefs/registry`](https://github.com/textrefs/registry). Run `git submodule update --init --recursive` after cloning. The compiler expands the pinned submodule into the flat registry dump (works, systems, refs, mappings) under `dist/dump/`. See [`docs/get-started/authoring`](https://textrefs.org/get-started/authoring/) for the format. For documentation, styling, and route work, use `npm run verify:fast` locally; run the full `npm run verify` before PRs that touch registry data, release output, production build behaviour, or CI behaviour.
 
 See [`AGENTS.md`](./AGENTS.md) for the full layout and conventions.
 

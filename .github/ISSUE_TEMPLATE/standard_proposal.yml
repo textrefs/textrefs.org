@@ -8,7 +8,7 @@ body:
       value: |
         Use this for **new** spec proposals. For errata in an already-released spec version, use the "Standard change (erratum)" template instead.
 
-        See the [review process](https://textrefs.org/standard/review-process/) for the stage gates.
+        See the [community governance](https://textrefs.org/community/governance/) and [contributing guide](https://textrefs.org/community/contributing/#review-tracks) for review tracks and escalation.
   - type: input
     id: section
     attributes:

@@ -4,17 +4,22 @@
 
 <!-- One sentence: what does this PR change, and why? -->
 
-## Type of change
+## Commit type
 
-<!-- Tick all that apply. Matches the Conventional Commit prefix you'll use. -->
+<!-- Tick the Conventional Commit type you expect to use. -->
 
-- [ ] `bug` — bug fix
+- [ ] `fix` — bug fix
 - [ ] `feat` — new feature
 - [ ] `docs` — documentation only
-- [ ] `data` — registry data change
-- [ ] `standard` — specification change
 - [ ] `refactor` — code restructure without behaviour change
 - [ ] `chore` / `build` / `ci` — tooling, dependencies, CI
+
+## Area
+
+- [ ] site / docs
+- [ ] standard
+- [ ] registry data
+- [ ] release / CI / tooling
 
 ## Related issues
 
@@ -22,9 +27,9 @@
 
 ## Testing
 
-- [ ] `npm run verify` passes locally (Prettier, astro check, build)
-- [ ] `npm run validate:data` passes (for `data` and `standard` PRs)
-- [ ] `npm test` passes (for `data` and `standard` PRs that touch the conformance suite, once available)
+- [ ] `npm run verify:fast` passes locally for routine docs, styling, or route work
+- [ ] `npm run verify` passes locally for registry-data, standard, release, production-build, or CI changes
+- [ ] `npm run validate:data` passes locally for registry-data and standard PRs
 
 ## Re-mint checklist (only if this PR renames a key or changes content of an existing reference / mapping)
 
@@ -33,7 +38,7 @@ Re-minting changes a record's IRI. The old IRI must continue to resolve as a tom
 - [ ] Old record retained with `status: withdrawn`
 - [ ] A new `MappingAssertion` with `relation: exactMatch`, `subject: <old IRI>`, `target: <new IRI>` links the old record to its successor (omit if there is no successor)
 - [ ] All other records that reference the old IRI have been audited (re-targeted to the new IRI, or themselves marked `withdrawn`)
-- [ ] Commit message uses `feat!:` / `fix!:` to signal the breaking IRI change
+- [ ] Commit message uses `feat!:` / `fix!:` or `feat(scope)!:` / `fix(scope)!:` to signal the breaking IRI change
 
 ## Checklist
 

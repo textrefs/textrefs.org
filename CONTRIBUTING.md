@@ -51,7 +51,7 @@ flowchart TD
 
 ## Local development
 
-Prerequisites: Node 20+ and npm.
+Prerequisites: Node 24 and npm.
 
 ```sh
 git clone --recurse-submodules https://github.com/textrefs/textrefs.org.git
@@ -60,13 +60,15 @@ npm install              # also wires git hooks via husky
 npm run dev              # http://localhost:4321
 ```
 
-Registry data lives in [`textrefs/registry`](https://github.com/textrefs/registry), mounted here as a git submodule at `data/`. If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`. To bump the submodule to the latest `main`, `git -C data pull origin main` and commit the new pointer.
+Registry data lives in [`textrefs/registry`](https://github.com/textrefs/registry), mounted here as a git submodule at `data/`. The registry uses `main` as its working branch. If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`. To bump the submodule to the latest `main`, run `git -C data pull origin main` and commit the new pointer.
 
-Before pushing, run the gate locally:
+Before pushing routine documentation, styling, or route work, run the fast local gate:
 
 ```sh
-npm run verify           # Prettier check + astro check + build
+npm run verify:fast      # Prettier check + fixture-backed astro check + fixture-backed build
 ```
+
+Run the full `npm run verify` before PRs that touch registry data, release output, production build behaviour, or CI behaviour. Run `npm run validate:data` as well for registry-data and standard PRs.
 
 `npm run format` rewrites files in place if Prettier finds drift.
 
@@ -94,7 +96,7 @@ The changelog is generated from this history via `npm run changelog` (git-cliff)
 1. Branch from `main`.
 2. Keep PRs focused — one logical change per PR.
 3. Link related issues in the PR description.
-4. Make sure `npm run verify` passes.
+4. Include local verification results: `npm run verify:fast` for routine work, or `npm run verify` plus `npm run validate:data` for registry-data, standard, release, production-build, or CI changes.
 5. Open the PR against `main`. GitHub requests `@textrefs/maintainers` by default via `.github/CODEOWNERS`; maintainers may add technical or expert reviewers based on the track.
 
 ## Project layout
@@ -117,10 +119,10 @@ Two release trains. The Zenodo–GitHub webhook MUST be enabled once per reposit
 
 **Registry** ([`textrefs/registry`](https://github.com/textrefs/registry)):
 
-1. From a short-lived feature branch off `main`, open a PR into `main` containing the cut.
+1. From a short-lived feature branch off `main`, open a PR into `main` containing the registry changes.
 2. Once merged, tag `vYYYY.MM.N` on `main` and push the tag.
-3. Verify the GitHub Release fires and Zenodo mints the version DOI.
-4. Back here in `textrefs.org`: bump the `data/` submodule pointer to the new tag (`git -C data fetch && git -C data checkout vYYYY.MM.N`) and commit.
+3. Verify the GitHub Release fires and Zenodo mints the version DOI for the registry source archive.
+4. Back here in `textrefs.org`: bump the `data/` submodule pointer to the latest registry `main` commit and commit. This repo's compiler builds the published dump from that pinned submodule pointer.
 
 ## Questions
 

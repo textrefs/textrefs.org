@@ -281,7 +281,7 @@ Name your capture groups deliberately — every URL template in every work that 
 ## Building, validating, and previewing
 
 ```sh
-npm run compile:data    # expand YAML → NDJSON.gz dump under dist/dump/
+npm run compile:data    # expand YAML → JSONL resources plus datapackage.json under dist/dump/
 npm run validate:data   # check every record against the canonical Zod schemas
 npm run build:data      # both, in order
 npm run dev             # browse at http://localhost:4321/reg/ ; records live under /id/

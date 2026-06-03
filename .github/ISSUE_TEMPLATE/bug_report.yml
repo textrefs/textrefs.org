@@ -40,7 +40,7 @@ body:
     attributes:
       label: Environment
       description: Browser + OS, or Node version if it's a build problem.
-      placeholder: Firefox 142 / macOS 26, or Node 20.18
+      placeholder: Firefox 142 / macOS 26, or Node 24.0
   - type: textarea
     id: extra
     attributes:

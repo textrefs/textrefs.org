@@ -6,14 +6,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        For changes that affect registry data — works, citation systems, references, mappings, or resolver targets.
+        For changes that affect registry data — works, citation systems, references, mappings, or resolver targets. Data-only reports can also be filed directly in textrefs/registry.
         Please provide evidence (sources, editions, scholarly references) so domain reviewers can verify.
   - type: input
     id: target
     attributes:
       label: Affected TextRefs ID or URL
-      description: The TextRefs ID, file path under `registry/`, or site URL.
-      placeholder: https://textrefs.org/id/ref/… or registry/references/…
+      description: The TextRefs ID, file path under `data/works/` or `data/systems/`, or site URL.
+      placeholder: https://textrefs.org/id/ref/… or data/works/dhammapada.yaml
     validations:
       required: true
   - type: input
