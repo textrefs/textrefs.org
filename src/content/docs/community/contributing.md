@@ -65,7 +65,7 @@ npm install              # also wires git hooks via husky
 npm run dev              # http://localhost:4321
 ```
 
-Registry data lives in [`textrefs/registry`](https://github.com/textrefs/registry), mounted here as a git submodule at `data/`. If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`. To bump the submodule to the latest `dev`, `git -C data pull origin dev` and commit the new pointer.
+Registry data lives in [`textrefs/registry`](https://github.com/textrefs/registry), mounted here as a git submodule at `data/`. If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive`. To bump the submodule to the latest `main`, `git -C data pull origin main` and commit the new pointer.
 
 Before pushing, run the gate locally:
 
@@ -90,11 +90,7 @@ Use one of:
 - `test:` — tests
 - `perf:` — performance
 
-Easiest way to get a valid message:
-
-```sh
-npm run commit           # opens the cz-git guided prompt
-```
+The commit-msg hook (commitlint) rejects non-conforming messages, so a plain `git commit -m "feat(registry): add ..."` is enough.
 
 The changelog is generated from this history via `npm run changelog` (git-cliff).
 

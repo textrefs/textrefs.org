@@ -1,24 +1,4 @@
 #!/usr/bin/env sh
 set -e
 
-# Guard submodule-pointer commits: refuse if data/ is dirty or the pinned
-# SHA is not on registry/main (would create a parent commit pointing at a
-# SHA Pages/CI can't fetch).
-if git diff --cached --name-only | grep -qx 'data'; then
-  pinned=$(git ls-files -s data | awk '{print $2}')
-  (
-    cd data
-    unset GIT_DIR GIT_INDEX_FILE GIT_WORK_TREE
-    if [ -n "$(git status --porcelain)" ]; then
-      echo "data/: working tree is dirty — commit & push in the submodule first" >&2
-      exit 1
-    fi
-    git fetch -q origin main
-    if ! git merge-base --is-ancestor "$pinned" origin/main; then
-      echo "data/: pinned $pinned is not on origin/main — push the submodule branch first" >&2
-      exit 1
-    fi
-  )
-fi
-
 npx lint-staged

@@ -85,11 +85,7 @@ Use one of:
 - `test:` — tests
 - `perf:` — performance
 
-Easiest way to get a valid message:
-
-```sh
-npm run commit           # opens the cz-git guided prompt
-```
+The commit-msg hook (commitlint) rejects non-conforming messages, so a plain `git commit -m "feat(registry): add ..."` is enough.
 
 The changelog is generated from this history via `npm run changelog` (git-cliff).
 

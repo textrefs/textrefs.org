@@ -20,7 +20,7 @@ jobs:
       - name: Verify data/ pin is on registry main
         run: |
           cd data
-          git fetch origin main --depth=200
+          git fetch --unshallow origin main 2>/dev/null || git fetch origin main
           if ! git merge-base --is-ancestor HEAD origin/main; then
             echo "::error::data/ pointer $(git rev-parse HEAD) is not an ancestor of registry/main"
             exit 1

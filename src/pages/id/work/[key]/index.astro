@@ -19,19 +19,34 @@ export async function getStaticPaths() {
 	const refs = loadReferences();
 	const mappings = loadMappings();
 	const aliases = loadAliases();
+
+	const refsByWork = new Map<string, typeof refs>();
+	for (const r of refs) {
+		const arr = refsByWork.get(r.work_key);
+		if (arr) arr.push(r);
+		else refsByWork.set(r.work_key, [r]);
+	}
+	const mappingsBySubject = new Map<string, typeof mappings>();
+	for (const m of mappings) {
+		const arr = mappingsBySubject.get(m.subject);
+		if (arr) arr.push(m);
+		else mappingsBySubject.set(m.subject, [m]);
+	}
+	const systemsByKey = new Map(systems.map((s) => [s.key, s]));
+
 	return works.map((work) => {
 		const workIri = work.id;
-		const workRefs = refs
-			.filter((r) => r.work_key === work.key)
+		const workRefs = (refsByWork.get(work.key) ?? [])
+			.slice()
 			.sort((a, b) =>
 				a.locator.localeCompare(b.locator, undefined, { numeric: true }),
 			);
-		const workMappings = mappings.filter((m) => m.subject === workIri);
+		const workMappings = mappingsBySubject.get(workIri) ?? [];
 		const usedSystemKeys = Array.from(
 			new Set(workRefs.map((r) => r.citation_system_key)),
 		);
 		const usedSystems = usedSystemKeys
-			.map((k) => systems.find((s) => s.key === k))
+			.map((k) => systemsByKey.get(k))
 			.filter((s): s is NonNullable<typeof s> => Boolean(s));
 		const workAliases = Object.entries(aliases)
 			.filter(([key, target]) => target === workIri && !key.includes('://'))

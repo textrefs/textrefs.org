@@ -10,9 +10,15 @@ export async function getStaticPaths() {
 	const PAGE_SIZE = 200;
 	const systems = loadSystems();
 	const refs = loadReferences();
+	const refsBySystem = new Map<string, typeof refs>();
+	for (const r of refs) {
+		const arr = refsBySystem.get(r.citation_system_key);
+		if (arr) arr.push(r);
+		else refsBySystem.set(r.citation_system_key, [r]);
+	}
 	return systems.flatMap((system) => {
-		const systemRefs = refs
-			.filter((r) => r.citation_system_key === system.key)
+		const systemRefs = (refsBySystem.get(system.key) ?? [])
+			.slice()
 			.sort((a, b) =>
 				a.locator.localeCompare(b.locator, undefined, { numeric: true }),
 			);
