@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'textrefs/textrefs.org'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Verify data/ pin is on registry main
@@ -25,7 +25,7 @@ jobs:
             echo "::error::data/ pointer $(git rev-parse HEAD) is not an ancestor of registry/main"
             exit 1
           fi
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
