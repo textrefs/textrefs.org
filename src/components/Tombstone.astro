@@ -1,4 +1,11 @@
 ---
+import {
+	DRAFT_RECORD_COPY,
+	getRecordStatusBanner,
+	NO_SUCCESSOR_RECORD_COPY,
+	SUPERSEDED_BY_COPY,
+} from '../lib/record-status.ts';
+
 interface Props {
 	status: string;
 	supersededBy?: string;
@@ -6,8 +13,7 @@ interface Props {
 
 const { status, supersededBy } = Astro.props;
 
-const isDraft = status === 'draft';
-const isTombstone = status === 'withdrawn' || status === 'blocked';
+const { isDraft, isTombstone, title } = getRecordStatusBanner(status);
 ---
 
 {
@@ -17,10 +23,8 @@ const isTombstone = status === 'withdrawn' || status === 'blocked';
 				<strong>Draft record.</strong>
 			</p>
 			<p>
-				This record has not been promoted to <code>active</code> by expert
-				review. Its identifier carries no persistence promise yet: the record
-				may be corrected (which mints a different identifier) or retracted
-				without a tombstone. Do not cite it as stable.
+				{DRAFT_RECORD_COPY.beforeStatus} <code>{DRAFT_RECORD_COPY.status}</code>{' '}
+				{DRAFT_RECORD_COPY.afterStatus}
 			</p>
 		</aside>
 	)
@@ -30,18 +34,14 @@ const isTombstone = status === 'withdrawn' || status === 'blocked';
 	isTombstone && (
 		<aside class="reg-tombstone" role="note">
 			<p class="reg-tombstone-title">
-				<strong>
-					{status === 'blocked'
-						? 'This record is blocked by a rights, trust, or policy dispute.'
-						: 'This record has been withdrawn.'}
-				</strong>
+				<strong>{title}</strong>
 			</p>
 			{supersededBy ? (
 				<p>
-					Superseded by <a href={supersededBy}>{supersededBy}</a>.
+					{SUPERSEDED_BY_COPY} <a href={supersededBy}>{supersededBy}</a>.
 				</p>
 			) : (
-				<p>No successor record exists.</p>
+				<p>{NO_SUCCESSOR_RECORD_COPY}</p>
 			)}
 		</aside>
 	)

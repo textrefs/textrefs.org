@@ -8,6 +8,12 @@ import {
 	uuidOf,
 } from '../../../../lib/registry.ts';
 import { toCSL, formatChicago, toCOinS } from '../../../../lib/citation.ts';
+import {
+	DRAFT_RECORD_COPY,
+	getRecordStatusBanner,
+	NO_SUCCESSOR_RECORD_COPY,
+	SUPERSEDED_BY_COPY,
+} from '../../../../lib/record-status.ts';
 
 export async function getStaticPaths() {
 	const refs = loadReferences();
@@ -81,8 +87,11 @@ const escapeHtml = (s: string) =>
 		.replace(/"/g, '&quot;');
 const chicagoHtml = escapeHtml(chicago).replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
-const isDraft = ref.status === 'draft';
-const isTombstone = ref.status === 'withdrawn' || ref.status === 'blocked';
+const {
+	isDraft,
+	isTombstone,
+	title: statusTitle,
+} = getRecordStatusBanner(ref.status);
 ---
 
 <RecordPage
@@ -103,11 +112,9 @@ const isTombstone = ref.status === 'withdrawn' || ref.status === 'blocked';
 		isDraft && (
 			<aside class="banner banner-draft" role="note">
 				<p>
-					<strong>Draft record.</strong> This record has not been promoted to{' '}
-					<code>active</code> by expert review. Its identifier carries no
-					persistence promise yet: the record may be corrected (which mints a
-					different identifier) or retracted without a tombstone. Do not cite it
-					as stable.
+					<strong>Draft record.</strong> {DRAFT_RECORD_COPY.beforeStatus}{' '}
+					<code>{DRAFT_RECORD_COPY.status}</code>{' '}
+					{DRAFT_RECORD_COPY.afterStatus}
 				</p>
 			</aside>
 		)
@@ -116,18 +123,15 @@ const isTombstone = ref.status === 'withdrawn' || ref.status === 'blocked';
 		isTombstone && (
 			<aside class="banner banner-tombstone" role="note">
 				<p>
-					<strong>
-						{ref.status === 'blocked'
-							? 'This record is blocked by a rights, trust, or policy dispute.'
-							: 'This record has been withdrawn.'}
-					</strong>
+					<strong>{statusTitle}</strong>
 				</p>
 				{ref.superseded_by ? (
 					<p>
-						Superseded by <a href={ref.superseded_by}>{ref.superseded_by}</a>.
+						{SUPERSEDED_BY_COPY}{' '}
+						<a href={ref.superseded_by}>{ref.superseded_by}</a>.
 					</p>
 				) : (
-					<p>No successor record exists.</p>
+					<p>{NO_SUCCESSOR_RECORD_COPY}</p>
 				)}
 			</aside>
 		)
