@@ -165,6 +165,79 @@ references:
 	assert.match(message, /alias grammar/);
 });
 
+test('multi-part reference ranges accept a custom locator separator', () => {
+	const chapterVerse = compileFixture({
+		systems: {
+			'colon-chapter-verse': system(
+				'colon-chapter-verse',
+				'active',
+				'^(?<chapter>[1-9][0-9]*):(?<verse>[1-9][0-9]*)$',
+			),
+		},
+		works: {
+			'test.work': `${workHeader()}
+citation_system: colon-chapter-verse
+references_range:
+  - kind: chapter_verse
+    separator: ':'
+    counts: [2, 1]
+`,
+		},
+	});
+	assert.deepEqual(
+		new Set(chapterVerse.references.map((reference) => reference.locator)),
+		new Set(['1:1', '1:2', '2:1']),
+	);
+
+	const bookChapterVerse = compileFixture({
+		systems: {
+			'colon-book-chapter-verse': system(
+				'colon-book-chapter-verse',
+				'active',
+				'^(?<book>[A-Za-z]+):(?<chapter>[1-9][0-9]*):(?<verse>[1-9][0-9]*)$',
+			),
+		},
+		works: {
+			'test.work': `${workHeader()}
+citation_system: colon-book-chapter-verse
+references_range:
+  - kind: book_chapter_verse
+    book: Alpha
+    separator: ':'
+    counts: [2]
+`,
+		},
+	});
+	assert.deepEqual(
+		new Set(bookChapterVerse.references.map((reference) => reference.locator)),
+		new Set(['Alpha:1:1', 'Alpha:1:2']),
+	);
+});
+
+test('multi-part reference ranges keep the period separator by default', () => {
+	const reg = compileFixture({
+		systems: {
+			'dotted-chapter-verse': system(
+				'dotted-chapter-verse',
+				'active',
+				'^(?<chapter>[1-9][0-9]*)\\.(?<verse>[1-9][0-9]*)$',
+			),
+		},
+		works: {
+			'test.work': `${workHeader()}
+citation_system: dotted-chapter-verse
+references_range:
+  - kind: chapter_verse
+    counts: [2]
+`,
+		},
+	});
+	assert.deepEqual(
+		reg.references.map((reference) => reference.locator),
+		['1.1', '1.2'],
+	);
+});
+
 test('an active reference under a draft citation system is rejected', (t) => {
 	const message = expectCompileError(t, {
 		systems: {

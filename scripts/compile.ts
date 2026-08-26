@@ -43,33 +43,38 @@ function expandRange(range: ReferenceRange): string[] {
 		}
 		case 'book_line': {
 			const out: string[] = [];
+			const separator = range.separator ?? '.';
 			for (let b = 1; b <= range.counts.length; b++) {
 				const lines = range.counts[b - 1];
-				for (let l = 1; l <= lines; l++) out.push(`${b}.${l}`);
+				for (let l = 1; l <= lines; l++) out.push(`${b}${separator}${l}`);
 			}
 			return out;
 		}
 		case 'book_chapter': {
 			const out: string[] = [];
+			const separator = range.separator ?? '.';
 			for (let b = 1; b <= range.counts.length; b++) {
 				const chapters = range.counts[b - 1];
-				for (let c = 1; c <= chapters; c++) out.push(`${b}.${c}`);
+				for (let c = 1; c <= chapters; c++) out.push(`${b}${separator}${c}`);
 			}
 			return out;
 		}
 		case 'book_chapter_verse': {
 			const out: string[] = [];
+			const separator = range.separator ?? '.';
 			for (let ch = 1; ch <= range.counts.length; ch++) {
 				const verses = range.counts[ch - 1];
-				for (let v = 1; v <= verses; v++) out.push(`${range.book}.${ch}.${v}`);
+				for (let v = 1; v <= verses; v++)
+					out.push(`${range.book}${separator}${ch}${separator}${v}`);
 			}
 			return out;
 		}
 		case 'chapter_verse': {
 			const out: string[] = [];
+			const separator = range.separator ?? '.';
 			for (let ch = 1; ch <= range.counts.length; ch++) {
 				const verses = range.counts[ch - 1];
-				for (let v = 1; v <= verses; v++) out.push(`${ch}.${v}`);
+				for (let v = 1; v <= verses; v++) out.push(`${ch}${separator}${v}`);
 			}
 			return out;
 		}

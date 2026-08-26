@@ -84,6 +84,7 @@ export const ReferenceSource = z.union([
 export type ReferenceSource = z.infer<typeof ReferenceSource>;
 
 const Counts = z.array(z.number().int().positive());
+const LocatorSeparator = z.string().min(1).optional();
 const PageRange = z.tuple([
 	z.number().int().positive(),
 	z.number().int().positive(),
@@ -95,14 +96,27 @@ export const ReferenceRangeSource = z.discriminatedUnion('kind', [
 		from: z.number().int(),
 		to: z.number().int(),
 	}),
-	z.strictObject({ kind: z.literal('book_line'), counts: Counts }),
-	z.strictObject({ kind: z.literal('book_chapter'), counts: Counts }),
+	z.strictObject({
+		kind: z.literal('book_line'),
+		counts: Counts,
+		separator: LocatorSeparator,
+	}),
+	z.strictObject({
+		kind: z.literal('book_chapter'),
+		counts: Counts,
+		separator: LocatorSeparator,
+	}),
 	z.strictObject({
 		kind: z.literal('book_chapter_verse'),
 		book: z.string().min(1),
 		counts: Counts,
+		separator: LocatorSeparator,
 	}),
-	z.strictObject({ kind: z.literal('chapter_verse'), counts: Counts }),
+	z.strictObject({
+		kind: z.literal('chapter_verse'),
+		counts: Counts,
+		separator: LocatorSeparator,
+	}),
 	z.strictObject({
 		kind: z.literal('bekker'),
 		page_ranges: z.array(PageRange),
