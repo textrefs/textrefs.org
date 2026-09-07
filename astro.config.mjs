@@ -8,6 +8,7 @@ import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
 import starlightBlog from 'starlight-blog';
 import sitemap from '@astrojs/sitemap';
 import { buildSitemapExclusion } from './src/lib/sitemap.ts';
+import citeDev from './src/integrations/cite-dev.ts';
 
 const siteDomain = process.env.SITE_DOMAIN ?? 'textrefs.org';
 const site = siteDomain.startsWith('http')
@@ -20,6 +21,9 @@ export default defineConfig({
 	site,
 	integrations: [
 		mermaid({ autoTheme: true }),
+		// `/cite/` has no route: `scripts/compile.ts` writes the redirect pages
+		// after `astro build`. This serves them in `astro dev` only.
+		citeDev(),
 		// Declared explicitly so the sitemap can drop the pages `src/lib/sitemap.ts`
 		// rules out; Starlight adds `@astrojs/sitemap` with default options only
 		// when the project has not already registered it.

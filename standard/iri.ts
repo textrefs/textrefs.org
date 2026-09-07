@@ -36,3 +36,19 @@ export function refIri(uuid: string): string {
 export function mappingIri(uuid: string): string {
 	return `${BASE}/id/mapping/${uuid}`;
 }
+
+/**
+ * The site path a record IRI is served at, or the IRI itself when it names no
+ * record — `https://textrefs.org/id/ref/{uuid}` → `/id/ref/{uuid}/`.
+ *
+ * The inverse of the four builders above, so it lives with them. It also has to
+ * live outside `src/lib/`: `scripts/compile.ts` writes the `/cite/` redirects
+ * and needs the target path, while `src/lib/registry.ts` imports the compiler.
+ */
+export function iriToLocal(iri: string): string {
+	const m = iri.match(
+		/^https:\/\/textrefs\.org\/id\/(work|system|ref|mapping)\/(.+)$/,
+	);
+	if (m) return `/id/${m[1]}/${m[2]}/`;
+	return iri;
+}

@@ -6,13 +6,22 @@
 // a hand-written CompiledRegistry.
 import { test, type TestContext } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import {
+	mkdtempSync,
+	mkdirSync,
+	writeFileSync,
+	readFileSync,
+	readdirSync,
+	rmSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { v5 as uuidv5 } from 'uuid';
 import { createHash } from 'node:crypto';
 import {
 	compileRegistry,
+	citeRedirectHtml,
+	writeCiteRedirects,
 	dumpResources,
 	describeResource,
 	DUMP_MANIFEST,
@@ -1029,4 +1038,109 @@ test('the JSONL bodies are unchanged by the alias-resource refactor', () => {
 			?.body,
 		'',
 	);
+});
+
+// `/cite/` redirects. The pages are written here rather than rendered by Astro
+// (see `writeCiteRedirects`), so `npm run build:fast` never exercises them and
+// these tests are the only cover the writer has.
+
+test('a redirect page carries the target, a title, a lang and nothing else', () => {
+	const html = citeRedirectHtml('/id/ref/uuid/', false);
+	assert.equal(
+		html,
+		'<!doctype html><html lang="en"><meta charset="utf-8">' +
+			'<title>Redirecting</title>' +
+			'<meta http-equiv="refresh" content="0;url=/id/ref/uuid/">' +
+			'<link rel="canonical" href="/id/ref/uuid/">' +
+			'<p>Redirecting to <a href="/id/ref/uuid/">the record</a>.',
+	);
+});
+
+test('the redirect page stays small, because there are 172,794 of them', () => {
+	// A UUID target is the longest form the compiler writes.
+	const html = citeRedirectHtml(
+		'/id/ref/dc799d4b-9b17-5d76-85aa-dfd001c5321d/',
+		true,
+	);
+	assert.ok(
+		Buffer.byteLength(html) <= 410,
+		`redirect page grew to ${Buffer.byteLength(html)} bytes`,
+	);
+});
+
+test('only the alias of a draft record carries noindex', () => {
+	assert.ok(!citeRedirectHtml('/id/ref/uuid/', false).includes('noindex'));
+	assert.ok(
+		citeRedirectHtml('/id/ref/uuid/', true).includes(
+			'<meta name="robots" content="noindex">',
+		),
+	);
+});
+
+test('every /cite/ alias gets a page, and no external identifier does', () => {
+	const reg = compileFixture(
+		workWithMappings(`
+additional_systems:
+  - citation_system: fallback-section
+    references:
+      - '5'
+`),
+	);
+	const root = mkdtempSync(join(tmpdir(), 'textrefs-cite-'));
+	try {
+		const written = writeCiteRedirects(reg, root);
+
+		// Three alias paths, and two mapping identifiers that are not routes.
+		assert.equal(written, 3);
+		assert.deepEqual(readdirSync(root), ['test.work']);
+
+		const page = (alias: string) =>
+			readFileSync(join(root, alias, 'index.html'), 'utf-8');
+		const primary = reg.aliases['test.work/primary-section/5'];
+		assert.equal(page('test.work/5'), page('test.work/primary-section/5'));
+		assert.ok(page('test.work/5').includes(`content="0;url=/id/ref/`));
+		assert.ok(page('test.work/5').includes(primary.split('/').pop() ?? ''));
+		assert.notEqual(
+			page('test.work/fallback-section/5'),
+			page('test.work/primary-section/5'),
+		);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
+test('a draft reference gets a noindex redirect, an active one does not', () => {
+	const draft = compileFixture({
+		systems: twoSystems,
+		works: {
+			'test.work': `${workHeader('draft')}
+citation_system: primary-section
+references:
+  - '5'
+`,
+		},
+	});
+	const active = compileFixture({
+		systems: twoSystems,
+		works: {
+			'test.work': `${workHeader()}
+citation_system: primary-section
+references:
+  - '5'
+`,
+		},
+	});
+
+	const pageFor = (reg: CompiledRegistry) => {
+		const root = mkdtempSync(join(tmpdir(), 'textrefs-cite-'));
+		try {
+			writeCiteRedirects(reg, root);
+			return readFileSync(join(root, 'test.work', '5', 'index.html'), 'utf-8');
+		} finally {
+			rmSync(root, { recursive: true, force: true });
+		}
+	};
+
+	assert.ok(pageFor(draft).includes('noindex'));
+	assert.ok(!pageFor(active).includes('noindex'));
 });

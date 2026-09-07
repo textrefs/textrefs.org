@@ -4,6 +4,10 @@ import {
 } from '../../scripts/compile.js';
 import { fixtureRegistry } from './registry.fixture.js';
 
+// Re-exported, not defined here: `scripts/compile.ts` writes the `/cite/`
+// redirects and needs it too, and it cannot import this module without a cycle.
+export { iriToLocal } from '../../standard/iri.js';
+
 // Astro loads `astro.config.mjs` in a module graph of its own, separate from
 // the one the pages render in, so this module is instantiated twice in a single
 // build and a module-level memo is not shared between the two. Compiling the
@@ -58,12 +62,4 @@ export function uuidOf(iri: string): string {
 
 export function workKeyOf(iri: string): string {
 	return iri.replace(/^https:\/\/textrefs\.org\/id\/work\//, '');
-}
-
-export function iriToLocal(iri: string): string {
-	const m = iri.match(
-		/^https:\/\/textrefs\.org\/id\/(work|system|ref|mapping)\/(.+)$/,
-	);
-	if (m) return `/id/${m[1]}/${m[2]}/`;
-	return iri;
 }
