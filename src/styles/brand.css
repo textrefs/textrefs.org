@@ -9,6 +9,11 @@
  * inline-code, emphasised text — picks up the brand's neutral hue instead of
  * Starlight's default bluish ramp. The four BRAND anchor values are kept
  * exactly; the in-between steps are interpolated on a neutral (hue 0%) scale.
+ *
+ * `public/assets/record.css` repeats these anchors, the same ramp steps, and
+ * the same @font-face block. Astro bundles this file for Starlight pages; that
+ * one is served unbundled so 39k+ record pages share one cached stylesheet, so
+ * it cannot import this. Change both files together.
  */
 
 @font-face {
@@ -148,6 +153,19 @@ h2 {
 	margin-right: 0.4rem;
 	vertical-align: middle;
 }
+/* A tag chip that links out — the SPDX licence IRI on a resolver target. It
+   keeps the chip's own colour rather than the link colour, so a row of chips
+   reads as one row. */
+a.reg-tag {
+	color: var(--sl-color-gray-3);
+	text-decoration: none;
+}
+a.reg-tag:hover,
+a.reg-tag:focus-visible {
+	color: var(--sl-color-text-accent);
+	text-decoration: underline;
+}
+
 ul.reg-list {
 	list-style: none;
 	padding: 0;

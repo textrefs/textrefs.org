@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { AdminMetadata, FlatKey, Iri, IsoDate, SemVer } from './common.js';
+import { AdminMetadata, FlatKey, Iri, IsoDate, LanguageTag } from './common.js';
 
 export const ResolverTargetEntry = z.object({
 	url: Iri,
-	language: z.string().min(2).optional(),
+	language: LanguageTag.optional(),
 	edition: z.string().optional(),
 	provider: z.string().optional(),
 	access: z.enum(['open', 'paywalled', 'restricted', 'unknown']),
@@ -24,7 +24,6 @@ export const CanonicalReferenceBase = AdminMetadata.extend({
 	work_key: FlatKey,
 	citation_system_key: FlatKey,
 	locator: z.string().min(1),
-	normalization_version: SemVer,
 	resolver_targets: z.array(ResolverTargetEntry).default([]),
 });
 

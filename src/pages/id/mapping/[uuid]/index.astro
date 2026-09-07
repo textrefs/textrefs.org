@@ -35,25 +35,34 @@ const jsonHref = `/id/mapping/${uuidOf(mapping.id)}.json`;
 				tag: 'link',
 				attrs: {
 					rel: 'alternate',
-					type: 'application/json',
+					type: 'application/ld+json',
 					href: jsonHref,
 				},
 			},
+			// Draft records are excluded from search indexing (ADR-0003).
+			...(mapping.status === 'draft'
+				? [
+						{
+							tag: 'meta' as const,
+							attrs: { name: 'robots', content: 'noindex' },
+						},
+					]
+				: []),
 		],
 	}}
 >
 	<p class="reg-sub">
-		<span class="reg-tag">MappingAssertion</span>
-		<span class="reg-tag">{mapping.status}</span>
-		<code class="reg-iri">{mapping.id}</code>
+		<span class="reg-tag">MappingAssertion</span>{' '}
+		<span class="reg-tag">{mapping.status}</span>{' '}
+		<code class="reg-iri">{mapping.id}</code>{' '}
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
 
-	<Tombstone status={mapping.status} />
+	<Tombstone status={mapping.status} supersededBy={mapping.superseded_by} />
 
 	<ul class="reg-list">
 		<li>
-			Subject:
+			Subject:{' '}
 			{
 				subjectWork ? (
 					<a href={`/id/work/${subjectWork.key}/`}>
@@ -70,12 +79,7 @@ const jsonHref = `/id/mapping/${uuidOf(mapping.id)}.json`;
 			Relation: <span class="reg-tag">{mapping.relation}</span>
 		</li>
 		<li>
-			Target:
-			{
-				mapping.target.target_kind && (
-					<span class="reg-tag">{mapping.target.target_kind}</span>
-				)
-			}
+			Target:{' '}
 			<a
 				href={mapping.target.identifier}
 				target="_blank"

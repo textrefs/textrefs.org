@@ -107,7 +107,7 @@ In the event of a tied vote on substantive matters, the President decides with t
 
 ## Art. 11 Board
 
-The Board consists of at least three persons.
+The Board consists of at least two persons.
 
 The term of office is two years. Re-election is possible.
 
@@ -143,11 +143,7 @@ Resolutions are recorded in minutes.
 
 ## Art. 15 Volunteer service, expenses, and compensation
 
-Members of the Board serve on a volunteer basis and are, as a matter of principle, only entitled to reimbursement of their effective expenses and out-of-pocket costs. Reasonable compensation may be granted to individual Board members for special services.
-
-Compensation for special services is granted only where it serves the association's purpose, is at market rate and proportionate, is budgeted or expressly resolved by the Board, is documented transparently, and does not result in hidden profit distribution or self-dealing.
-
-Affected persons recuse themselves from decisions concerning their own compensation or the compensation of persons close to them.
+The members of the Board serve in an honorary capacity and are entitled only to reimbursement of their actual expenses and cash outlays. Compensation for special or operational services is excluded.
 
 Details are governed by an expense and compensation regulation.
 
@@ -197,12 +193,12 @@ The assets remaining after dissolution of the association shall be transferred t
 
 ## Art. 22 Entry into force
 
-These statutes were adopted at the founding meeting of [date] and enter into force immediately.
+These statutes were adopted at the founding meeting of 2 September 2026 and enter into force immediately.
 
-Place, date: Zürich, [date]
+Place, date: Zürich, 2 September 2026
 
 For the founding meeting:
 
-President: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+President, Moritz Mähr: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-Recording officer: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+Recording officer, Luz Christopher Seiberth: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_

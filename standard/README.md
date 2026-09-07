@@ -12,6 +12,7 @@ These paths are part of the standard but stay in their current locations today b
 
 - `src/content/docs/standard/*.md` — normative spec prose (rendered by Starlight at `/standard/`).
 - `public/contexts/v1.jsonld` — JSON-LD `@context` (served at `/contexts/v1.jsonld`).
+- `src/lib/ontology.ts`, `src/pages/ontology.astro`, and `src/pages/ontology.json.ts` — the shared ontology definitions and their dereferenceable renderings at `/ontology/` (HTML) and `/ontology.json` (JSON-LD).
 
 When the standard is extracted, these move into this directory (e.g. `standard/spec/`, `standard/contexts/`) and the site consumes them through a submodule, an npm package, or a CI sync step.
 

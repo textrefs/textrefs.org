@@ -15,14 +15,14 @@ export const Maturity = z.enum([
 export const collections = {
 	docs: defineCollection({
 		loader: docsLoader(),
+		// `extend` must return a ZodObject: Starlight deep-merges it into its own
+		// frontmatter shape, so an intersection (`.and()`) is rejected.
 		schema: docsSchema({
 			extend: (context) =>
-				blogSchema(context).and(
-					z.object({
-						maturity: Maturity.optional(),
-						banner: z.object({ content: z.string() }).default(UNSTABLE_BANNER),
-					}),
-				),
+				blogSchema(context).extend({
+					maturity: Maturity.optional(),
+					banner: z.object({ content: z.string() }).default(UNSTABLE_BANNER),
+				}),
 		}),
 	}),
 };

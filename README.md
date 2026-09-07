@@ -16,7 +16,7 @@ Site: <https://textrefs.org> · Built with [Astro](https://astro.build) + [Starl
 
 ## About
 
-TextRefs is a non-profit infrastructure project that builds, maintains, and publishes an open registry for canonical text references — the kind of identifiers used to cite a passage in Plato, a Bekker line in Aristotle, a Stephanus page, or any other established reference system in the humanities. It is being set up as a Zürich-based association (_Verein_) in formation, which will seek tax-exempt non-profit status.
+TextRefs is a non-profit infrastructure project that builds, maintains, and publishes an open registry for canonical text references — the kind of identifiers used to cite a passage in Plato, a Bekker line in Aristotle, a Stephanus page, or any other established reference system in the humanities. It is a Zürich-based association (_Verein_), founded on 2 September 2026. On 27 August 2026, the Cantonal Tax Office of Zürich assured the association of tax exemption on grounds of public benefit, subject to its being founded as presented; donations become tax-deductible only after a legally binding decision.
 
 **TextRefs is:**
 
@@ -49,13 +49,16 @@ TextRefs is a non-profit infrastructure project that builds, maintains, and publ
 ├── src/
 │   ├── components/             # Starlight component overrides (Footer)
 │   ├── content/docs/           # site content (English at root, German under de/)
+│   ├── layouts/                # shared page layouts (e.g. canonical record pages)
+│   ├── lib/                    # registry loading, citation, and banner helpers
+│   ├── pages/                  # id/, reg/, cite/ routes (see AGENTS.md)
 │   ├── styles/brand.css        # brand tokens (see public/BRAND notes)
 │   └── content.config.ts
 ├── data/                       # git submodule → textrefs/registry (hand-authored YAML)
 ├── scripts/                    # data compile + validate pipeline
-├── standard/, api/             # scaffolds reserved for future repo splits
+├── standard/                   # draft standard workspace: Zod schemas, JSON-LD context
+├── api/                        # OpenAPI contract (api/openapi.yaml)
 ├── decisions/                  # Architecture Decision Records (MADR)
-├── docs-internal/              # maintainer-only notes, not published
 ├── astro.config.mjs            # Astro + Starlight config (i18n, sidebar)
 ├── cliff.toml                  # git-cliff config for CHANGELOG generation
 ├── commitlint.config.js        # conventional-commit enforcement
@@ -68,19 +71,19 @@ Prerequisites: Node 24 and npm.
 
 Configuration lives in `.env`; use [`.env.example`](./.env.example) as the starting point. `SITE_DOMAIN` controls Astro's canonical `site` URL and defaults to `textrefs.org` when unset.
 
-| Command                 | Action                                                                                                                                                              |
-| :---------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `npm install`           | Install dependencies; wires git hooks (husky + lint-staged)                                                                                                         |
-| `npm run dev`           | Start local dev server at `localhost:4321`                                                                                                                          |
-| `npm run build`         | Build the production site to `./dist/`                                                                                                                              |
-| `npm run build:fast`    | Build the site against a tiny fixture registry, without compiling full data                                                                                         |
-| `npm run preview`       | Preview the build locally                                                                                                                                           |
-| `npm run compile:data`  | Read hand-authored YAML under `data/works/` and `data/systems/`, expand the in-memory registry, and emit JSONL resources plus `datapackage.json` under `dist/dump/` |
-| `npm run validate:data` | Validate every compiled record against the canonical Zod schemas                                                                                                    |
-| `npm run build:data`    | `compile:data` then `validate:data` — the contributor data pipeline                                                                                                 |
-| `npm run verify:fast`   | Fast local check using fixture registry data                                                                                                                        |
-| `npm run verify`        | Prettier + `astro check` + production build — the CI gate                                                                                                           |
-| `npm run changelog`     | Regenerate `CHANGELOG.md` from git history (git-cliff)                                                                                                              |
+| Command                 | Action                                                                                                                                                                               |
+| :---------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm install`           | Install dependencies; wires git hooks (husky + lint-staged)                                                                                                                          |
+| `npm run dev`           | Start local dev server at `localhost:4321`                                                                                                                                           |
+| `npm run build`         | Build the production site to `./dist/`                                                                                                                                               |
+| `npm run build:fast`    | Build the site against a tiny fixture registry, without compiling full data                                                                                                          |
+| `npm run preview`       | Preview the build locally                                                                                                                                                            |
+| `npm run compile:data`  | Read hand-authored YAML under `data/works/` and `data/systems/`, expand the in-memory registry, and emit JSONL resources, the alias table, and `datapackage.json` under `dist/dump/` |
+| `npm run validate:data` | Validate every compiled record against the canonical Zod schemas                                                                                                                     |
+| `npm run build:data`    | `compile:data` then `validate:data` — the contributor data pipeline                                                                                                                  |
+| `npm run verify:fast`   | Fast local check using fixture registry data                                                                                                                                         |
+| `npm run verify`        | Prettier + `astro check` + tests + production build — the CI gate                                                                                                                    |
+| `npm run changelog`     | Regenerate `CHANGELOG.md` from git history (git-cliff)                                                                                                                               |
 
 Contributors edit the YAML under [`data/works/`](https://github.com/textrefs/registry/tree/main/works) and [`data/systems/`](https://github.com/textrefs/registry/tree/main/systems); the directory is a git submodule pointing at [`textrefs/registry`](https://github.com/textrefs/registry). Run `git submodule update --init --recursive` after cloning. The compiler expands the pinned submodule into the flat registry dump (works, systems, refs, mappings) under `dist/dump/`. See [`docs/get-started/authoring`](https://textrefs.org/get-started/authoring/) for the format. For documentation, styling, and route work, use `npm run verify:fast` locally; run the full `npm run verify` before PRs that touch registry data, release output, production build behaviour, or CI behaviour.
 
@@ -111,13 +114,13 @@ Both deposits live in the [TextRefs Zenodo community](https://zenodo.org/communi
 | 🎁 Feature requests               | [GitHub Issues](https://github.com/textrefs/textrefs.org/issues)                 |
 | 📊 Bad data / mapping corrections | [GitHub Issues](https://github.com/textrefs/textrefs.org/issues) (label: `data`) |
 | 📚 Docs issues                    | [GitHub Issues](https://github.com/textrefs/textrefs.org/issues)                 |
-| 🛡 Security vulnerabilities       | See [`SECURITY.md`](./SECURITY.md) — private GitHub advisory                     |
+| 🛡 Security vulnerabilities        | See [`SECURITY.md`](./SECURITY.md) — private GitHub advisory                     |
 | 🤝 Code-of-Conduct concerns       | <community@textrefs.org>                                                         |
 | 💬 General questions              | [GitHub Discussions](https://github.com/textrefs/textrefs.org/discussions)       |
 
 ## Roadmap
 
-TextRefs is **pre-1.0**: the association is being founded, the standard is being drafted, and the current registry examples are candidate data. Public milestones will appear on the [GitHub project board](https://github.com/textrefs/textrefs.org/projects) once it is set up. The statutes ([English](https://textrefs.org/association/statutes/), [Deutsch](https://textrefs.org/de/association/statutes/)) and governance regulation describe the long-term scope.
+TextRefs is **pre-1.0**: the association is being founded, the standard is being drafted, and the current registry examples are draft data. Public milestones will appear on the [GitHub project board](https://github.com/textrefs/textrefs.org/projects) once it is set up. The statutes ([English](https://textrefs.org/association/statutes/), [Deutsch](https://textrefs.org/de/association/statutes/)) and governance regulation describe the long-term scope.
 
 ## Contributing
 
@@ -132,7 +135,7 @@ Two release trains live in two repositories:
 - **TextRefs Standard** (this repo) — tags `vMAJOR.MINOR.PATCH[-prerelease]` advance the spec, schemas, and site together. The spec's maturity level (`working-draft` → `candidate-recommendation` → `recommendation`) is encoded in each `/standard/*` page's frontmatter; the SemVer tag encodes pre-release status.
 - **TextRefs Registry** ([`textrefs/registry`](https://github.com/textrefs/registry)) — calendar tags `vYYYY.MM.N` cut monthly registry exports. The data-package `version` inside `datapackage.json` follows SemVer-without-`v`.
 
-Records can be re-minted (e.g. when a `work` key is renamed). The old IRI continues to resolve as a tombstone (`status: withdrawn`); successors are linked by an `exactMatch` `MappingAssertion`. See [versioning policy](https://textrefs.org/standard/versioning/) for the full rules.
+Records can be re-minted (e.g. when a `work` key is renamed). The old IRI continues to resolve as a tombstone (`status: withdrawn`); successors are linked by the `superseded_by` field (`dcterms:isReplacedBy`). See [versioning policy](https://textrefs.org/standard/versioning/) for the full rules.
 
 ## Contributors and roles
 

@@ -2,9 +2,18 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import { loadWorks, loadSystems } from '../../lib/registry.ts';
 import { UNSTABLE_BANNER } from '../../lib/banner.ts';
+import { byKey } from '../../lib/collection.ts';
 
-const works = [...loadWorks()].sort((a, b) => a.key.localeCompare(b.key));
-const systems = [...loadSystems()].sort((a, b) => a.key.localeCompare(b.key));
+const works = [...loadWorks()].sort(byKey);
+const systems = [...loadSystems()].sort(byKey);
+
+// The client filter below is a plain substring match on this attribute, so a
+// work is found by its abbreviation and by a translated title as soon as those
+// sit in the haystack (ADR-0007).
+const workFilterKey = (w: (typeof works)[number]) =>
+	[w.preferred_label, ...(w.alternative_labels ?? []), w.key]
+		.join(' ')
+		.toLowerCase();
 ---
 
 <StarlightPage
@@ -15,17 +24,39 @@ const systems = [...loadSystems()].sort((a, b) => a.key.localeCompare(b.key));
 		template: 'doc',
 		tableOfContents: false,
 		banner: UNSTABLE_BANNER,
+		head: [
+			{
+				tag: 'link',
+				attrs: {
+					rel: 'alternate',
+					type: 'application/ld+json',
+					href: '/reg/works.json',
+					title: 'Works',
+				},
+			},
+			{
+				tag: 'link',
+				attrs: {
+					rel: 'alternate',
+					type: 'application/ld+json',
+					href: '/reg/systems.json',
+					title: 'Citation systems',
+				},
+			},
+		],
 	}}
 >
 	<p>
 		The TextRefs registry holds <strong>works</strong> (texts that get cited),
+		{' '}
 		<strong>citation systems</strong> (rules for how locators inside a work look),
 		and <strong>canonical references</strong> (individual points inside a work). Each
-		record lives at its persistent identifier under <code>/id/</code>; this page
-		is the human entry point for finding them. See
-		<a href="/get-started/url-layout/">URL layout</a> for how
-		<code>/id/</code>, <code>/reg/</code>, <code>/cite/</code>, and
-		<code>/api/</code> fit together, or the
+		record lives at its canonical identifier under <code>/id/</code>, permanent
+		once the record is <code>active</code>; this page is the human entry point
+		for finding them. See{' '}
+		<a href="/get-started/url-layout/">URL layout</a> for how{' '}
+		<code>/id/</code>, <code>/reg/</code>, <code>/cite/</code>, and{' '}
+		<code>/api/</code> fit together, or the{' '}
 		<a href="/standard/specification/">specification</a> for the data model.
 	</p>
 
@@ -46,7 +77,7 @@ const systems = [...loadSystems()].sort((a, b) => a.key.localeCompare(b.key));
 		) : (
 			<ul id="reg-works" class="reg-list" data-reg-list>
 				{works.map((w) => (
-					<li data-reg-item={`${w.preferred_label} ${w.key}`.toLowerCase()}>
+					<li data-reg-item={workFilterKey(w)}>
 						<a href={`/id/work/${w.key}/`}>{w.preferred_label}</a>{' '}
 						<span class="reg-tag">{w.status}</span>{' '}
 						<code class="reg-iri">{w.key}</code>

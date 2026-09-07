@@ -1,8 +1,5 @@
 ---
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import AliasList from '../../../../components/AliasList.astro';
-import CitationBox from '../../../../components/CitationBox.astro';
-import Tombstone from '../../../../components/Tombstone.astro';
+import RecordPage from '../../../../layouts/RecordPage.astro';
 import {
 	loadAliases,
 	loadReferences,
@@ -10,7 +7,17 @@ import {
 	loadSystems,
 	uuidOf,
 } from '../../../../lib/registry.ts';
-import { UNSTABLE_BANNER } from '../../../../lib/banner.ts';
+import { toCSL, formatChicago, toCOinS } from '../../../../lib/citation.ts';
+import { spdxLicenseLabel } from '../../../../lib/license.ts';
+import {
+	DEPRECATED_DETAIL,
+	DRAFT_BODY_HTML,
+	DRAFT_TITLE,
+	NO_SUCCESSOR,
+	isDraft,
+	isTombstone,
+	tombstoneTitle,
+} from '../../../../lib/record-status.ts';
 
 export async function getStaticPaths() {
 	const refs = loadReferences();
@@ -26,6 +33,15 @@ export async function getStaticPaths() {
 		if (targetAliases) targetAliases.push(key);
 		else aliasesByTarget.set(target, [key]);
 	}
+	// Works cited under several systems repeat locator strings across them
+	// (ADR-0005), so the locator alone no longer identifies the passage in the
+	// page title or the rendered citation.
+	const systemsByWork = new Map<string, Set<string>>();
+	for (const r of refs) {
+		const seen = systemsByWork.get(r.work_key);
+		if (seen) seen.add(r.citation_system_key);
+		else systemsByWork.set(r.work_key, new Set([r.citation_system_key]));
+	}
 	return refs.map((ref) => {
 		const work = worksByKey.get(ref.work_key);
 		const system = systemsByKey.get(ref.citation_system_key);
@@ -40,49 +56,94 @@ export async function getStaticPaths() {
 		}));
 		return {
 			params: { uuid: uuidOf(ref.id) },
-			props: { ref, work, system, aliases: refAliases, byLang },
+			props: {
+				ref,
+				work,
+				system,
+				aliases: refAliases,
+				byLang,
+				multiSystem: (systemsByWork.get(ref.work_key)?.size ?? 1) > 1,
+			},
 		};
 	});
 }
 
-const { ref, work, system, aliases, byLang } = Astro.props;
-const pageTitle = `${work?.preferred_label ?? ref.work_key} ${ref.locator}`;
+const { ref, work, system, aliases, byLang, multiSystem } = Astro.props;
+const workLabel = work?.preferred_label ?? ref.work_key;
+const systemLabel = system?.preferred_label ?? ref.citation_system_key;
+const pageTitle = multiSystem
+	? `${workLabel} ${ref.locator} (${systemLabel})`
+	: `${workLabel} ${ref.locator}`;
 const jsonHref = `/id/ref/${uuidOf(ref.id)}.json`;
+const site = Astro.site ?? new URL('https://textrefs.org');
+const aliasUrls = aliases.map((alias) =>
+	new URL(`/cite/${alias}/`, site).toString(),
+);
+
+const csl = toCSL(work, ref, system);
+const chicago = formatChicago(csl, { includeSection: multiSystem });
+const coins = toCOinS(csl);
+const escapeHtml = (s: string) =>
+	s
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
+const chicagoHtml = escapeHtml(chicago).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+// The copy and the two derivations come from `src/lib/record-status.ts`, which
+// `src/components/Tombstone.astro` reads as well (#100). This template keeps its
+// own markup and takes its styling from `public/assets/record.css`: a scoped
+// `<style>` block would ship with every one of the reference pages.
+const draft = isDraft(ref.status);
+const tombstone = isTombstone(ref.status);
 ---
 
-<StarlightPage
-	frontmatter={{
-		title: pageTitle,
-		description: `Canonical reference ${ref.locator} in ${work?.preferred_label ?? ref.work_key}.`,
-		template: 'doc',
-		tableOfContents: false,
-		pagefind: false,
-		banner: UNSTABLE_BANNER,
-		head: [
-			{
-				tag: 'link',
-				attrs: {
-					rel: 'alternate',
-					type: 'application/json',
-					href: jsonHref,
-				},
-			},
-		],
-	}}
+<RecordPage
+	title={pageTitle}
+	description={`Canonical reference ${ref.locator} in ${workLabel}, ${systemLabel}.`}
+	jsonHref={jsonHref}
+	noindex={draft}
 >
+	<h1>{pageTitle}</h1>
 	<p class="reg-sub">
-		<span class="reg-tag">CanonicalReference</span>
-		<span class="reg-tag">{ref.status}</span>
-		<code class="reg-iri">{ref.id}</code>
-		<a href={jsonHref} class="reg-json">JSON</a>
+		<span class="reg-tag">CanonicalReference</span>{' '}
+		<span class="reg-tag">{ref.status}</span>{' '}
+		<code class="reg-iri">{ref.id}</code>{' '}
+		<a href={jsonHref}>JSON</a>
 	</p>
 
-	<Tombstone status={ref.status} />
+	{
+		draft && (
+			<aside class="banner banner-draft" role="note">
+				<p>
+					<strong>{DRAFT_TITLE}</strong> <Fragment set:html={DRAFT_BODY_HTML} />
+				</p>
+			</aside>
+		)
+	}
+	{
+		tombstone && (
+			<aside class="banner banner-tombstone" role="note">
+				<p>
+					<strong>{tombstoneTitle(ref.status)}</strong>
+				</p>
+				{ref.status === 'deprecated' && <p>{DEPRECATED_DETAIL}</p>}
+				{ref.superseded_by ? (
+					<p>
+						Superseded by <a href={ref.superseded_by}>{ref.superseded_by}</a>.
+					</p>
+				) : (
+					<p>{NO_SUCCESSOR}</p>
+				)}
+			</aside>
+		)
+	}
 
 	<h2>In context</h2>
 	<ul class="reg-list">
 		<li>
-			Work:
+			Work:{' '}
 			{
 				work ? (
 					<a href={`/id/work/${work.key}/`}>{work.preferred_label}</a>
@@ -92,7 +153,7 @@ const jsonHref = `/id/ref/${uuidOf(ref.id)}.json`;
 			}
 		</li>
 		<li>
-			Citation system:
+			Citation system:{' '}
 			{
 				system ? (
 					<a href={`/id/system/${system.key}/`}>{system.preferred_label}</a>
@@ -103,17 +164,29 @@ const jsonHref = `/id/ref/${uuidOf(ref.id)}.json`;
 		</li>
 		<li>
 			Locator: <code>{ref.locator}</code>
-			(normalization <code>{ref.normalization_version}</code>)
 		</li>
 	</ul>
 
-	<CitationBox work={work} ref={ref} system={system} />
+	<h2>Cite this reference</h2>
+	<blockquote class="cite-text" set:html={chicagoHtml} />
+	<span class="Z3988" hidden title={coins}></span>
 
-	<h2>Aliases ({aliases.length})</h2>
-	<AliasList
-		aliases={aliases}
-		empty="No aliases registered for this reference."
-	/>
+	<h2>Aliases ({aliasUrls.length})</h2>
+	{
+		aliasUrls.length === 0 ? (
+			<p class="reg-empty">No aliases registered for this reference.</p>
+		) : (
+			<ul class="reg-list">
+				{aliasUrls.map((aliasUrl) => (
+					<li>
+						<a href={aliasUrl}>
+							<code class="reg-iri">{aliasUrl}</code>
+						</a>
+					</li>
+				))}
+			</ul>
+		)
+	}
 
 	<h2>Resolver targets ({ref.resolver_targets.length})</h2>
 	{
@@ -133,10 +206,30 @@ const jsonHref = `/id/ref/${uuidOf(ref.id)}.json`;
 								<li>
 									<a href={t.url} target="_blank" rel="noopener noreferrer">
 										{t.provider ?? t.url}
-									</a>
-									{t.edition && <span class="reg-tag">{t.edition}</span>}
-									<span class="reg-tag">{t.access}</span>
-									{t.license && <span class="reg-tag">{t.license}</span>}
+									</a>{' '}
+									{t.edition && <span class="reg-tag">{t.edition}</span>}{' '}
+									<span class="reg-tag">{t.access}</span>{' '}
+									{t.license && (
+										<a
+											class="reg-tag"
+											href={t.license}
+											target="_blank"
+											rel="noopener noreferrer license"
+										>
+											{spdxLicenseLabel(t.license)}
+										</a>
+									)}{' '}
+									{t.license_url && (
+										<a
+											class="reg-tag"
+											href={t.license_url}
+											target="_blank"
+											rel="noopener noreferrer"
+											aria-label={`Rights statement for ${t.provider ?? t.url}`}
+										>
+											Rights
+										</a>
+									)}
 									<br />
 									<code class="reg-iri">{t.url}</code>
 								</li>
@@ -147,4 +240,4 @@ const jsonHref = `/id/ref/${uuidOf(ref.id)}.json`;
 			</div>
 		)
 	}
-</StarlightPage>
+</RecordPage>

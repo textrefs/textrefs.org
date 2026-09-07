@@ -1,10 +1,40 @@
+# Version updates target `staging`, not the default branch.
+#
+# `main` only moves at release time, by squash-merging `staging`. A bump landed
+# on `main` alone is therefore reverted by the next release: the squash applies
+# staging's tree against a merge base that predates the bump. Everything that
+# should survive a release has to reach `main` through `staging`.
+#
+# Note that `target-branch` governs version updates only — Dependabot security
+# updates are always raised against the default branch, so advisory-driven PRs
+# will still appear against `main` and still need folding into `staging` by
+# hand.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
+    target-branch: staging
     schedule:
       interval: weekly
     groups:
       github-actions:
+        patterns:
+          - '*'
+
+  - package-ecosystem: npm
+    directory: /
+    target-branch: staging
+    schedule:
+      interval: weekly
+    groups:
+      # Astro, Starlight and their plugins move in lockstep and are upgraded
+      # together or not at all; a lone bump here usually fails to resolve.
+      astro:
+        patterns:
+          - 'astro'
+          - '@astrojs/*'
+          - 'starlight*'
+      # First match wins, so this picks up everything else in one PR.
+      npm:
         patterns:
           - '*'

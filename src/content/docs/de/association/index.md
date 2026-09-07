@@ -5,7 +5,7 @@ sidebar:
   order: 1
 ---
 
-**TextRefs** ist ein gemeinnütziger, offener und nicht-kommerzieller, in Gründung befindlicher Verein mit Sitz in Zürich. Er baut, pflegt und veröffentlicht ein offenes, persistentes und maschinenlesbares Register für kanonische Textreferenzen.
+**TextRefs** ist ein gemeinnütziger, offener und nicht-kommerzieller Verein mit Sitz in Zürich. Er baut, pflegt und veröffentlicht ein offenes, persistentes und maschinenlesbares Register für kanonische Textreferenzen.
 
 Diese Seiten enthalten die rechtlich verbindlichen Dokumente in der ursprünglichen deutschen Fassung:
 
@@ -17,5 +17,5 @@ Diese Seiten enthalten die rechtlich verbindlichen Dokumente in der ursprünglic
 Die englischen Fassungen sind unverbindliche Übersetzungen.
 
 :::note[Status Steuerbefreiung]
-Der Verein strebt die Steuerbefreiung wegen Gemeinnützigkeit im Kanton Zürich an. Spenden sind erst nach rechtskräftiger Verfügung des Kantonalen Steueramts steuerlich abzugsfähig.
+Das Kantonale Steueramt Zürich hat dem Verein am 27. August 2026 die Steuerbefreiung wegen Gemeinnützigkeit zugesichert. Der Verein wurde am 2. September 2026 wie dargelegt gegründet. Der Verein hat die unterzeichneten Statuten und das Gründungsprotokoll eingereicht. Spenden sind erst nach rechtskräftiger Verfügung des Kantonalen Steueramts steuerlich abzugsfähig.
 :::

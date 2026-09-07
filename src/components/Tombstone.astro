@@ -1,23 +1,51 @@
 ---
+import {
+	DEPRECATED_DETAIL,
+	DRAFT_BODY_HTML,
+	DRAFT_TITLE,
+	NO_SUCCESSOR,
+	isDraft,
+	isTombstone,
+	tombstoneTitle,
+} from '../lib/record-status.js';
+
 interface Props {
 	status: string;
+	supersededBy?: string;
 }
 
-const { status } = Astro.props;
+const { status, supersededBy } = Astro.props;
 
-const isTombstone = status === 'withdrawn';
+// The copy and the two derivations live in `src/lib/record-status.ts`, with the
+// ADR-0004 reasoning behind them. `src/pages/id/ref/[uuid]/index.astro` renders
+// the same words in its own markup, and reads them from the same module (#100).
 ---
 
 {
-	isTombstone && (
+	isDraft(status) && (
+		<aside class="reg-draft" role="note">
+			<p class="reg-draft-title">
+				<strong>{DRAFT_TITLE}</strong>
+			</p>
+			<p set:html={DRAFT_BODY_HTML} />
+		</aside>
+	)
+}
+
+{
+	isTombstone(status) && (
 		<aside class="reg-tombstone" role="note">
 			<p class="reg-tombstone-title">
-				<strong>This record has been withdrawn.</strong>
+				<strong>{tombstoneTitle(status)}</strong>
 			</p>
-			<p>
-				If a successor exists, it is linked from an <code>exactMatch</code>{' '}
-				mapping listed on this page.
-			</p>
+			{status === 'deprecated' && <p>{DEPRECATED_DETAIL}</p>}
+			{supersededBy ? (
+				<p>
+					Superseded by <a href={supersededBy}>{supersededBy}</a>.
+				</p>
+			) : (
+				<p>{NO_SUCCESSOR}</p>
+			)}
 		</aside>
 	)
 }
@@ -34,6 +62,19 @@ const isTombstone = status === 'withdrawn';
 		margin-top: 0;
 	}
 	.reg-tombstone p {
+		margin: 0.25rem 0;
+	}
+	.reg-draft {
+		border-left: 4px solid var(--sl-color-blue, #2563eb);
+		background: var(--sl-color-bg-nav, rgba(37, 99, 235, 0.08));
+		padding: 0.75rem 1rem;
+		margin: 1rem 0;
+		border-radius: 0.25rem;
+	}
+	.reg-draft-title {
+		margin-top: 0;
+	}
+	.reg-draft p {
 		margin: 0.25rem 0;
 	}
 </style>

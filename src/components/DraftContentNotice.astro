@@ -1,0 +1,16 @@
+---
+// The 404 page needs `draft: true`. That flag is what keeps the page out of the
+// sitemap, out of the Pagefind index, and out of the `llms*.txt` corpus, all of
+// which read the flag rather than the route. Starlight also renders a draft
+// notice from the same flag, and the production filter that would drop a draft
+// page never applies to the 404 route. The live 404 page therefore announced
+// that it was not published (#111, finding G10).
+//
+// Suppress the notice for the 404 entry only. Every other draft page keeps it.
+import Default from '@astrojs/starlight/components/DraftContentNotice.astro';
+
+const { id } = Astro.locals.starlightRoute.entry;
+const is404 = id === '404' || id.endsWith('/404');
+---
+
+{!is404 && <Default />}

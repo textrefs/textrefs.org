@@ -4,17 +4,11 @@ import Tombstone from '../../../../components/Tombstone.astro';
 import {
 	loadSystems,
 	loadReferences,
-	uuidOf,
+	loadWorks,
 } from '../../../../lib/registry.ts';
 import { UNSTABLE_BANNER } from '../../../../lib/banner.ts';
 
-function intersperse<T>(items: T[], separator: T): T[] {
-	return items.flatMap((item, i) => (i === 0 ? [item] : [separator, item]));
-}
-
 export async function getStaticPaths() {
-	const PAGE_SIZE = 200;
-	const PREVIEW = 20;
 	const systems = loadSystems();
 	const refs = loadReferences();
 	const refsBySystem = new Map<string, typeof refs>();
@@ -23,27 +17,36 @@ export async function getStaticPaths() {
 		if (arr) arr.push(r);
 		else refsBySystem.set(r.citation_system_key, [r]);
 	}
+	const worksByKey = new Map(loadWorks().map((w) => [w.key, w]));
+
 	return systems.map((system) => {
-		const systemRefs = (refsBySystem.get(system.key) ?? [])
-			.slice()
-			.sort((a, b) =>
-				a.locator.localeCompare(b.locator, undefined, { numeric: true }),
+		const refCountByWorkKey = new Map<string, number>();
+		for (const r of refsBySystem.get(system.key) ?? []) {
+			refCountByWorkKey.set(
+				r.work_key,
+				(refCountByWorkKey.get(r.work_key) ?? 0) + 1,
 			);
-		const pageCount = Math.max(1, Math.ceil(systemRefs.length / PAGE_SIZE));
+		}
+		const works = Array.from(refCountByWorkKey.entries())
+			.map(([key, refCount]) => ({ work: worksByKey.get(key), refCount }))
+			.filter(
+				(e): e is { work: NonNullable<typeof e.work>; refCount: number } =>
+					Boolean(e.work),
+			)
+			.sort((a, b) =>
+				a.work.preferred_label.localeCompare(b.work.preferred_label),
+			);
 		return {
 			params: { key: system.key },
 			props: {
 				system,
-				preview: systemRefs.slice(0, PREVIEW),
-				refCount: systemRefs.length,
-				pageCount,
-				pageSize: PAGE_SIZE,
+				works,
 			},
 		};
 	});
 }
 
-const { system, preview, refCount, pageCount, pageSize } = Astro.props;
+const { system, works } = Astro.props;
 const jsonHref = `/id/system/${system.key}.json`;
 ---
 
@@ -59,70 +62,53 @@ const jsonHref = `/id/system/${system.key}.json`;
 				tag: 'link',
 				attrs: {
 					rel: 'alternate',
-					type: 'application/json',
+					type: 'application/ld+json',
 					href: jsonHref,
 				},
 			},
+			// A draft record stays out of external search engines (ADR-0003) and
+			// out of the sitemap. It stays in the site's own Pagefind index, where
+			// the status tag below identifies it as a draft.
+			...(system.status === 'draft'
+				? [
+						{
+							tag: 'meta' as const,
+							attrs: { name: 'robots', content: 'noindex' },
+						},
+					]
+				: []),
 		],
 	}}
 >
 	<p class="reg-sub">
-		<span class="reg-tag">CitationSystem</span>
-		<span class="reg-tag">{system.status}</span>
-		<code class="reg-iri">{system.id}</code>
+		<span class="reg-tag">CitationSystem</span>{' '}
+		<span class="reg-tag" data-pagefind-meta="status">{system.status}</span>{
+			' '
+		}
+		<code class="reg-iri">{system.id}</code>{' '}
 		<a href={jsonHref} class="reg-json">JSON</a>
 	</p>
 
-	<Tombstone status={system.status} />
+	<Tombstone status={system.status} supersededBy={system.superseded_by} />
 
 	<h2>Locator format</h2>
+	<p>{system.description}</p>
 	<p>Regex: <code>{system.locator_regex}</code></p>
-	<p>Normalization version: <code>{system.normalization_version}</code></p>
 
-	<h2>Examples</h2>
-	<p>
-		<strong>Valid:</strong>
-		{
-			intersperse(
-				system.examples.valid.map((v) => <code>{v}</code>),
-				' · ',
-			)
-		}
-	</p>
-	<p>
-		<strong>Invalid:</strong>
-		{
-			intersperse(
-				system.examples.invalid.map((v) => <code>{v}</code>),
-				' · ',
-			)
-		}
-	</p>
-
-	<section data-pagefind-ignore>
-		<h2>References using this system ({refCount})</h2>
-		{
-			refCount === 0 ? (
-				<p class="reg-empty">No references registered yet.</p>
-			) : (
-				<>
-					<ul class="reg-list">
-						{preview.map((r) => (
-							<li>
-								<a href={`/id/ref/${uuidOf(r.id)}/`}>
-									<code>{r.work_key}</code> · <code>{r.locator}</code>
-								</a>
-							</li>
-						))}
-					</ul>
-					<p>
-						<a href={`/reg/system/${system.key}/refs/1/`}>
-							Browse all {refCount} reference(s){' '}
-							{pageCount > 1 ? `(${pageCount} pages of ${pageSize})` : ''} →
-						</a>
-					</p>
-				</>
-			)
-		}
-	</section>
+	<h2>Works using this system ({works.length})</h2>
+	{
+		works.length === 0 ? (
+			<p class="reg-empty">No works registered for this system yet.</p>
+		) : (
+			<ul class="reg-list">
+				{works.map(({ work, refCount }) => (
+					<li>
+						<a href={`/id/work/${work.key}/`}>{work.preferred_label}</a>{' '}
+						<code class="reg-iri">{work.key}</code>{' '}
+						<span class="reg-tag">{refCount} reference(s)</span>
+					</li>
+				))}
+			</ul>
+		)
+	}
 </StarlightPage>

@@ -6,16 +6,28 @@ import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
 import starlightBlog from 'starlight-blog';
+import sitemap from '@astrojs/sitemap';
+import { buildSitemapExclusion } from './src/lib/sitemap.ts';
+import citeDev from './src/integrations/cite-dev.ts';
 
 const siteDomain = process.env.SITE_DOMAIN ?? 'textrefs.org';
 const site = siteDomain.startsWith('http')
 	? siteDomain
 	: `https://${siteDomain}`;
 
+const isExcluded = buildSitemapExclusion();
+
 export default defineConfig({
 	site,
 	integrations: [
 		mermaid({ autoTheme: true }),
+		// `/cite/` has no route: `scripts/compile.ts` writes the redirect pages
+		// after `astro build`. This serves them in `astro dev` only.
+		citeDev(),
+		// Declared explicitly so the sitemap can drop the pages `src/lib/sitemap.ts`
+		// rules out; Starlight adds `@astrojs/sitemap` with default options only
+		// when the project has not already registered it.
+		sitemap({ filter: (page) => !isExcluded(new URL(page).pathname) }),
 		starlight({
 			plugins: [
 				starlightBlog({
@@ -32,7 +44,14 @@ export default defineConfig({
 				}),
 				starlightLinksValidator({
 					errorOnFallbackPages: false,
-					exclude: ['/id/**', '/reg/**', '/cite/**', '/api/**'],
+					exclude: [
+						'/id/**',
+						'/reg/**',
+						'/cite/**',
+						'/api/**',
+						'/find/**',
+						'/ontology/**',
+					],
 				}),
 				starlightOpenAPI([
 					{
@@ -78,6 +97,7 @@ export default defineConfig({
 				baseUrl: 'https://github.com/textrefs/textrefs.org/edit/main/',
 			},
 			components: {
+				DraftContentNotice: './src/components/DraftContentNotice.astro',
 				Footer: './src/components/Footer.astro',
 				PageTitle: './src/components/PageTitle.astro',
 			},
@@ -95,7 +115,11 @@ export default defineConfig({
 				{
 					label: 'Registry',
 					translations: { de: 'Verzeichnis' },
-					items: [{ label: 'Browse', link: '/reg/' }],
+					items: [
+						{ label: 'Find a reference', link: '/find/' },
+						{ label: 'Browse', link: '/reg/' },
+						{ label: 'Bulk downloads', link: '/dump/' },
+					],
 				},
 				...openAPISidebarGroups,
 				{

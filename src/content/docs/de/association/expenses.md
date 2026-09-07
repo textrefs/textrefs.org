@@ -5,13 +5,9 @@ sidebar:
   order: 5
 ---
 
-:::note[Arbeitsentwurf]
-Dies ist eine Arbeitsfassung vom 27. Mai 2026. Sie steht unter rechtlichem Vorbehalt bis zur Annahme durch die Gründungsversammlung.
-:::
-
 ## 1. Grundsatz
 
-Die Tätigkeit im Vorstand erfolgt grundsätzlich ehrenamtlich. Der Verein ersetzt effektive, notwendige und belegte Spesen, die im Interesse des Vereinszwecks entstanden sind.
+Die Tätigkeit im Vorstand erfolgt ehrenamtlich. Der Verein ersetzt effektive, notwendige und belegte Spesen, die im Interesse des Vereinszwecks entstanden sind.
 
 ## 2. Spesen
 
@@ -37,29 +33,16 @@ Nicht erstattungsfähig sind insbesondere:
 - Aufwendungen, die primär einer einzelnen Person oder Institution dienen;
 - Auslagen, die gegen Statuten, Zweck oder Gemeinnützigkeit verstossen.
 
-## 4. Entschädigungen für besondere Leistungen
+## 4. Keine Entschädigung für besondere Leistungen
 
-Besondere Leistungen können entschädigt werden, wenn:
+Die Mitglieder des Vorstandes sind ehrenamtlich tätig. Eine Entschädigung für besondere oder operative Leistungen ist ausgeschlossen (Art. 15 der Statuten).
 
-1. sie über die übliche ehrenamtliche Vorstandstätigkeit hinausgehen;
-2. sie für den Vereinszweck erforderlich oder besonders nützlich sind;
-3. sie marktüblich und verhältnismässig vergütet werden;
-4. sie vorab budgetiert oder vom Vorstand bewilligt sind;
-5. sie schriftlich dokumentiert werden.
-
-Beispiele besonderer Leistungen können sein:
-
-- technische Implementierung;
-- umfangreiche Datenmodellierung;
-- rechtliche oder steuerliche Projektkoordination;
-- Drittmittelanträge;
-- grössere Dokumentations- oder Schulungsarbeiten;
-- Projektmanagement für geförderte Vorhaben.
+Der Ausschluss gilt auch für Aufträge an Vorstandsmitglieder und an ihnen nahestehende Personen.
 
 ## 5. Ausstand
 
-Personen, deren eigene Entschädigung oder deren nahestehende Personen betroffen sind, nehmen an Beratung und Beschlussfassung nicht teil.
+Personen, deren eigene Spesen oder deren nahestehende Personen betroffen sind, nehmen an Beratung und Beschlussfassung nicht teil.
 
 ## 6. Dokumentation
 
-Alle Spesen und Entschädigungen werden in der Buchhaltung nachvollziehbar erfasst. Der Vorstand kann der Mitgliederversammlung eine aggregierte Übersicht vorlegen.
+Alle Spesen werden in der Buchhaltung nachvollziehbar erfasst. Der Vorstand kann der Mitgliederversammlung eine aggregierte Übersicht vorlegen.

@@ -20,9 +20,15 @@ export async function getStaticPaths() {
 	return works.flatMap((work) => {
 		const workRefs = (refsByWork.get(work.key) ?? [])
 			.slice()
-			.sort((a, b) =>
-				a.locator.localeCompare(b.locator, undefined, { numeric: true }),
+			.sort(
+				(a, b) =>
+					a.citation_system_key.localeCompare(b.citation_system_key) ||
+					a.locator.localeCompare(b.locator, undefined, { numeric: true }),
 			);
+		// A work cited under several systems can repeat a locator string while
+		// meaning a different passage each time (ADR-0005) — label them.
+		const multiSystem =
+			new Set(workRefs.map((r) => r.citation_system_key)).size > 1;
 		const pageCount = Math.max(1, Math.ceil(workRefs.length / PAGE_SIZE));
 		return Array.from({ length: pageCount }, (_, i) => {
 			const page = i + 1;
@@ -32,6 +38,7 @@ export async function getStaticPaths() {
 				props: {
 					work,
 					refs: slice,
+					multiSystem,
 					page,
 					pageCount,
 					pageSize: PAGE_SIZE,
@@ -42,7 +49,8 @@ export async function getStaticPaths() {
 	});
 }
 
-const { work, refs, page, pageCount, pageSize, total } = Astro.props;
+const { work, refs, multiSystem, page, pageCount, pageSize, total } =
+	Astro.props;
 const prev = page > 1 ? page - 1 : null;
 const next = page < pageCount ? page + 1 : null;
 const from = (page - 1) * pageSize + 1;
@@ -57,10 +65,21 @@ const to = Math.min(page * pageSize, total);
 		tableOfContents: false,
 		pagefind: false,
 		banner: UNSTABLE_BANNER,
+		// Draft records are excluded from search indexing (ADR-0003).
+		head:
+			work.status === 'draft'
+				? [
+						{
+							tag: 'meta' as const,
+							attrs: { name: 'robots', content: 'noindex' },
+						},
+					]
+				: [],
 	}}
 >
 	<p class="reg-sub">
-		<a href={`/id/work/${work.key}/`}>← {work.preferred_label}</a>
+		<a href={`/id/work/${work.key}/`}>← {work.preferred_label}</a>{' '}
+		{work.status === 'draft' && <span class="reg-tag">draft</span>}
 	</p>
 
 	<p>
@@ -74,6 +93,11 @@ const to = Math.min(page * pageSize, total);
 					<a href={`/id/ref/${uuidOf(r.id)}/`}>
 						<code>{r.locator}</code>
 					</a>{' '}
+					{multiSystem && (
+						<>
+							<span class="reg-tag">{r.citation_system_key}</span>{' '}
+						</>
+					)}
 					<span class="reg-tag">{r.resolver_targets.length} target(s)</span>
 				</li>
 			))

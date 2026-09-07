@@ -18,10 +18,11 @@ export const MappingAssertionBase = AdminMetadata.extend({
 		),
 	type: z.literal('MappingAssertion'),
 	subject: WorkIri,
-	relation: z.enum(['exactMatch', 'closeMatch']),
+	// ADR-0006. Kept in lockstep with MappingSource in scripts/source-schema.ts.
+	relation: z.enum(['alternateOf', 'isReferencedBy']),
 	target: z.object({
-		target_kind: z.string().optional(),
 		identifier: Iri,
+		conforms_to: z.union([Iri, z.array(Iri).min(1)]).optional(),
 	}),
 	source: z.string().min(1),
 });

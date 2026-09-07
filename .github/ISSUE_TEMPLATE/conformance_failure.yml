@@ -23,9 +23,9 @@ body:
     id: failing-cases
     attributes:
       label: Failing test cases
-      description: List the conformance test IDs that fail and what your implementation produces instead.
+      description: Describe the failing case and what your implementation produces instead. Include conformance test IDs if the conformance suite is available.
     validations:
-      required: true
+      required: false
   - type: textarea
     id: analysis
     attributes:

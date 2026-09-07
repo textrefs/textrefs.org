@@ -31,28 +31,29 @@ A contribution does not create a claim to acceptance, prioritization, publicatio
 
 ## Review tracks
 
-Changes are routed to one of two tracks:
+Changes are routed to one of three tracks:
 
-- **Technical review** — typos, formatting, broken links, minor metadata, `last_checked` updates, uncontested aliases, build / tooling fixes. Needs automated validation and one technical reviewer.
-- **Expert review** — new works, new citation systems, new corpora, contested mappings, changes to deterministic ID inputs, status changes (`active` / `deprecated` / `withdrawn` / `blocked`). Needs technical validation, a documented rationale with sources, and at least one expert reviewer.
-
-The Board reserves decisions on legal or policy-sensitive matters (takedowns, blocking, licence policy).
+- **Technical review** — typos, formatting, broken links, minor metadata, `last_checked` updates, uncontested aliases, build / tooling fixes, and merging new registry data as `draft`. Needs automated validation and one technical reviewer.
+- **Expert review** — new works, new citation systems, new corpora, contested mappings, changes to deterministic ID inputs, status changes (promotion `draft` → `active`, and `deprecated` / `withdrawn` / `blocked`). Needs technical validation, a documented rationale with sources, and at least one expert reviewer.
+- **Board reservation** — takedowns, blocking, licence policy, and other legal or policy-sensitive matters. Decided by the Association Board.
 
 ```mermaid
 flowchart TD
     S["Contribution<br/>(issue or PR)"] --> T{Triage}
     T -->|"typos, formatting, links, metadata, tooling"| TR[Technical review]
-    T -->|"new work / system / corpus, contested mapping, ID inputs, status change"| ER[Expert review]
+    T -->|"new work / system / corpus, contested mapping, ID inputs, status change / promotion"| ER[Expert review]
     T -->|"takedown, blocking, licence / policy"| BR[Board reservation]
     TR --> V{"Automated validation<br/>+ 1 technical reviewer"}
     ER --> V2{"Validation + rationale and sources<br/>+ 1 expert reviewer"}
-    V -->|pass| A([Accepted / merged])
+    V -->|pass| A(["Accepted / merged<br/>(new data lands as draft)"])
     V -->|fail| R([Rejected, with reason])
     V2 -->|pass| A
     V2 -->|fail| R
     BR -->|decision| A
     BR -->|decision| R
 ```
+
+New registry records enter at `status: draft` after technical review; they stay retractable until an expert review promotes them to `active`, which permanently freezes their identifier (see the [versioning rules](/standard/versioning/) and governance §5).
 
 ## Local development
 
@@ -70,7 +71,7 @@ Registry data lives in [`textrefs/registry`](https://github.com/textrefs/registr
 Before pushing routine documentation, styling, or route work, run the fast local gate:
 
 ```sh
-npm run verify:fast      # Prettier check + fixture-backed astro check + fixture-backed build
+npm run verify:fast      # Prettier check + fixture-backed astro check + tests + fixture-backed build
 ```
 
 Run the full `npm run verify` before PRs that touch registry data, release output, production build behaviour, or CI behaviour. Run `npm run validate:data` as well for registry-data and standard PRs.
@@ -96,13 +97,25 @@ The commit-msg hook (commitlint) rejects non-conforming messages, so a plain `gi
 
 The changelog is generated from this history via `npm run changelog` (git-cliff).
 
+## Branching model
+
+The production site (`textrefs.org`) is built and deployed from `main`. To keep `main`'s history low-noise while still allowing many small content edits, day-to-day docs/blog/copy work batches on a long-lived `staging` branch and is squash-merged into `main` to publish.
+
+- `main` — production source. Pushes here auto-deploy via `.github/workflows/pages.yml`. Release tags (`vX.Y.Z`) are cut from `main`; the registry's `vYYYY.MM.N` tags are cut in [`textrefs/registry`](https://github.com/textrefs/registry).
+- `staging` — long-lived batching branch for docs, blog posts, copy, registry-pointer bumps, and other content edits. Does **not** auto-deploy. Edits accumulate here as many small commits.
+- To publish: open a PR `staging → main` and squash-merge. The squash-commit lands on `main` as one conventional commit (so `git-cliff` stays clean) and triggers the production deploy.
+- Manual preview / ad-hoc deploy: from the GitHub Actions UI, run the **Pages** workflow via `workflow_dispatch` and pick `staging` (or any branch) as the ref. This deploys that ref to production until the next push to `main`. There is no separate preview URL — GitHub Pages serves a single site per repo, so manual staging deploys temporarily replace production. Use sparingly.
+- Infrastructure changes (CI, release workflow, build tooling, deploy config) target `main` directly so they are not gated on the next staging-to-main snapshot.
+
+Squash merging is the only enabled merge style on the canonical repo, so `staging`'s noisy history is collapsed into a single conventional-commit message on `main` and `git-cliff` still produces a clean `CHANGELOG.md`.
+
 ## Submitting a pull request
 
-1. Branch from `main`.
+1. Branch from `staging` for content/docs/blog; branch from `main` for infra, CI, or release-workflow changes.
 2. Keep PRs focused — one logical change per PR.
 3. Link related issues in the PR description.
 4. Include local verification results: `npm run verify:fast` for routine work, or `npm run verify` plus `npm run validate:data` for registry-data, standard, release, production-build, or CI changes.
-5. Open the PR against `main`. GitHub requests `@textrefs/maintainers` by default via `.github/CODEOWNERS`; maintainers may add technical or expert reviewers based on the track.
+5. Open the PR against the branch you started from (`staging` or `main`). GitHub requests `@textrefs/maintainers` by default via `.github/CODEOWNERS`; maintainers may add technical or expert reviewers based on the track.
 
 ## Project layout
 
@@ -114,13 +127,15 @@ Two release trains. The Zenodo–GitHub webhook MUST be enabled once per reposit
 
 **Standard + site** (this repo):
 
-1. Bump `version` in `package.json` to match the new tag.
-2. `npm run changelog` to regenerate `CHANGELOG.md`.
-3. Update spec page frontmatter `maturity:` if the release transitions the ladder.
-4. Commit, open PR, merge to `main`.
-5. Tag `vX.Y.Z[-pre]` on `main`; push the tag.
-6. Verify the GitHub Release fires and Zenodo mints the version DOI.
-7. Fill the concept DOI into `CITATION.cff` `identifiers:` and the badge in `README.md` (once, after the first release).
+1. Bump `version` in `package.json` to match the new tag. The compiler reads it, so it also becomes the `datapackage.json` version of the published dump.
+2. Set `version` and `date-released` in `CITATION.cff` to the same tag and its release date. Without them the file cannot say which release it describes.
+3. `npx git-cliff --tag vX.Y.Z -o CHANGELOG.md` to regenerate `CHANGELOG.md`. Pass `--tag` explicitly: the tag does not exist yet at this point, and bare `npm run changelog` would file the commits under `## [Unreleased]`.
+4. Update spec page frontmatter `maturity:` if the release transitions the ladder.
+5. Dispatch the **Pages** workflow on `staging`. `main`'s ruleset requires a successful `github-pages` deployment for the exact SHA being merged, so the release PR stays blocked until the branch tip has one.
+6. Open a PR `staging → main` and squash-merge it. The squash message should be a conventional commit (`docs(release): vX.Y.Z` or similar) so the changelog stays clean.
+7. Tag `vX.Y.Z[-pre]` on `main`; push the tag.
+8. Verify the GitHub Release fires and Zenodo mints the version DOI.
+9. Fill the concept DOI into `CITATION.cff` `identifiers:` and the badge in `README.md` (once, after the first release).
 
 **Registry** ([`textrefs/registry`](https://github.com/textrefs/registry)):
 

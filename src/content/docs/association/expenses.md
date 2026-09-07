@@ -11,7 +11,7 @@ This English translation is provided for convenience only and is **not legally b
 
 ## 1. Principle
 
-Board service is performed on a volunteer basis as a matter of principle. The association reimburses effective, necessary, and documented expenses incurred in the interest of the association's purpose.
+Board service is performed in an honorary capacity. The association reimburses effective, necessary, and documented expenses incurred in the interest of the association's purpose.
 
 ## 2. Expenses
 
@@ -37,29 +37,16 @@ Non-reimbursable in particular are:
 - expenditures that primarily serve an individual person or institution;
 - expenses that violate the statutes, purpose, or non-profit status.
 
-## 4. Compensation for special services
+## 4. No compensation for special services
 
-Special services may be compensated where:
+The members of the Board serve in an honorary capacity. Compensation for special or operational services is excluded (Art. 15 of the statutes).
 
-1. they go beyond the usual volunteer Board activity;
-2. they are required or particularly useful for the association's purpose;
-3. they are compensated at market rate and proportionately;
-4. they are budgeted in advance or approved by the Board;
-5. they are documented in writing.
-
-Examples of special services may include:
-
-- technical implementation;
-- extensive data modelling;
-- legal or tax project coordination;
-- third-party grant applications;
-- substantial documentation or training work;
-- project management for funded undertakings.
+The exclusion also applies to engagements of Board members and of persons close to them.
 
 ## 5. Recusal
 
-Persons whose own compensation, or that of persons close to them, is concerned do not take part in deliberation and decision-making.
+Persons whose own expenses, or those of persons close to them, are concerned do not take part in deliberation and decision-making.
 
 ## 6. Documentation
 
-All expenses and compensation are recorded traceably in the accounts. The Board may submit an aggregated overview to the General Assembly.
+All expenses are recorded traceably in the accounts. The Board may submit an aggregated overview to the General Assembly.

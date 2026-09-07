@@ -1,0 +1,990 @@
+---
+import RecordPage from '../../layouts/RecordPage.astro';
+
+// Deliberately not a Starlight page. The finder is a tool, not a document:
+// a sidebar, a table of contents, and a second search box are noise beside a
+// single search field. It shares the minimal chrome and the stylesheet the
+// `/id/` record pages use.
+//
+// This page reads no registry data at build time. It is a shell: the search
+// runs in the browser against the same public endpoints any other client uses
+// (`/reg/works.json`, `/reg/systems.json`, `/reg/work/{key}/aliases.json`,
+// `/id/ref/{uuid}.json`), so the finder never gets a private index the API
+// does not offer.
+---
+
+<RecordPage
+	title="Find a reference"
+	description="Resolve a familiar citation — a work, an author, or a work and a passage — to its canonical TextRefs reference."
+>
+	<h1>Find a reference</h1>
+
+	<p class="find-lede">
+		Type a text and a passage — <em>Plato Republic 514a</em> — to get a canonical
+		link to that passage, the editions that carry it, and a citation you can paste.
+	</p>
+
+	<form id="find-form" method="get" action="/find/" role="search">
+		<label class="sr-only" for="find-q">Work, author, or citation</label>
+		<input
+			id="find-q"
+			class="find-input"
+			type="search"
+			name="q"
+			placeholder="Plato Republic 514a"
+			autocomplete="off"
+			autocapitalize="off"
+			spellcheck="false"
+			autofocus
+			aria-describedby="find-examples"
+		/>
+		<noscript>
+			<button type="submit">Search</button>
+		</noscript>
+	</form>
+
+	<p id="find-examples" class="reg-sub">
+		Try <button class="find-example" type="button" data-q="Plato Republic 514a"
+			>Plato Republic 514a</button
+		>, <button
+			class="find-example"
+			type="button"
+			data-q="Nicomachean Ethics 1094a1">Nicomachean Ethics 1094a1</button
+		>, <button class="find-example" type="button" data-q="Homer 1.1"
+			>Homer 1.1</button
+		>, or <button class="find-example" type="button" data-q="Tractatus 1"
+			>Tractatus 1</button
+		>.
+	</p>
+
+	<noscript>
+		<p class="reg-empty">
+			The finder needs JavaScript, because it searches the registry in your
+			browser rather than on a server. Without it, browse the works at{' '}
+			<a href="/reg/">the registry</a>, or go straight to a passage with{' '}
+			<code>/cite/{'{work}'}/{'{locator}'}</code> — for example{' '}
+			<a href="/cite/plato.republic/514a/">/cite/plato.republic/514a/</a>.
+		</p>
+	</noscript>
+
+	<div id="find-results" aria-live="polite" aria-busy="false"></div>
+
+	<!-- Shown until a search runs, and again when the field is cleared. It is
+	     markup rather than script output so it is there before the bundle
+	     loads, and for a reader with no JavaScript. -->
+	<div id="find-intro">
+		<h2 class="find-subheading">What you can search</h2>
+		<ul class="reg-list">
+			<li>
+				<strong>A text.</strong> Its title, an author, or a short form —{' '}
+				<em>Republic</em>, <em>Plato</em>, <em>Tractatus</em>.
+			</li>
+			<li>
+				<strong>A text and a passage.</strong> Add the passage the way you would cite
+				it — <em>Republic 514a</em>, <em>Iliad 1.1</em>. Each text has its own
+				numbering, so TextRefs checks the passage against that text's own
+				system.
+			</li>
+		</ul>
+
+		<h2 class="find-subheading">What you get back</h2>
+		<ul class="reg-list">
+			<li>
+				<strong>A canonical link</strong> to that passage. It names the passage itself,
+				not one edition of it, so it keeps working when editions come and go. Only
+				an
+				<code>active</code> record carries a persistence promise.
+			</li>
+			<li>
+				<strong>Editions</strong> that carry the passage, where any are known.
+			</li>
+			<li><strong>A citation</strong> to copy.</li>
+		</ul>
+
+		<p class="reg-sub">
+			Nothing is guessed. If a query fits more than one text, TextRefs asks
+			which one rather than picking. The registry is small and still growing —{
+				' '
+			}
+			<a href="/reg/">see what is in it</a>.
+		</p>
+	</div>
+
+	<p class="reg-sub find-foot">
+		<a href="/reg/">Browse the registry</a> ·{' '}
+		<a href="/community/contributing/">Contribute</a>
+	</p>
+</RecordPage>
+
+<script>
+	import {
+		interpret,
+		isFuzzy,
+		resolveInIndex,
+		referenceIri,
+		type FindSystem,
+		type FindWork,
+		type Interpretation,
+		type WorkMatch,
+	} from '../../lib/find.ts';
+	import { toCSL, formatChicago } from '../../lib/citation.ts';
+	import { findNotice } from '../../lib/find-notice.ts';
+	import type { WorkAliasIndex } from '../../lib/alias-index.ts';
+
+	const form = document.getElementById('find-form') as HTMLFormElement | null;
+	const input = document.getElementById('find-q') as HTMLInputElement | null;
+	const out = document.getElementById('find-results');
+	if (!form || !input || !out) throw new Error('find: missing page shell');
+
+	// --- collections -------------------------------------------------------
+	// The two registry-wide collections are small (about 7 KB and 6 KB) and are
+	// fetched once per page load. A per-work alias index is not: it runs to
+	// 1.18 MB for the Tanakh, so one is fetched only after a single work is
+	// identified, and each is kept after the first fetch.
+
+	type Collections = { works: FindWork[]; systems: FindSystem[] };
+	let collections: Promise<Collections> | null = null;
+	const indexes = new Map<string, Promise<WorkAliasIndex>>();
+
+	async function json<T>(url: string): Promise<T> {
+		const response = await fetch(url, {
+			headers: { Accept: 'application/json' },
+		});
+		if (!response.ok) throw new Error(`${url} responded ${response.status}`);
+		return (await response.json()) as T;
+	}
+
+	function loadCollections(): Promise<Collections> {
+		collections ??= Promise.all([
+			json<{ '@graph': FindWork[] }>('/reg/works.json'),
+			json<{ '@graph': FindSystem[] }>('/reg/systems.json'),
+		]).then(([w, s]) => ({ works: w['@graph'], systems: s['@graph'] }));
+		return collections;
+	}
+
+	function loadIndex(workKey: string): Promise<WorkAliasIndex> {
+		let pending = indexes.get(workKey);
+		if (!pending) {
+			pending = json<WorkAliasIndex>(
+				`/reg/work/${encodeURIComponent(workKey)}/aliases.json`,
+			);
+			indexes.set(workKey, pending);
+		}
+		return pending;
+	}
+
+	// --- rendering ---------------------------------------------------------
+	// Every node is built with `textContent`, never `innerHTML`. Labels and
+	// resolver URLs are curated, but they are still data, and this page is the
+	// one place they meet the DOM.
+
+	function el<K extends keyof HTMLElementTagNameMap>(
+		tag: K,
+		props: { class?: string; text?: string; href?: string } = {},
+		children: Node[] = [],
+	): HTMLElementTagNameMap[K] {
+		const node = document.createElement(tag);
+		if (props.class) node.className = props.class;
+		if (props.text !== undefined) node.textContent = props.text;
+		if (props.href !== undefined) node.setAttribute('href', props.href);
+		children.forEach((child) => node.appendChild(child));
+		return node;
+	}
+
+	const intro = document.getElementById('find-intro');
+
+	function show(...nodes: Node[]): void {
+		out!.replaceChildren(...nodes);
+		// The explainer is for a reader who has not searched yet.
+		if (intro) intro.hidden = nodes.length > 0;
+	}
+
+	function note(text: string): HTMLElement {
+		return el('p', { class: 'reg-empty', text });
+	}
+
+	function creatorLine(work: FindWork): string {
+		return (work.creators ?? [])
+			.map((c) =>
+				c.kind === 'person'
+					? c.given
+						? `${c.given} ${c.family}`
+						: c.family
+					: c.name,
+			)
+			.join(', ');
+	}
+
+	/** A candidate row. Choosing one re-runs the search by the work's key,
+	 *  which is tier 1 and therefore unambiguous. */
+	function candidate(match: WorkMatch, locator: string | null): HTMLLIElement {
+		const button = el('button', {
+			class: 'find-candidate',
+			text: match.work.preferred_label,
+		});
+		button.type = 'button';
+		button.addEventListener('click', () =>
+			run(locator ? `${match.work.key} ${locator}` : match.work.key, true),
+		);
+
+		const row = el('li', {}, [button]);
+		const creator = creatorLine(match.work);
+		if (creator)
+			row.appendChild(el('span', { class: 'reg-sub', text: ` ${creator}` }));
+		if (match.work.status !== 'active') {
+			row.appendChild(
+				el('span', { class: 'reg-tag', text: match.work.status }),
+			);
+		}
+		row.appendChild(el('code', { class: 'reg-iri', text: match.work.key }));
+		return row;
+	}
+
+	function candidateList(
+		matches: WorkMatch[],
+		locator: string | null,
+	): HTMLElement {
+		return el(
+			'ul',
+			{ class: 'reg-list' },
+			matches.map((m) => candidate(m, locator)),
+		);
+	}
+
+	function copyButton(
+		value: string,
+		label = 'Copy',
+		cls = 'find-copy',
+	): HTMLButtonElement {
+		const button = el('button', { class: cls, text: label });
+		button.type = 'button';
+		button.addEventListener('click', async () => {
+			try {
+				await navigator.clipboard.writeText(value);
+				button.textContent = 'Copied';
+			} catch {
+				button.textContent = 'Press Ctrl+C';
+			}
+			setTimeout(() => (button.textContent = label), 2000);
+		});
+		return button;
+	}
+
+	// `grc` tells a reader nothing. `Intl.DisplayNames` is built into the browser
+	// and names every modern tag the registry uses, but it does not carry the
+	// historical ones: `grc` and `hbo` pass straight through, and `pli` comes back
+	// as "pi". Those are the languages a classics and theology registry leans on
+	// hardest, so the four it cannot do are named here and everything else is left
+	// to the browser.
+	const HISTORICAL_LANGUAGES: Record<string, string> = {
+		grc: 'Ancient Greek',
+		hbo: 'Ancient Hebrew',
+		lzh: 'Literary Chinese',
+		pli: 'Pali',
+	};
+
+	const languageNames = (() => {
+		try {
+			return new Intl.DisplayNames(['en'], { type: 'language' });
+		} catch {
+			return null;
+		}
+	})();
+
+	function languageName(tag: string): string {
+		const known = HISTORICAL_LANGUAGES[tag];
+		if (known) return known;
+		try {
+			const named = languageNames?.of(tag);
+			// `of` returns the input when it knows nothing, so this is not a name.
+			return named && named !== tag ? named : tag;
+		} catch {
+			return tag;
+		}
+	}
+
+	type Reference = {
+		status: string;
+		locator: string;
+		work_key: string;
+		citation_system_key: string;
+		/** The successor IRI of a retired record (specification §12). */
+		superseded_by?: string;
+		resolver_targets?: {
+			url: string;
+			provider?: string;
+			language?: string;
+			edition?: string;
+			access: string;
+		}[];
+	};
+
+	// The reference resolved. Two things a scholar came for lead: where to read
+	// the passage, and what to paste into a manuscript. Everything that
+	// describes the record rather than the passage sits below, in a disclosure
+	// that stays shut until it is asked for.
+	function resultCard(
+		work: FindWork,
+		system: FindSystem | undefined,
+		ref: Reference,
+		uuid: string,
+		showSystem: boolean,
+	): HTMLElement {
+		const card = el('div', { class: 'find-result' });
+
+		// The human-readable reference confirms what resolved. The UUID never
+		// labels it; it appears only inside the canonical URI.
+		const heading = el('h2', { class: 'find-heading' });
+		heading.appendChild(
+			el('a', { text: work.preferred_label, href: `/id/work/${work.key}/` }),
+		);
+		heading.appendChild(
+			el('span', { class: 'find-locator', text: ` ${ref.locator}` }),
+		);
+		card.appendChild(heading);
+
+		const creator = creatorLine(work);
+		const subtitle = [
+			creator,
+			showSystem && system ? system.preferred_label : '',
+		]
+			.filter(Boolean)
+			.join(' · ');
+		if (subtitle)
+			card.appendChild(el('p', { class: 'reg-sub', text: subtitle }));
+
+		// --- Read it -------------------------------------------------------
+		card.appendChild(el('h3', { class: 'find-subheading', text: 'Read it' }));
+		const targets = (ref.resolver_targets ?? []).filter((t) =>
+			/^https?:\/\//i.test(t.url),
+		);
+		if (targets.length === 0) {
+			card.appendChild(
+				note(
+					'No online edition is registered for this passage yet. The reference above still identifies it.',
+				),
+			);
+		} else {
+			card.appendChild(
+				el('p', {
+					class: 'reg-sub find-hint',
+					text: 'Editions that show this exact passage.',
+				}),
+			);
+			card.appendChild(
+				el(
+					'ul',
+					{ class: 'reg-list' },
+					targets.map((t) => {
+						const link = el('a', {
+							text: t.edition ?? t.provider ?? t.url,
+							href: t.url,
+						});
+						link.setAttribute('rel', 'noopener external');
+						const row = el('li', {}, [link]);
+						if (t.provider && t.edition) {
+							row.appendChild(
+								el('span', { class: 'reg-sub', text: ` ${t.provider}` }),
+							);
+						}
+						if (t.language) {
+							const tag = el('span', {
+								class: 'reg-tag',
+								text: languageName(t.language),
+							});
+							tag.title = `Language of this edition (${t.language})`;
+							row.appendChild(tag);
+						}
+						if (t.access !== 'open') {
+							const tag = el('span', { class: 'reg-tag', text: t.access });
+							tag.title = 'You may need a subscription or a library login.';
+							row.appendChild(tag);
+						}
+						return row;
+					}),
+				),
+			);
+		}
+
+		// --- Cite it -------------------------------------------------------
+		card.appendChild(el('h3', { class: 'find-subheading', text: 'Cite it' }));
+		const chicago = formatChicago(
+			toCSL(
+				work,
+				{ id: referenceIri(uuid), work_key: work.key, locator: ref.locator },
+				system,
+			),
+			{ includeSection: showSystem },
+		);
+		// `formatChicago` marks the title with asterisks. Render them as italics
+		// rather than showing the markup, and keep the plain string for the
+		// clipboard.
+		const quote = el('blockquote', { class: 'cite-text' });
+		chicago.split(/\*([^*]+)\*/).forEach((part, i) => {
+			if (part === '') return;
+			quote.appendChild(
+				i % 2 === 1 ? el('em', { text: part }) : document.createTextNode(part),
+			);
+		});
+		card.appendChild(quote);
+		card.appendChild(
+			el('p', { class: 'find-actions' }, [
+				copyButton(chicago, 'Copy citation', 'find-button'),
+				copyButton(referenceIri(uuid), 'Copy link', 'find-button'),
+			]),
+		);
+		// The link is already in the citation above and behind "Copy link", so it
+		// is not repeated here. Only the reason it is worth using is.
+		card.appendChild(
+			el('p', {
+				class: 'reg-sub find-hint',
+				text: 'The link names this passage, not one edition of it, so it keeps working when the editions above change.',
+			}),
+		);
+
+		// ADR-0004: the notice belongs here rather than at the top, because it is
+		// advice about citing, and it is the citation directly above that a reader
+		// would otherwise paste. Which sentences a status earns is decided and
+		// tested in `src/lib/find-notice.ts`; this maps them onto nodes.
+		const notice = findNotice(ref.status, ref.superseded_by);
+		if (notice) {
+			card.appendChild(
+				el(
+					'p',
+					{ class: 'find-warn' },
+					notice.map((part) =>
+						part.kind === 'lead'
+							? el('strong', { text: part.text })
+							: part.kind === 'link'
+								? el('a', { text: part.text, href: part.href })
+								: el('span', { text: part.text }),
+					),
+				),
+			);
+		}
+
+		// --- The record ----------------------------------------------------
+		const details = el('details', { class: 'find-details' });
+		details.appendChild(el('summary', { text: 'Registry record' }));
+		const rows = el('ul', { class: 'reg-list' }, [
+			el('li', {}, [
+				el('span', { class: 'find-key', text: 'Work' }),
+				el('a', { text: work.key, href: `/id/work/${work.key}/` }),
+			]),
+			el('li', {}, [
+				el('span', { class: 'find-key', text: 'Citation system' }),
+				el('a', {
+					text: system?.preferred_label ?? ref.citation_system_key,
+					href: `/id/system/${ref.citation_system_key}/`,
+				}),
+			]),
+			el('li', {}, [
+				el('span', { class: 'find-key', text: 'Passage' }),
+				el('code', { text: ref.locator }),
+			]),
+			el('li', {}, [
+				el('span', { class: 'find-key', text: 'Status' }),
+				el('span', { text: ref.status }),
+			]),
+			el('li', {}, [
+				el('span', { class: 'find-key', text: 'Record' }),
+				el('a', { text: 'HTML', href: `/id/ref/${uuid}/` }),
+				el('span', { text: ' · ' }),
+				el('a', { text: 'JSON-LD', href: `/id/ref/${uuid}.json` }),
+			]),
+		]);
+		details.appendChild(rows);
+		card.appendChild(details);
+
+		return card;
+	}
+
+	// --- the search --------------------------------------------------------
+
+	let generation = 0;
+
+	async function render(query: string): Promise<void> {
+		const mine = ++generation;
+		if (query.trim().length === 0) {
+			show();
+			return;
+		}
+
+		out!.setAttribute('aria-busy', 'true');
+		let works: FindWork[];
+		let systems: FindSystem[];
+		try {
+			({ works, systems } = await loadCollections());
+		} catch (error) {
+			collections = null;
+			if (mine !== generation) return;
+			out!.setAttribute('aria-busy', 'false');
+			show(
+				note(
+					`The registry could not be loaded (${(error as Error).message}). Check your connection and search again.`,
+				),
+			);
+			return;
+		}
+		if (mine !== generation) return;
+
+		const result: Interpretation = interpret(query, works, systems);
+
+		switch (result.kind) {
+			case 'empty':
+				show();
+				break;
+
+			case 'no-match':
+				show(
+					el('p', {
+						text: `Nothing in the registry answers to “${result.query}”.`,
+					}),
+					el('p', { class: 'reg-sub' }, [
+						el('span', {
+							// Counted from the collection the finder already loaded, never
+							// written out: a hard-coded number goes stale on the next work
+							// the registry gains.
+							text: `The registry holds ${works.length} work${works.length === 1 ? '' : 's'} so far, so a text you expect may simply not be in it yet. `,
+						}),
+						el('a', { text: 'See what is registered', href: '/reg/' }),
+						el('span', { text: '.' }),
+					]),
+				);
+				break;
+
+			case 'work-matches': {
+				// A fuzzy leading tier is a spelling guess, so it is offered and
+				// never applied. Saying "more than one text is called that" would
+				// be wrong for a single near miss, and applying it silently would
+				// break the promise that nothing is guessed.
+				const guessed = isFuzzy(result.matches);
+				const lead = guessed
+					? result.locator
+						? `Nothing is spelled exactly that way. Did you mean one of these, with ${result.locator}?`
+						: 'Nothing is spelled exactly that way. Did you mean one of these?'
+					: result.locator
+						? `More than one text is called that. Choose the one you mean, and TextRefs will look up ${result.locator} in it.`
+						: 'More than one text is called that. Choose the one you mean.';
+				show(
+					el('p', { text: lead }),
+					candidateList(result.matches, result.locator),
+				);
+				break;
+			}
+
+			case 'work-selected': {
+				const selected = result.match.work;
+				const system = systems.find(
+					(sys) => sys.key === selected.preferred_citation_system_key,
+				);
+				show(
+					el('p', {}, [
+						el('strong', {}, [
+							el('a', {
+								text: selected.preferred_label,
+								href: `/id/work/${selected.key}/`,
+							}),
+						]),
+						el('span', {
+							text: ' is in the registry. Add the passage you want, after the title.',
+						}),
+					]),
+					system
+						? el('p', { class: 'reg-sub find-hint' }, [
+								el('span', {
+									text: `How ${selected.preferred_label} is cited — `,
+								}),
+								el('a', {
+									text: system.preferred_label,
+									href: `/id/system/${system.key}/`,
+								}),
+								el('span', { text: `. ${system.description}` }),
+							])
+						: el('span'),
+					el('p', {}, [
+						el('a', {
+							text: 'Or browse its passages',
+							href: `/reg/work/${selected.key}/refs/1/`,
+						}),
+					]),
+				);
+				break;
+			}
+
+			case 'bare-locator':
+				// The candidates come from each work's PREFERRED citation system,
+				// because that is the only one `/reg/works.json` names (#91). A work
+				// cited under a second system might also accept this locator and not
+				// appear here, so neither string may claim to speak for the registry.
+				show(
+					el('p', {
+						text: `“${result.locator}” looks like a passage, but it does not say which text. Add a title or an author.`,
+					}),
+					result.candidates.length === 0
+						? note(
+								'No text in the registry uses a passage number of that shape as its main numbering.',
+							)
+						: el('p', { class: 'reg-sub find-hint' }, [
+								el('span', {
+									text: 'A passage number means a different place in every text. These use that shape as their main numbering:',
+								}),
+							]),
+					result.candidates.length === 0
+						? el('span')
+						: candidateList(result.candidates, result.locator),
+				);
+				break;
+
+			case 'locator-invalid': {
+				const invalidWork = result.match.work;
+				const system = systems.find(
+					(sys) => sys.key === invalidWork.preferred_citation_system_key,
+				);
+				show(
+					el('p', {
+						text: `“${result.locator}” is not a passage number any text in the registry uses.`,
+					}),
+					system
+						? el('p', { class: 'reg-sub find-hint' }, [
+								el('span', {
+									text: `${invalidWork.preferred_label} is cited by `,
+								}),
+								el('a', {
+									text: system.preferred_label,
+									href: `/id/system/${system.key}/`,
+								}),
+								el('span', { text: `. ${system.description}` }),
+							])
+						: el('span'),
+					el('p', {}, [
+						el('a', {
+							text: `Browse the passages of ${invalidWork.preferred_label}`,
+							href: `/reg/work/${invalidWork.key}/refs/1/`,
+						}),
+					]),
+				);
+				break;
+			}
+
+			case 'resolvable':
+				await resolve(result.match, result.locator, systems, mine);
+				break;
+		}
+		if (mine === generation) out!.setAttribute('aria-busy', 'false');
+	}
+
+	async function resolve(
+		match: WorkMatch,
+		locator: string,
+		systems: FindSystem[],
+		mine: number,
+	): Promise<void> {
+		const work = match.work;
+		let index: WorkAliasIndex;
+		try {
+			index = await loadIndex(work.key);
+		} catch (error) {
+			indexes.delete(work.key);
+			if (mine !== generation) return;
+			show(
+				note(
+					`Could not load the passages of ${work.preferred_label} (${(error as Error).message}).`,
+				),
+			);
+			return;
+		}
+		if (mine !== generation) return;
+
+		const resolution = resolveInIndex(index, locator, systems);
+		const systemOf = (key: string) => systems.find((s) => s.key === key);
+
+		if (resolution.kind === 'locator-invalid') {
+			// The shape passed some system in the registry, but none that this work
+			// is cited by. Naming that system is the whole explanation.
+			const own = systems.find(
+				(sys) => sys.key === work.preferred_citation_system_key,
+			);
+			show(
+				el('p', {
+					text: `“${locator}” is not how ${work.preferred_label} is numbered. It is a passage number in some other text.`,
+				}),
+				own
+					? el('p', { class: 'reg-sub find-hint' }, [
+							el('span', { text: `${work.preferred_label} is cited by ` }),
+							el('a', {
+								text: own.preferred_label,
+								href: `/id/system/${own.key}/`,
+							}),
+							el('span', { text: `. ${own.description}` }),
+						])
+					: el('span'),
+				el('p', {}, [
+					el('a', {
+						text: `Browse the passages of ${work.preferred_label}`,
+						href: `/reg/work/${work.key}/refs/1/`,
+					}),
+				]),
+			);
+			return;
+		}
+
+		if (resolution.kind === 'not-in-registry') {
+			show(
+				el('p', {
+					text: `“${locator}” is numbered the way ${work.preferred_label} is cited, but that passage is not registered yet.`,
+				}),
+				el('p', {
+					class: 'reg-sub find-hint',
+					text: 'The registry is filled in passage by passage, so a gap means the work is unfinished rather than that the passage does not exist.',
+				}),
+				el('p', {}, [
+					el('a', {
+						text: `Browse the registered passages of ${work.preferred_label}`,
+						href: `/reg/work/${work.key}/refs/1/`,
+					}),
+				]),
+			);
+			return;
+		}
+
+		if (resolution.kind === 'ambiguous-system') {
+			// ADR-0005: the same string under two systems is two passages.
+			show(
+				el('p', {
+					text: `${work.preferred_label} is cited under more than one numbering, and “${locator}” is a valid passage in each — but a different passage. Choose the numbering you meant.`,
+				}),
+				el(
+					'ul',
+					{ class: 'reg-list' },
+					resolution.options.map((option) =>
+						el('li', {}, [
+							el('a', {
+								text:
+									systemOf(option.systemKey)?.preferred_label ??
+									option.systemKey,
+								href: `/id/ref/${option.uuid}/`,
+							}),
+						]),
+					),
+				),
+			);
+			return;
+		}
+
+		let ref: Reference;
+		try {
+			ref = await json<Reference>(`/id/ref/${resolution.uuid}.json`);
+		} catch (error) {
+			if (mine !== generation) return;
+			show(note(`Could not load the reference (${(error as Error).message}).`));
+			return;
+		}
+		if (mine !== generation) return;
+
+		// Naming the system only earns its place when the work uses more than
+		// one; otherwise the locator is unambiguous on its own.
+		const showSystem = Object.keys(index.refs).length > 1;
+		show(
+			resultCard(
+				work,
+				systemOf(resolution.systemKey),
+				ref,
+				resolution.uuid,
+				showSystem,
+			),
+		);
+	}
+
+	// --- URL state ---------------------------------------------------------
+
+	function url(query: string): string {
+		return query.trim().length === 0
+			? '/find/'
+			: `/find/?q=${encodeURIComponent(query.trim())}`;
+	}
+
+	function run(query: string, push: boolean): void {
+		if (input!.value !== query) input!.value = query;
+		const next = url(query);
+		if (next !== location.pathname + location.search) {
+			if (push) history.pushState({ q: query }, '', next);
+			else history.replaceState({ q: query }, '', next);
+		}
+		void render(query);
+	}
+
+	let debounce: ReturnType<typeof setTimeout> | undefined;
+	input.addEventListener('input', () => {
+		clearTimeout(debounce);
+		debounce = setTimeout(() => run(input.value, false), 250);
+	});
+
+	form.addEventListener('submit', (event) => {
+		event.preventDefault();
+		clearTimeout(debounce);
+		run(input.value, true);
+	});
+
+	window.addEventListener('popstate', () => {
+		const q = new URLSearchParams(location.search).get('q') ?? '';
+		input.value = q;
+		void render(q);
+	});
+
+	document
+		.querySelectorAll<HTMLButtonElement>('.find-example')
+		.forEach((button) => {
+			button.addEventListener('click', () => run(button.dataset.q ?? '', true));
+		});
+
+	// A shared `/find/?q=…` link restores and executes its search.
+	const initial = new URLSearchParams(location.search).get('q');
+	if (initial) {
+		input.value = initial;
+		void render(initial);
+	}
+</script>
+
+<style is:global>
+	/* Tokens come from /assets/record.css, which RecordPage links.
+	 *
+	 * `is:global` is required, not a shortcut. Astro scopes a plain <style> by
+	 * rewriting every selector to `.foo:where(.astro-HASH)` and stamping that
+	 * hash onto elements in the template. The result card is built in the
+	 * browser, so its elements never carry the hash and every rule below that
+	 * targets one would silently do nothing. The sheet ships only with this
+	 * page, so global here means page-wide, not site-wide. */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+	.find-input {
+		display: block;
+		width: 100%;
+		padding: 0.6rem 0.75rem;
+		margin: 0.5rem 0 0.75rem;
+		border: 1px solid var(--hairline);
+		border-radius: 0.3rem;
+		background: var(--bg);
+		color: var(--fg);
+		font: inherit;
+	}
+	.find-input:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 1px;
+	}
+	.find-example,
+	.find-candidate,
+	.find-copy {
+		font: inherit;
+		background: none;
+		border: 0;
+		padding: 0;
+		color: var(--accent);
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	.find-copy {
+		font-size: 0.8rem;
+		margin-left: 0.5rem;
+	}
+	.find-lede {
+		font-size: 1.05rem;
+		color: var(--fg);
+		margin-bottom: 1rem;
+	}
+	.find-heading {
+		font-size: 1.35rem;
+		margin: 0.25rem 0;
+	}
+	.find-result {
+		margin-top: 1.5rem;
+	}
+	.find-hint {
+		font-size: 0.85rem;
+		margin: 0.25rem 0 0.75rem;
+	}
+	.find-warn {
+		border-left: 3px solid var(--warn);
+		padding: 0.4rem 0.75rem;
+		margin: 0.75rem 0;
+		font-size: 0.9rem;
+	}
+	.cite-text {
+		margin: 0.25rem 0 0.75rem;
+		padding: 0.75rem 1rem;
+		border-left: 3px solid var(--hairline);
+		background: var(--bg-code);
+		font-size: 0.95rem;
+		user-select: text;
+	}
+	.find-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: 0 0 0.5rem;
+	}
+	.find-button {
+		font: inherit;
+		font-size: 0.9rem;
+		padding: 0.35rem 0.8rem;
+		border: 1px solid var(--hairline);
+		border-radius: 0.25rem;
+		background: var(--bg);
+		color: var(--fg);
+		cursor: pointer;
+	}
+	.find-button:hover {
+		background: var(--bg-code);
+	}
+	.find-details {
+		margin-top: 1.5rem;
+		border-top: 1px solid var(--hairline);
+		padding-top: 0.5rem;
+	}
+	.find-details summary {
+		cursor: pointer;
+		font-size: 0.9rem;
+		color: var(--fg-muted);
+	}
+	.find-details .reg-list {
+		margin-top: 0.5rem;
+	}
+	/* A flex row with a gap, rather than an inline-block width: a label wider
+	   than the reserved space would otherwise butt straight into its value. */
+	.find-details .reg-list > li {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.15rem 0.75rem;
+	}
+	.find-key {
+		flex: 0 0 9rem;
+		color: var(--fg-muted);
+		font-size: 0.85rem;
+	}
+	.find-locator {
+		font-weight: 400;
+		color: var(--fg-muted);
+	}
+	.find-subheading {
+		font-size: 1rem;
+		margin-bottom: 0.25rem;
+	}
+	.find-facts {
+		margin: 0.35rem 0;
+	}
+	.find-foot {
+		margin-top: 2.5rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid var(--hairline);
+		font-size: 0.85rem;
+	}
+</style>

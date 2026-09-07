@@ -16,6 +16,6 @@ export const GET: APIRoute = ({ props }) => {
 	};
 	const body = { '@context': CONTEXT, ...system };
 	return new Response(JSON.stringify(body, null, 2), {
-		headers: { 'Content-Type': 'application/json; charset=utf-8' },
+		headers: { 'Content-Type': 'application/ld+json; charset=utf-8' },
 	});
 };

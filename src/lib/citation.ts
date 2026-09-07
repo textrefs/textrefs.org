@@ -1,9 +1,15 @@
-import type {
-	Work,
-	Creator,
-	CanonicalReference,
-	CitationSystem,
-} from '../../standard/schema/index.js';
+import type { Creator } from '../../standard/schema/index.js';
+
+// The parameters below name the fields this module actually reads, rather than
+// the whole compiled records. A full `Work`, `CanonicalReference`, or
+// `CitationSystem` still satisfies them, so the record pages pass theirs
+// unchanged; `/find/` passes the subset that `/reg/works.json` gives a browser.
+export type CitedWork = {
+	preferred_label: string;
+	creators?: readonly Creator[];
+};
+export type CitedReference = { id: string; work_key: string; locator: string };
+export type CitedSystem = { preferred_label: string };
 
 export type CSLName = { family: string; given?: string } | { literal: string };
 
@@ -27,9 +33,9 @@ function cslAuthor(c: Creator): CSLName {
 }
 
 export function toCSL(
-	work: Work | undefined,
-	ref: CanonicalReference,
-	system: CitationSystem | undefined,
+	work: CitedWork | undefined,
+	ref: CitedReference,
+	system: CitedSystem | undefined,
 ): CSLItem {
 	const title = work ? work.preferred_label : ref.work_key;
 	const authors = (work?.creators ?? []).map(cslAuthor);
@@ -55,13 +61,26 @@ function authorsChicago(authors: CSLName[]): string {
 	return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`;
 }
 
-export function formatChicago(csl: CSLItem): string {
+/**
+ * `includeSection` names the citation system alongside the locator. Set it when
+ * the work is cited under more than one system, where a bare locator is
+ * ambiguous — the same string can denote a different passage per system
+ * (ADR-0005). Left off, the citation stays uncluttered for the common case.
+ */
+export function formatChicago(
+	csl: CSLItem,
+	opts: { includeSection?: boolean } = {},
+): string {
 	const parts: string[] = [];
 	const authors = csl.author ?? [];
 	if (authors.length) parts.push(authorsChicago(authors));
 	parts.push(`*${csl.title}*`);
 	const head = parts.join(', ');
-	return `${head} ${csl.locator}. ${csl.URL}`;
+	const locator =
+		opts.includeSection && csl.section
+			? `${csl.locator} (${csl.section})`
+			: csl.locator;
+	return `${head} ${locator}. ${csl.URL}`;
 }
 
 export function toCOinS(csl: CSLItem): string {

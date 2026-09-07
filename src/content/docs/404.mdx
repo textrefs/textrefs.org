@@ -3,6 +3,11 @@ title: '404'
 description: This page could not be found. Help improve TextRefs by reporting broken links or missing content.
 template: splash
 editUrl: false
+# Keep this flag. It holds the page out of the sitemap, the Pagefind index,
+# and the llms*.txt corpus, all of which read the flag rather than the route.
+# The draft banner it would otherwise show is suppressed by the
+# DraftContentNotice override in src/components/ (#111, finding G10).
+draft: true
 hero:
   title: This reference is missing.
   tagline: If you expected a TextRefs page here, please help us improve the registry and documentation.

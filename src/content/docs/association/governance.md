@@ -96,7 +96,8 @@ A technical review is usually sufficient for:
 - minor metadata corrections;
 - updates to `last_checked` fields;
 - adding uncontested aliases;
-- documentation corrections without expert implications.
+- documentation corrections without expert implications;
+- entry of new records as `draft` (merging validated data into the registry).
 
 Prerequisites:
 
@@ -118,7 +119,8 @@ An expert review is required for:
 - contested mapping statements;
 - conflicting external identifiers;
 - changes with significant expert or reputational impact;
-- status changes to `active`, `deprecated`, `withdrawn`, or `blocked`, where these are subject-matter decisions.
+- promotion of records from `draft` to `active` (the point at which the persistence guarantee attaches);
+- status changes to `deprecated`, `withdrawn`, or `blocked`, where these are subject-matter decisions.
 
 Prerequisites:
 
@@ -143,16 +145,16 @@ The Board decides or confirms:
 
 ### 5.1 General record status
 
-- **candidate:** proposed record, not yet fully reviewed;
-- **active:** valid and recommended;
+- **draft:** work-in-progress record; correctable or retractable without a tombstone; excluded from the persistence guarantee;
+- **active:** valid and recommended; permanently identified from this point on;
 - **deprecated:** no longer recommended, but retained for historical reasons;
 - **withdrawn:** withdrawn, landing page retained;
 - **blocked:** blocked on legal, policy, or serious quality grounds.
 
 ### 5.2 Mapping status
 
-- **candidate:** proposed mapping;
-- **active:** reviewed and recommended mapping;
+- **draft:** work-in-progress mapping; correctable or retractable without a tombstone;
+- **active:** reviewed and recommended mapping; permanently identified from this point on;
 - **deprecated:** mapping no longer recommended;
 - **withdrawn:** withdrawn mapping;
 - **blocked:** blocked mapping.
@@ -161,7 +163,7 @@ Contested mappings remain in the appropriate schema status and carry the documen
 
 ### 5.3 Tombstone principle
 
-Published IDs are, as a matter of principle, not hard-deleted.
+Active IDs (status `active` or a tombstone status) are, as a matter of principle, not hard-deleted. Records in `draft` status may be retracted without a landing page.
 
 In the event of withdrawal, blocking, or deprecation, a landing page is retained with:
 
@@ -176,10 +178,10 @@ In the event of withdrawal, blocking, or deprecation, a landing page is retained
 
 1. Primary TextRefs IDs are independent HTTP URIs.
 2. External identifiers such as CTS URNs, Wikidata IDs, DOIs, ARKs, Perseus URLs, or Scaife URLs are not primary TextRefs IDs.
-3. Stable and established references may receive deterministic IDs.
-4. Provisional or uncertain objects receive generated IDs.
+3. All registry records carry deterministic IDs computable from their identity fields.
+4. Provisional records are expressed through the `draft` status, which is excluded from the persistence guarantee; their IDs may disappear or change until promotion to `active`.
 5. Once published, IDs are not changed merely because labels, titles, aliases, or external mappings are improved.
-6. Human-readable citation URLs are aliases and may be redirected, changed, or deprecated; primary IDs remain authoritative.
+6. Human-readable citation URLs are aliases and may be redirected, changed, deprecated, or retargeted to a different record; only the primary `/id/` identifiers are permanent.
 
 ## 7. Contribution process
 
@@ -299,11 +301,11 @@ CanonicalReference, Work, and CitationSystem IDs shall not be deleted merely bec
 ## 10. Financial and compensation principles
 
 1. The association's funds may be used only for the non-profit purpose.
-2. The Board serves on a volunteer basis as a matter of principle.
+2. The Board serves in an honorary capacity.
 3. Effective, necessary, and documented expenses are reimbursed.
-4. Special services may be compensated appropriately where they are purpose-bound, budgeted, documented, and proportionate.
-5. Affected persons recuse themselves from decisions on their own compensation.
-6. Engagements for Board members or persons close to them are permitted only where they serve the association's purpose, are at market rate, and are resolved transparently.
+4. Compensation for special or operational services is excluded.
+5. Affected persons recuse themselves from decisions on their own expenses.
+6. Engagements of Board members or of persons close to them are excluded.
 7. Donations and grants are used in accordance with their purpose.
 8. Purpose-bound funds are documented separately in a traceable manner.
 

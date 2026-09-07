@@ -11,7 +11,7 @@ This English translation is provided for convenience only and is **not legally b
 
 ## 1. Core positioning
 
-**TextRefs** is a non-profit, open, and non-commercial infrastructure association in formation, based in Zürich. The association does not operate a publishing business, a commercial platform, a members' mutual-aid organization, or a professional or trade body.
+**TextRefs** is a non-profit, open, and non-commercial infrastructure association based in Zürich. The association does not operate a publishing business, a commercial platform, a members' mutual-aid organization, or a professional or trade body.
 
 TextRefs advances scholarship, education, culture, and digital research infrastructure by building, maintaining, and publishing an open, persistent, and machine-readable registry for canonical text references.
 

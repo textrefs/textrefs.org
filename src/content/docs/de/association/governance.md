@@ -5,10 +5,6 @@ sidebar:
   order: 4
 ---
 
-:::note[Arbeitsentwurf]
-Dies ist eine Arbeitsfassung vom 27. Mai 2026. Sie steht unter rechtlichem Vorbehalt bis zur Annahme durch die Gründungsversammlung.
-:::
-
 ## 1. Zweck des Reglements
 
 Dieses Reglement konkretisiert die Organisation, Verantwortlichkeiten und Entscheidungsprozesse von TextRefs. Es soll sicherstellen, dass der Verein gemeinnützig, transparent, offen, wissenschaftlich nachvollziehbar und rechtssicher geführt wird.
@@ -96,7 +92,8 @@ Ein technischer Review genügt in der Regel für:
 - kleinere Metadatenkorrekturen;
 - Aktualisierung von `last_checked`-Feldern;
 - Ergänzung unstrittiger Aliase;
-- Dokumentationskorrekturen ohne fachliche Tragweite.
+- Dokumentationskorrekturen ohne fachliche Tragweite;
+- Aufnahme neuer Datensätze als `draft` (Merge validierter Daten in das Register).
 
 Voraussetzungen:
 
@@ -118,7 +115,8 @@ Ein fachlicher Review ist erforderlich für:
 - strittige Mapping-Aussagen;
 - widersprüchliche externe Identifikatoren;
 - Änderungen mit erheblicher fachlicher oder reputationsbezogener Wirkung;
-- Statusänderungen zu `active`, `deprecated`, `withdrawn` oder `blocked`, soweit fachlich begründet.
+- Promotion von Datensätzen von `draft` zu `active` (der Zeitpunkt, an dem die Persistenzzusage beginnt);
+- Statusänderungen zu `deprecated`, `withdrawn` oder `blocked`, soweit fachlich begründet.
 
 Voraussetzungen:
 
@@ -143,16 +141,16 @@ Der Vorstand entscheidet oder bestätigt:
 
 ### 5.1 Allgemeine Datensatzstatus
 
-- **candidate:** vorgeschlagener Datensatz, noch nicht vollständig geprüft;
-- **active:** gültig und empfohlen;
+- **draft:** Datensatz in Arbeit; ohne Tombstone korrigierbar oder zurückziehbar; von der Persistenzzusage ausgenommen;
+- **active:** gültig und empfohlen; ab diesem Zeitpunkt dauerhaft identifiziert;
 - **deprecated:** nicht mehr empfohlen, aber aus historischen Gründen erhalten;
 - **withdrawn:** zurückgezogen, Landing Page bleibt erhalten;
 - **blocked:** aus rechtlichen, policybezogenen oder schwerwiegenden Qualitätsgründen gesperrt.
 
 ### 5.2 Mapping-Status
 
-- **candidate:** vorgeschlagene Zuordnung;
-- **active:** geprüfte und empfohlene Zuordnung;
+- **draft:** Zuordnung in Arbeit; ohne Tombstone korrigierbar oder zurückziehbar;
+- **active:** geprüfte und empfohlene Zuordnung; ab diesem Zeitpunkt dauerhaft identifiziert;
 - **deprecated:** nicht mehr empfohlene Zuordnung;
 - **withdrawn:** zurückgezogene Zuordnung;
 - **blocked:** gesperrte Zuordnung.
@@ -161,7 +159,7 @@ Strittige Mappings behalten den passenden Schema-Status und führen Begründung,
 
 ### 5.3 Tombstone-Prinzip
 
-Publizierte IDs werden grundsätzlich nicht hart gelöscht.
+Aktive IDs (Status `active` oder ein Tombstone-Status) werden grundsätzlich nicht hart gelöscht. Datensätze im Status `draft` können ohne Landing Page zurückgezogen werden.
 
 Bei Rückzug, Sperrung oder Deprecation bleibt eine Landing Page erhalten mit:
 
@@ -176,10 +174,10 @@ Bei Rückzug, Sperrung oder Deprecation bleibt eine Landing Page erhalten mit:
 
 1. Primäre TextRefs-IDs sind unabhängige HTTP-URIs.
 2. Externe Identifikatoren wie CTS URNs, Wikidata-IDs, DOIs, ARKs, Perseus-URLs oder Scaife-URLs sind keine primären TextRefs-IDs.
-3. Stabile und etablierte Referenzen können deterministische IDs erhalten.
-4. Provisorische oder unsichere Objekte erhalten generierte IDs.
+3. Alle Registereinträge tragen deterministische IDs, die aus ihren Identitätsfeldern berechenbar sind.
+4. Provisorische Einträge werden über den Status `draft` ausgedrückt, der von der Persistenzzusage ausgenommen ist; ihre IDs können bis zur Promotion zu `active` verschwinden oder sich ändern.
 5. Einmal publizierte IDs werden nicht geändert, nur weil Labels, Titel, Aliase oder externe Mappings verbessert werden.
-6. Lesbare Citation-URLs sind Aliase und können umgeleitet, geändert oder deprecated werden; primäre IDs bleiben massgeblich.
+6. Lesbare Citation-URLs sind Aliase und können umgeleitet, geändert, deprecated oder einem anderen Datensatz neu zugeordnet werden; nur die primären `/id/`-Identifikatoren sind dauerhaft.
 
 ## 7. Contribution-Prozess
 
@@ -299,11 +297,11 @@ CanonicalReference-, Work- und CitationSystem-IDs sollen nicht gelöscht werden,
 ## 10. Finanz- und Vergütungsgrundsätze
 
 1. Vereinsmittel dürfen nur für den gemeinnützigen Zweck verwendet werden.
-2. Der Vorstand arbeitet grundsätzlich ehrenamtlich.
+2. Der Vorstand arbeitet ehrenamtlich.
 3. Effektive, notwendige und belegte Spesen werden ersetzt.
-4. Besondere Leistungen können angemessen entschädigt werden, wenn sie zweckbezogen, budgetiert, dokumentiert und verhältnismässig sind.
-5. Betroffene Personen treten bei Beschlüssen über eigene Entschädigungen in den Ausstand.
-6. Aufträge an Vorstandsmitglieder oder nahestehende Personen sind nur zulässig, wenn sie dem Vereinszweck dienen, marktüblich sind und transparent beschlossen werden.
+4. Eine Entschädigung für besondere oder operative Leistungen ist ausgeschlossen.
+5. Betroffene Personen treten bei Beschlüssen über eigene Spesen in den Ausstand.
+6. Aufträge an Vorstandsmitglieder oder an ihnen nahestehende Personen sind ausgeschlossen.
 7. Spenden und Fördermittel werden zweckgemäss verwendet.
 8. Zweckgebundene Mittel werden separat nachvollziehbar dokumentiert.
 

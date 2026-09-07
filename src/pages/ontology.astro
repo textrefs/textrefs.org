@@ -1,0 +1,101 @@
+---
+import RecordPage from '../layouts/RecordPage.astro';
+import {
+	ONTOLOGY_IRI,
+	ONTOLOGY_NAMESPACE,
+	ONTOLOGY_TERMS,
+	ontologyJsonLd,
+} from '../lib/ontology.ts';
+
+const ontology = ontologyJsonLd();
+const jsonLd = JSON.stringify(ontology).replace(/</g, '\\u003c');
+---
+
+<RecordPage
+	title="TextRefs ontology"
+	description="Definitions of the TextRefs-specific classes and properties used by the v1 JSON-LD context."
+	jsonHref="/ontology.json"
+>
+	<script is:inline type="application/ld+json" set:html={jsonLd} />
+	<h1>TextRefs ontology</h1>
+	<p>
+		This document defines the small application vocabulary rooted at <code
+			>{ONTOLOGY_NAMESPACE}</code
+		>. TextRefs reuses RDF, SKOS, Dublin Core Terms, PROV-O, and schema.org
+		where their semantics fit, and defines a local term only where they do not.
+	</p>
+	<p>
+		Ontology IRI: <a href={ONTOLOGY_IRI}><code>{ONTOLOGY_IRI}</code></a><br />
+		JSON-LD context: <a href="/contexts/v1.jsonld"
+			><code>https://textrefs.org/contexts/v1.jsonld</code></a
+		><br />
+		This document as JSON-LD: <a href="/ontology.json"
+			><code>/ontology.json</code></a
+		>
+	</p>
+
+	<h2>Terms</h2>
+	<dl>
+		{
+			ONTOLOGY_TERMS.map((term) => (
+				<Fragment>
+					<dt id={term.localName}>
+						<a href={`#${term.localName}`}>{term.label}</a>{' '}
+						<span class="reg-tag">owl:{term.kind}</span>
+					</dt>
+					<dd>
+						<p>{term.comment}</p>
+						<p>
+							<code>{ONTOLOGY_NAMESPACE + term.localName}</code>
+						</p>
+						{(
+							[
+								['Subclass of', term.subClassOf],
+								['Domain', term.domain],
+								['Range', term.range],
+							] as const
+						).map(
+							([label, iris]) =>
+								iris && (
+									<p>
+										{label}:{' '}
+										{iris.map((iri, index) => (
+											<Fragment>
+												{index > 0 && ', '}
+												<a href={iri}>{iri}</a>
+											</Fragment>
+										))}
+									</p>
+								),
+						)}
+					</dd>
+				</Fragment>
+			))
+		}
+	</dl>
+
+	<h2>Terms reused directly</h2>
+	<ul>
+		<li><code>key</code> expands to <code>dcterms:identifier</code>.</li>
+		<li><code>locator</code> expands to <code>skos:notation</code>.</li>
+		<li>
+			The two mapping relations expand to <code>prov:alternateOf</code> and{' '}
+			<code>dcterms:isReferencedBy</code> (ADR-0006).
+		</li>
+	</ul>
+</RecordPage>
+
+<style>
+	dt {
+		font-weight: 700;
+		margin-top: 1.5rem;
+	}
+	dd {
+		margin-left: 0;
+		padding-bottom: 0.75rem;
+		border-bottom: 1px solid var(--hairline);
+	}
+	dd p {
+		margin: 0.4rem 0;
+	}
+</style>

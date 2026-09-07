@@ -1,0 +1,44 @@
+---
+// Minimal standalone document for high-volume registry record pages
+// (/id/ref/…). Deliberately not a Starlight page: 39k+ instances make
+// per-page chrome the dominant cost of the deployed site. Styles live in
+// the shared /assets/record.css (never inlined or bundled).
+interface Props {
+	title: string;
+	description: string;
+	/** Omitted by a page with no single JSON-LD sibling, such as `/find/`. */
+	jsonHref?: string;
+	noindex?: boolean;
+}
+
+const { title, description, jsonHref, noindex = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title} — TextRefs</title>
+		<meta name="description" content={description} />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="stylesheet" href="/assets/record.css" />
+		{
+			jsonHref && (
+				<link rel="alternate" type="application/ld+json" href={jsonHref} />
+			)
+		}
+		{noindex && <meta name="robots" content="noindex" />}
+	</head>
+	<body>
+		<header class="site-header">
+			<a href="/">TextRefs</a>{' '}
+			<span class="note">
+				Unstable preview — the standard and registry are pre-release drafts.
+			</span>
+		</header>
+		<main>
+			<slot />
+		</main>
+	</body>
+</html>

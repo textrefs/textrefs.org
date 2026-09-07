@@ -9,7 +9,8 @@ We follow the [MADR](https://adr.github.io/madr/) format (Markdown ADR). Start f
 - Filename: `ADR-NNNN-{kebab-case-slug}.md`, with `NNNN` zero-padded and monotonically increasing.
 - Status field: `Proposed` → `Accepted` → optionally `Deprecated` or `Superseded by ADR-XXXX`.
 - One decision per ADR. Split rather than expand.
-- ADRs are immutable once accepted; corrections happen via a new ADR that supersedes the old one.
+- The decision, its context, and its consequences are immutable once the ADR is accepted. Corrections happen via a new ADR that supersedes the old one.
+- The **Status** field and the **Follow-up actions** checklist are the exception. They are tracking state. Update them in place as the work lands.
 
 ## When to write an ADR
 

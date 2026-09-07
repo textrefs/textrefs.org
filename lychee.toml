@@ -33,6 +33,9 @@ exclude = [
 	"^https?://([a-z0-9-]+\\.)*linkedin\\.com",
 	"^https?://([a-z0-9-]+\\.)*twitter\\.com",
 	"^https?://([a-z0-9-]+\\.)*x\\.com",
+	"^https?://([a-z0-9-]+\\.)*opencollective\\.com",
+	"^https?://([a-z0-9-]+\\.)*iso\\.org",
+	"^https?://([a-z0-9-]+\\.)*loc\\.gov",
 	"^https?://localhost(:\\d+)?(/|$)",
 ]
 

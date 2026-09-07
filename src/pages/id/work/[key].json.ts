@@ -14,6 +14,6 @@ export const GET: APIRoute = ({ props }) => {
 	const { work } = props as { work: ReturnType<typeof loadWorks>[number] };
 	const body = { '@context': CONTEXT, ...work };
 	return new Response(JSON.stringify(body, null, 2), {
-		headers: { 'Content-Type': 'application/json; charset=utf-8' },
+		headers: { 'Content-Type': 'application/ld+json; charset=utf-8' },
 	});
 };

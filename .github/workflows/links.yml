@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'textrefs/textrefs.org'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -28,8 +28,36 @@ jobs:
       - name: Collect external URLs from sources
         run: |
           mkdir -p lychee
-          grep -rhoE 'https?://[^"'\''<>) ]+' data/ src/content/docs/ \
-            | sed -E 's/[.,;:]+$//' \
+          # A URL may legitimately contain `(` and `)`, because Wikipedia and
+          # Wikisource put disambiguation titles there. The match therefore
+          # keeps parentheses and the trailing markup is trimmed afterwards.
+          #
+          # The trim runs as one loop, not as a fixed sequence. A URL at the
+          # end of a markdown link, a bold run, or a sentence carries several
+          # layers of trailing markup at once — `…/4.0/).`, `…/arks.org/)**`,
+          # `…/rfc3987))` — so each pass strips punctuation, then one
+          # unbalanced `)`, until the string stops changing. Doing this in a
+          # single pass leaves a `)` behind whenever punctuation follows it,
+          # which is what produced the false 404s in #3.
+          #
+          # Resolver templates are dropped: `{placeholder}` literally, and
+          # `%7B`/`%7D` for the percent-encoded spelling.
+          #
+          # Restrict to YAML/MD, and skip node_modules, so lockfiles and
+          # dependency READMEs inside data/ are not scanned.
+          grep -rhoE --include='*.yaml' --include='*.yml' --include='*.md' --include='*.mdx' \
+              --exclude-dir=node_modules \
+              'https?://[^]["'\''<>[:space:]]+' data/ src/content/docs/ \
+            | awk '{
+                do {
+                  changed = 0
+                  if (sub(/[.,;:!?*_`]+$/, "")) changed = 1
+                  n = gsub(/\(/, "&"); m = gsub(/\)/, "&")
+                  if (m > n && sub(/\)$/, "")) changed = 1
+                } while (changed)
+                if (length($0) > 0) print
+              }' \
+            | grep -viE '[{}]|%7b|%7d' \
             | sort -u > lychee/urls.txt
           echo "Collected $(wc -l < lychee/urls.txt) unique URLs"
 

@@ -5,10 +5,6 @@ sidebar:
   order: 3
 ---
 
-:::note[Arbeitsentwurf]
-Dies ist eine Arbeitsfassung vom 2. Juni 2026. Sie steht unter rechtlichem Vorbehalt bis zur Annahme durch die Gründungsversammlung.
-:::
-
 ## Art. 1 Name und Sitz
 
 Unter dem Namen **TextRefs** besteht ein Verein im Sinne von Art. 60 ff. ZGB mit Sitz in Zürich, Schweiz.
@@ -107,7 +103,7 @@ Bei Stimmengleichheit entscheidet bei Sachgeschäften die Präsidentin oder der 
 
 ## Art. 11 Vorstand
 
-Der Vorstand besteht aus mindestens drei Personen.
+Der Vorstand besteht aus mindestens zwei Personen.
 
 Die Amtsdauer beträgt zwei Jahre. Wiederwahl ist möglich.
 
@@ -143,11 +139,7 @@ Beschlüsse werden protokolliert.
 
 ## Art. 15 Ehrenamtlichkeit, Spesen und Entschädigungen
 
-Die Mitglieder des Vorstandes sind ehrenamtlich tätig und haben grundsätzlich nur Anspruch auf Entschädigung ihrer effektiven Spesen und Barauslagen. Für besondere Leistungen einzelner Vorstandsmitglieder kann eine angemessene Entschädigung ausgerichtet werden.
-
-Entschädigungen für besondere Leistungen werden nur ausgerichtet, sofern sie dem Vereinszweck dienen, marktüblich und verhältnismässig sind, budgetiert oder vom Vorstand ausdrücklich beschlossen werden, transparent dokumentiert werden und nicht zu einer verdeckten Gewinnausschüttung oder Selbstbegünstigung führen.
-
-Betroffene Personen treten bei Beschlüssen über eigene Entschädigungen oder über Entschädigungen nahestehender Personen in den Ausstand.
+Die Mitglieder des Vorstandes sind ehrenamtlich tätig und haben nur Anspruch auf Ersatz ihrer effektiven Spesen und Barauslagen. Eine Entschädigung für besondere oder operative Leistungen ist ausgeschlossen.
 
 Einzelheiten regelt ein Spesen- und Vergütungsreglement.
 
@@ -197,12 +189,12 @@ Die nach Auflösung des Vereins verbleibenden Mittel sind einer steuerbefreiten 
 
 ## Art. 22 Inkrafttreten
 
-Diese Statuten wurden an der Gründungsversammlung vom [Datum] angenommen und treten sofort in Kraft.
+Diese Statuten wurden an der Gründungsversammlung vom 2. September 2026 angenommen und treten sofort in Kraft.
 
-Ort, Datum: Zürich, [Datum]
+Ort, Datum: Zürich, 2. September 2026
 
 Für die Gründungsversammlung:
 
-Präsidentin/Präsident: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+Präsident, Moritz Mähr: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-Protokollführerin/Protokollführer: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+Protokollführer, Luz Christopher Seiberth: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_

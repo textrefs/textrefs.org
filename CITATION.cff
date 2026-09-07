@@ -1,6 +1,8 @@
 cff-version: 1.2.0
 message: 'If you cite TextRefs, please cite it as below.'
 title: TextRefs
+version: 0.1.0
+date-released: '2026-08-12'
 abstract: An open, persistent, machine-readable registry for canonical text references.
 type: software
 authors:
@@ -13,8 +15,8 @@ authors:
   - family-names: Seiberth
     given-names: Luz Christopher
     email: luz@seiberth.de
+    orcid: 'https://orcid.org/0000-0002-5606-0964'
     affiliation: TextRefs
-    # ORCID: TBD
 repository-code: 'https://github.com/textrefs/textrefs.org'
 url: 'https://textrefs.org'
 license:

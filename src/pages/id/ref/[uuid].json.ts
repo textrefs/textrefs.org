@@ -14,6 +14,6 @@ export const GET: APIRoute = ({ props }) => {
 	const { ref } = props as { ref: ReturnType<typeof loadReferences>[number] };
 	const body = { '@context': CONTEXT, ...ref };
 	return new Response(JSON.stringify(body, null, 2), {
-		headers: { 'Content-Type': 'application/json; charset=utf-8' },
+		headers: { 'Content-Type': 'application/ld+json; charset=utf-8' },
 	});
 };
